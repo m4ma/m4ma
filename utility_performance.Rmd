@@ -1,0 +1,88 @@
+---
+title: "Performance"
+author: "Eva Viviani"
+date: '2022-06-24'
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+This notebook compares the performance of the R's utility functions with their counterpart in Rcpp
+
+```{r, message=FALSE}
+rm(list = ls())
+library("microbenchmark")
+library("Rcpp")
+
+c_functions_folder <- file.path(paste0(getwd(),'/src/'))
+r_functions_folder <- file.path(paste0(getwd(),'/R/'))
+```
+
+Source all the R and Rcpp functions
+
+```{r}
+c_functions <- list.files(c_functions_folder, pattern = ".cpp")
+r_functions <- list.files(r_functions_folder, pattern = ".R")
+
+for (i in c_functions){
+  sourceCpp(paste0(c_functions_folder,i))
+}
+
+for (i in r_functions){
+  source(paste0(r_functions_folder,i))
+}
+
+```
+
+## psUtility
+
+```{r}
+p <- c(aPS = 1, sPref = 3, 
+       sSlow = 2, bPS = 1)
+v = 1
+d = 11.46856 
+results <- microbenchmark(psUtilityR = psUtility(p, v, d),
+                          psUtilityCpp = psUtility_rcpp(aPS = p["aPS"], sPref = p["sPref"], 
+                                                        sSlow = 2, bPS = 1, 
+                                                        v, d))
+print(summary(results, unit = 'us')[, c(1:7)],digits=2)
+
+```
+
+## gaUtility
+
+```{r}
+GA = c(0.33040516, 0.08040516, 0.11403929, 0.25292818, 0.36403929, 0.47515040, 0.58626151, 0.69737262, 0.83626151, 1.03070596, 1.28070596)
+p <- c(
+  bGA = 10,
+  aGA = 2
+)
+
+
+results <- microbenchmark(gaUtilityR = gaUtility(p, GA) ,
+                          gaUtilityCpp = gaUtility_rcpp(bGA = 10, aGA = 2, GA))
+
+print(summary(results, unit = 'us')[, c(1:7)],digits=2)
+```
+
+## caUtility
+```{r}
+p <- c(
+  aCA = 1.5,
+  bCA = 1,
+  bCAlr = 10
+)
+
+results <- microbenchmark(caUtilityR = caUtility(p),
+                          caUtilityCpp = caUtility_rcpp(aCA = 1.5, bCA = 1, bCAlr = 10),
+                          times = 1000,
+                          unit = 'us')
+
+print(summary(results, unit = 'us')[, c(1:7)],digits=2)
+```
+
+
+
+
+
