@@ -10,19 +10,25 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// rcpp_hello_world
-List rcpp_hello_world();
-RcppExport SEXP _m4ma_rcpp_hello_world() {
+// pcnl_rcpp
+double pcnl_rcpp(NumericVector cell, NumericVector u, NumericVector mum, List nests, List alpha, double mu);
+RcppExport SEXP _m4ma_pcnl_rcpp(SEXP cellSEXP, SEXP uSEXP, SEXP mumSEXP, SEXP nestsSEXP, SEXP alphaSEXP, SEXP muSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(rcpp_hello_world());
+    Rcpp::traits::input_parameter< NumericVector >::type cell(cellSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type u(uSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type mum(mumSEXP);
+    Rcpp::traits::input_parameter< List >::type nests(nestsSEXP);
+    Rcpp::traits::input_parameter< List >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< double >::type mu(muSEXP);
+    rcpp_result_gen = Rcpp::wrap(pcnl_rcpp(cell, u, mum, nests, alpha, mu));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_m4ma_rcpp_hello_world", (DL_FUNC) &_m4ma_rcpp_hello_world, 0},
+    {"_m4ma_pcnl_rcpp", (DL_FUNC) &_m4ma_pcnl_rcpp, 6},
     {NULL, NULL, 0}
 };
 
