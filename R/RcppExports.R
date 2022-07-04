@@ -4,13 +4,13 @@
 #' Probability of the Conditional Nested Logit Model
 #'
 #' @param cell Alternative vector with nest indices.
-#' @param utility Vector with utility for each alternative.
+#' @param u Vector with utility for each alternative.
 #' @param mum Vector with nests associations ranging between 0 and 1.
 #' @param nests List of vectors with utility indices.
 #' @param alpha List of vectors with alpha values.
 #' @param mu General nest association ranging between 0 and 1.
 #'
-#' @return Probability of alternative \code{cell} given \code{utility}, \code{alpha}, and parameters \code{mum} and \code{mu}.
+#' @return Probability of alternative \code{cell} given \code{u}, \code{alpha}, and parameters \code{mum} and \code{mu}.
 #' @export
 pcnl_rcpp <- function(cell, u, mum, nests, alpha, mu) {
     .Call(`_m4ma_pcnl_rcpp`, cell, u, mum, nests, alpha, mu)

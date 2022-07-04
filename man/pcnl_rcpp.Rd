@@ -9,6 +9,8 @@ pcnl_rcpp(cell, u, mum, nests, alpha, mu)
 \arguments{
 \item{cell}{Alternative vector with nest indices.}
 
+\item{u}{Vector with utility for each alternative.}
+
 \item{mum}{Vector with nests associations ranging between 0 and 1.}
 
 \item{nests}{List of vectors with utility indices.}
@@ -16,11 +18,9 @@ pcnl_rcpp(cell, u, mum, nests, alpha, mu)
 \item{alpha}{List of vectors with alpha values.}
 
 \item{mu}{General nest association ranging between 0 and 1.}
-
-\item{utility}{Vector with utility for each alternative.}
 }
 \value{
-Probability of alternative \code{cell} given \code{utility}, \code{alpha}, and parameters \code{mum} and \code{mu}.
+Probability of alternative \code{cell} given \code{u}, \code{alpha}, and parameters \code{mum} and \code{mu}.
 }
 \description{
 Probability of the Conditional Nested Logit Model
