@@ -53,8 +53,8 @@ p <- c(aPS = 1, sPref = 3,
 v = 1
 d = 11.46856 
 proc1List <- lapply(times,function(x){
-  b <- microbenchmark(psUtilityR = psUtility(p, v, d),
-                      psUtilityCpp = psUtility_rcpp(aPS = p["aPS"], sPref = p["sPref"], 
+  b <- microbenchmark(psUtilityR = m4ma::psUtility(p, v, d),
+                      psUtilityCpp = m4ma::psUtility_rcpp(aPS = p["aPS"], sPref = p["sPref"], 
                                                     sSlow = 2, bPS = 1, 
                                                     v, d),
                       times = x)
@@ -76,8 +76,8 @@ p <- c(
 
 
 proc2List <- lapply(times,function(x){
-  b <- microbenchmark(gaUtilityR = gaUtility(p, GA) ,
-                      gaUtilityCpp = gaUtility_rcpp(bGA = 10, aGA = 2, GA),
+  b <- microbenchmark(gaUtilityR = m4ma::gaUtility(p, GA) ,
+                      gaUtilityCpp = m4ma::gaUtility_rcpp(bGA = 10, aGA = 2, GA),
                       times = x)
   b$n <- x
   b
@@ -96,8 +96,8 @@ p <- c(
 )
 
 proc3List <- lapply(times,function(x){
-  b <- microbenchmark(caUtilityR = caUtility(p),
-                      caUtilityCpp = caUtility_rcpp(aCA = 1.5, bCA = 1, bCAlr = 10),
+  b <- microbenchmark(caUtilityR = m4ma::caUtility(p),
+                      caUtilityCpp = m4ma::caUtility_rcpp(aCA = 1.5, bCA = 1, bCAlr = 10),
                       times = x)
   b$n <- x
   b
@@ -110,7 +110,7 @@ proc3summary
 
 # idUtility
 
-```{r}
+```{r, eval=FALSE}
 p <- c(
   'bID' = 1.3,
   'dID' = 2,
@@ -130,6 +130,58 @@ proc4List <- lapply(times,function(x){
 })
 proc4summary <- do.call(rbind,(proc4List))
 proc4summary
+
+```
+
+## baUtility
+```{r}
+set.seed(23123)
+BA = runif(6)
+names(BA) = c(1:6)
+
+p <- c(
+  aBA = 1.5,
+  bBA = 1
+)
+
+proc5List <- lapply(times,function(x){
+  b <- microbenchmark(baUtilityR = m4ma::baUtility(p, BA),
+                      baUtilityCpp = m4ma::baUtility_rcpp(1.5, 1, BA, 1:6),
+                      times = x)
+  b$n <- x
+  b
+})
+proc5summary <- do.call(rbind,(proc5List))
+proc5summary
+
+
+```
+
+## flUtility
+```{r}
+leaders = matrix(c(9, 0.5, 0.5, 8, 0.5, 0.5), ncol = 2)
+row.names(leaders) <- c('cell', 'angleDisagree', 'inGroup')
+set.seed(12123)
+dists = t(matrix(rep(runif(33), 2), ncol = 2))
+
+FL = list(leaders = leaders, dists = dists)
+
+p <- c(
+  aFL = 1.5,
+  bFL = 1,
+  dFL = 4
+)
+
+proc6List <- lapply(times,function(x){
+  b <- microbenchmark(flUtilityR = m4ma::flUtility(p, FL),
+                      flUtilityCpp = m4ma::flUtility_rcpp(1.5, 1, 4, leaders, dists),
+                      times = x)
+  b$n <- x
+  b
+})
+proc6summary <- do.call(rbind,(proc6List))
+proc6summary
+
 
 ```
 
@@ -187,36 +239,38 @@ maxV = max(V)
 
 norm_sample = rnorm(34)
 
-proc5List <- lapply(times,function(x){
+proc7List <- lapply(times,function(x){
   b <- microbenchmark(
- pCNLR = pCNL(17, V, muM = muM, nests, alpha, mu, cell_nest),
- pCNLCpp = pcnl_rcpp(cell_nest[18, ], V, muM, nests, alpha, mu),
+ pCNLR = m4ma::pCNL(17, V, muM = muM, nests, alpha, mu, cell_nest),
+ pCNLCpp = m4ma::pcnl_rcpp(cell_nest[18, ], V, muM, nests, alpha, mu),
                       times = x)
   b$n <- x
   b
 })
-proc5summary <- do.call(rbind,(proc5List))
-proc5summary
+proc7summary <- do.call(rbind,(proc7List))
+proc7summary
 
 
 ```
-
 
 # plot benchmark results
 
 ```{r, message=FALSE}
 library(tidyverse)
 library(ggplot2)
-library(PupillometryR)
+library(dplyr)
+library(tidyr)
+library(tibble)
+#library(PupillometryR)
 ```
 
 ```{r}
 
 # bind all outputs together 
-do.call(rbind,list(proc1summary,proc2summary,proc3summary,proc4summary,proc5summary)) -> proc_time 
+do.call(rbind,list(proc1summary,proc2summary,proc3summary,proc5summary, proc6summary, proc7summary)) -> proc_time 
 proc_time$type <- ifelse(substr(proc_time$expr,nchar(as.character(proc_time$expr)),nchar(as.character(proc_time$expr[1]))) == 'R','R','Cpp')
 proc_time$type <- as.factor(proc_time$type)
-proc_time$ntime <- log(proc_time$time *   .000001, base = 10) #ms
+proc_time$ntime <- log(proc_time$time * 0.000001, base = 10) #ms
 
 ```
 
@@ -245,8 +299,10 @@ ggsave(plot = p1, "performance_29_june.png", dpi = 300)
 as_tibble(proc1summary) -> proc1summary_tbl
 as_tibble(proc2summary) -> proc2summary_tbl
 as_tibble(proc3summary) -> proc3summary_tbl
-as_tibble(proc4summary) -> proc4summary_tbl
+#as_tibble(proc4summary) -> proc4summary_tbl
 as_tibble(proc5summary) -> proc5summary_tbl
+as_tibble(proc6summary) -> proc6summary_tbl
+as_tibble(proc7summary) -> proc7summary_tbl
 
 
 proc1summary_tbl%>%
@@ -267,30 +323,43 @@ proc3summary_tbl%>%
   summarise(caUtilityR = ((lag(med_gain) - med_gain ) * 100)/lag(med_gain))%>%
   na.omit()-> proc3summary_median
 
-proc4summary_tbl%>%
-  group_by(expr)%>%
-  summarise(med_gain = median(time))%>%
-  summarise(idUtilityR = ((lag(med_gain) - med_gain ) * 100)/lag(med_gain))%>%
-  na.omit()-> proc4summary_median
+# proc4summary_tbl%>%
+#   group_by(expr)%>%
+#   summarise(med_gain = median(time))%>%
+#   summarise(idUtilityR = ((lag(med_gain) - med_gain ) * 100)/lag(med_gain))%>%
+#   na.omit()-> proc4summary_median
 
 proc5summary_tbl%>%
   group_by(expr)%>%
   summarise(med_gain = median(time))%>%
-  summarise(pCNLR = ((lag(med_gain) - med_gain ) * 100)/lag(med_gain))%>%
+  summarise(baUtilityR = ((lag(med_gain) - med_gain ) * 100)/lag(med_gain))%>%
   na.omit()-> proc5summary_median
 
-procsummary_median <- bind_cols(proc1summary_median,proc2summary_median,proc3summary_median,proc4summary_median,proc5summary_median)
+proc6summary_tbl%>%
+  group_by(expr)%>%
+  summarise(med_gain = median(time))%>%
+  summarise(flUtilityR = ((lag(med_gain) - med_gain ) * 100)/lag(med_gain))%>%
+  na.omit()-> proc6summary_median
+
+proc7summary_tbl%>%
+  group_by(expr)%>%
+  summarise(med_gain = median(time))%>%
+  summarise(pCNLR = ((lag(med_gain) - med_gain ) * 100)/lag(med_gain))%>%
+  na.omit()-> proc7summary_median
+
+procsummary_median <- bind_cols(proc1summary_median,proc2summary_median,proc3summary_median,proc5summary_median,proc6summary_median,proc7summary_median)
 prop_gain <- procsummary_median%>%
-  pivot_longer(cols = c(psUtilityR,gaUtilityR,caUtilityR,idUtilityR,pCNLR),names_to = "expr", values_to = "prop_gain")
+  pivot_longer(cols = c(psUtilityR,gaUtilityR,caUtilityR,baUtilityR,flUtilityR,pCNLR),names_to = "expr", values_to = "prop_gain")
 prop_gain
 
 vec_gains <-as.character(c(round(prop_gain[prop_gain$expr=='pCNLR',]$prop_gain),
-             round(prop_gain[prop_gain$expr=='idUtilityR',]$prop_gain),
              round(prop_gain[prop_gain$expr=='caUtilityR',]$prop_gain),
              round(prop_gain[prop_gain$expr=='gaUtilityR',]$prop_gain),
-             round(prop_gain[prop_gain$expr=='psUtilityR',]$prop_gain)))
+             round(prop_gain[prop_gain$expr=='psUtilityR',]$prop_gain),
+             round(prop_gain[prop_gain$expr=='baUtilityR',]$prop_gain),
+             round(prop_gain[prop_gain$expr=='flUtilityR',]$prop_gain)))
 vec_gains <-paste0(vec_gains,'%')
-fun_gains <- c('pCNLR','idUtilityR','caUtilityR','gaUtilityR','psUtilityR')
+fun_gains <- c('pCNLR','caUtilityR','gaUtilityR','psUtilityR', 'baUtilityR', 'flUtilityR')
 
 p1_p<-ggplot(proc_time, aes(x = expr, y = ntime, fill=type))+
   geom_violin(trim = T)+
@@ -305,7 +374,8 @@ p1_p<-ggplot(proc_time, aes(x = expr, y = ntime, fill=type))+
   geom_text(aes(x = fun_gains[2], y = 1.2), label=vec_gains[2],color="red")+
   geom_text(aes(x = fun_gains[3], y = 1), label=vec_gains[3],color="red")+
   geom_text(aes(x = fun_gains[4], y = 1), label=vec_gains[4],color="red")+
-  geom_text(aes(x = fun_gains[5], y = 1), label=vec_gains[5],color="red")
+  geom_text(aes(x = fun_gains[5], y = 1), label=vec_gains[5],color="red") +
+  geom_text(aes(x = fun_gains[6], y = 1), label=vec_gains[5],color="red")
 p1_p
 ```
 
