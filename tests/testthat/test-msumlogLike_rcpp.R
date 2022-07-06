@@ -35,13 +35,13 @@ testthat::test_that("State likelihood works", {
 })
 
 testthat::test_that("State likelihood loop works", {
-  ref = c(0, 2.588332e-212, 0.5, 0, 3.502169e-07, 0, 0, 4.420030e-135, 0)
+  ref = c(-Inf, -487.1970260, -0.6931472, -Inf, -14.8647133, -Inf, -Inf, -309.3628411, -Inf)
   ll_states = m4ma::like_states_rcpp(trace_i, p, nests, alpha, m4ma::get_cell_nest())
-  testthat::expect_equal(unlist(ll_states), ref, tolerance = 1e-6)
+  testthat::expect_equal(log(unlist(ll_states)), ref)
 })
 
 testthat::test_that("Trace likelihood sum works", {
-  ref = 176.7388
+  ref = 176.738817
   ll_sum = m4ma::msumlogLike_rcpp(p, trace_i, minLike = 1e-10, mult = -1)
-  testthat::expect_equal(ll_sum, ref, tolerance = 1e-6)
+  testthat::expect_equal(ll_sum, ref)
 })
