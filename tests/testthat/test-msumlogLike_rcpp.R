@@ -1,5 +1,7 @@
 
-load('tests/data/trace_i.rda')
+test_filepath = file.path('data', 'trace_i.rda')
+
+test_obj_name = load(test_filepath)
 
 nests = list(
   Central = c(0, 6, 17, 28),
@@ -26,7 +28,7 @@ cell_nest = cbind(
   cbind(c(1, 1:5, 2, 6:15, 3, 16:25, 4, 26:30), 
         c(1, 1:11, 1:11, 2:12)))-1
 
-p = attr(trace_i, 'pMat')
+p = attr(get(test_obj_name), 'pMat')
 
 testthat::test_that("State likelihood works", {
   ref = 0.5

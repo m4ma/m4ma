@@ -2,22 +2,40 @@
 % Please edit documentation in R/utility_rcpp.R
 \name{utility_rcpp}
 \alias{utility_rcpp}
-\title{Total Utility of Alternatives}
+\title{Total Utility of Cells}
 \usage{
 utility_rcpp(p, n, v, d, ga, ba, id, fl, wb, ok, group)
 }
 \arguments{
-\item{p}{Vector with subject parameters.}
+\item{p}{Numeric vector of subject parameters.}
 
-\item{v}{Scalar indicating the current speed..}
+\item{n}{Integer scalar indexing the subject in the state.}
 
-\item{d}{Scalar indicating the distance to next goal.}
+\item{v}{Numeric scalar indicating the current speed.}
 
-\item{ga}{Vector with angles to next goal.}
+\item{d}{Numeric scalar indicating the distance to next goal.}
+
+\item{ga}{Numeric vector of angles to next goal.}
+
+\item{ba}{Numeric vector of distances from each cell to closest pedestrian.}
+
+\item{id}{Numeric matrix of predicted distances from the subject to other pedestrians in the front.}
+
+\item{fl}{List of numeric matrices:
+\describe{
+  \item{leaders}{Matrix with columns per leader and rows of their normalized angle disagreement and in-group status.}
+  \item{dists}{Matrix with rows per leader and columns per cell with distances from each cell to chosen cell.}
+}}
+
+\item{wb}{Numeric vector of distances from cells' centers to closest buddy.}
+
+\item{ok}{Logical matrix indicating if cells are blocked.}
+
+\item{group}{Integer vector with group indices for each pedestrian.}
 }
 \value{
-Vector with total utility for each alternative.
+Numeric vector with total utility for each cell.
 }
 \description{
-Total Utility of Alternatives
+Total Utility of Cells
 }

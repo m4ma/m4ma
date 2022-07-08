@@ -1,11 +1,22 @@
-#' Total Utility of Alternatives
+#' Total Utility of Cells
 #'
-#' @param p Vector with subject parameters.
-#' @param v Scalar indicating the current speed..
-#' @param d Scalar indicating the distance to next goal.
-#' @param ga Vector with angles to next goal.
+#' @param p Numeric vector of subject parameters.
+#' @param n Integer scalar indexing the subject in the state.
+#' @param v Numeric scalar indicating the current speed.
+#' @param d Numeric scalar indicating the distance to next goal.
+#' @param ga Numeric vector of angles to next goal.
+#' @param ba Numeric vector of distances from each cell to closest pedestrian.
+#' @param id Numeric matrix of predicted distances from the subject to other pedestrians in the front.
+#' @param fl List of numeric matrices:
+#' \describe{
+#'   \item{leaders}{Matrix with columns per leader and rows of their normalized angle disagreement and in-group status.}
+#'   \item{dists}{Matrix with rows per leader and columns per cell with distances from each cell to chosen cell.}
+#' }
+#' @param wb Numeric vector of distances from cells' centers to closest buddy.
+#' @param ok Logical matrix indicating if cells are blocked.
+#' @param group Integer vector with group indices for each pedestrian.
 #'
-#' @return Vector with total utility for each alternative.
+#' @return Numeric vector with total utility for each cell.
 #' @export
 #'
 utility_rcpp = function(p, n, v, d, ga, ba, id, fl, wb, ok, group) {
