@@ -10,7 +10,9 @@ idUtility <- function(p, n, ID, ok, group) {
                 p["bID"] + p["dID"])
   
   # Object or ped clash
-  ok <- ok & apply(ID, 2, function(x) {all(x > 0)})
+  ok <- ok & apply(ID, 2, function(x) {
+    all(x > 0)
+  })
   out <- ifelse(ok, 0, -Inf)
   
   # Repulsion
