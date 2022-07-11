@@ -15,7 +15,7 @@ NumericVector caUtility_rcpp(double aCA, double bCA, double bCAlr) {
   
   // angles 
   NumericVector angles =
-    NumericVector::create(10 / 90, 20 / 90, 32.5 / 90, 50 / 90, 72.5 / 90) ;
+    NumericVector::create(10, 20, 32.5, 50, 72.5)/90 ;
   
   // compute power of angles
   NumericVector ap = pow(angles, aCA);

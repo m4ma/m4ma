@@ -14,9 +14,21 @@ using namespace Rcpp;
 //' @param ID named numeric matrix or NULL by default
 //' @returns a numeric vector of 33 elements 
 //' @examples
-//' idUtility_rcpp(bID = 1.3, aID = 2, dID = 2, n = 1, ID = matrix(rnorm((33*5), mean = 4, sd =1), ncol = 33, nrow = 5, dimnames = list(c('A_1','a_1','b_1','B_1','C_1'))), ok = matrix(data = TRUE, nrow = 11, ncol = 3), group = c('A_1' = 1, 'a_1' = 2, 'b_1' = 3, 'B_1' = 4, 'C_1' = 5, 'c_1' = 6))
-//' idUtility_rcpp(bID = 0, aID = 2, dID = 2, n = 1, ID = NULL, ok = matrix(data = TRUE, nrow = 11, ncol = 3), group = c('A_1' = 1, 'a_1' = 2, 'b_1' = 3, 'B_1' = 4, 'C_1' = 5, 'c_1' = 6))
-//' idUtility_rcpp(bID = 1.3, aID = 2, dID = 2, n = 1, ID = NULL, ok = matrix(data = TRUE, nrow = 11, ncol = 3), group = c('A_1' = 1, 'a_1' = 2, 'b_1' = 3, 'B_1' = 4, 'C_1' = 5, 'c_1' = 6))
+//' # when ID is != NULL
+//' idUtility_rcpp(bID = 1.3, aID = 2, dID = 2, n = 1, ID = matrix(rnorm((33*5), mean = 4, sd =1), +
+//' ncol = 33, nrow = 5, dimnames = list(c('A_1','a_1','b_1','B_1','C_1'))), +
+//' ok = matrix(data = TRUE, nrow = 11, ncol = 3), +
+//' group = c('A_1' = 1, 'a_1' = 2, 'b_1' = 3, 'B_1' = 4, 'C_1' = 5, 'c_1' = 6))
+//' 
+//' # when ID is NULL and bID = 0
+//' idUtility_rcpp(bID = 0, aID = 2, dID = 2, n = 1, ID = NULL, +
+//' ok = matrix(data = TRUE, nrow = 11, ncol = 3), +
+//' group = c('A_1' = 1, 'a_1' = 2, 'b_1' = 3, 'B_1' = 4, 'C_1' = 5, 'c_1' = 6))
+//' 
+//' # when ID is NULL and bID != 0
+//' idUtility_rcpp(bID = 1.3, aID = 2, dID = 2, n = 1, ID = NULL, +
+//' ok = matrix(data = TRUE, nrow = 11, ncol = 3), +
+//' group = c('A_1' = 1, 'a_1' = 2, 'b_1' = 3, 'B_1' = 4, 'C_1' = 5, 'c_1' = 6))
 //' @export
 // [[Rcpp::export]]
 NumericVector idUtility_rcpp(double bID, double dID, double aID, double n, 
