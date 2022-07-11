@@ -1,16 +1,12 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-// This is a simple example of exporting a C++ function to R. You can
-// source this function into an R session using the Rcpp::sourceCpp 
-// function (or via the Source button on the editor toolbar). Learn
-// more about Rcpp at:
-//
-//   http://www.rcpp.org/
-//   http://adv-r.had.co.nz/Rcpp.html
-//   http://gallery.rcpp.org/
-//
-
+//' Compute caUtility
+//' @param aCA numeric vector
+//' @param bCA numeric vector
+//' @param bCAlr numeric vector
+//' @examples
+//' caUtility_rcpp(aCA = 1.5, bCA = 1, bCAlr = 10)
 // [[Rcpp::export]]
 NumericVector caUtility_rcpp(double aCA, double bCA, double bCAlr) {
   
@@ -19,7 +15,7 @@ NumericVector caUtility_rcpp(double aCA, double bCA, double bCAlr) {
   
   // angles 
   NumericVector angles =
-    NumericVector::create(10, 20, 32.5, 50, 72.5) / 90;
+    NumericVector::create(10 / 90, 20 / 90, 32.5 / 90, 50 / 90, 72.5 / 90) ;
   
   // compute power of angles
   NumericVector ap = pow(angles, aCA);
@@ -34,7 +30,7 @@ NumericVector caUtility_rcpp(double aCA, double bCA, double bCAlr) {
   output[ap_len] = 0;
   
   
-  output = rep(output, 3) * -1;
+  output = -rep(output, 3);
   return output;
   
 }

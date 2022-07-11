@@ -2,19 +2,21 @@
 
 using namespace Rcpp;
 
-// This is a simple example of exporting a C++ function to R. You can
-// source this function into an R session using the Rcpp::sourceCpp 
-// function (or via the Source button on the editor toolbar). Learn
-// more about Rcpp at:
-//
-//   http://www.rcpp.org/
-//   http://adv-r.had.co.nz/Rcpp.html
-//   http://gallery.rcpp.org/
-// [[Rcpp::plugins("cpp11")]]
-
-//
-
+//' Compute psUtility
+//'
+//' @param aPS numeric vector
+//' @param sPref numeric vector
+//' @param sSlow numeric vector
+//' @param bPS numeric vector
+//' @param v numeric vector
+//' @param d numeric vector 
+//' @returns a numeric vector of length equals to d's length 
+//' @examples
+//' 
+//' psUtility_rcpp(aPS = 1, sPref = 3,  sSlow = 2, bPS = 1,  v = 1, d = 11.46)
+//' @export
 // [[Rcpp::export]]
+
 NumericVector psUtility_rcpp(double aPS, double sPref, 
                              double sSlow, double bPS, 
                              double v, NumericVector d) {

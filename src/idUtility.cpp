@@ -3,16 +3,21 @@
 
 using namespace Rcpp;
 
-// This is a simple example of exporting a C++ function to R. You can
-// source this function into an R session using the Rcpp::sourceCpp 
-// function (or via the Source button on the editor toolbar). Learn
-// more about Rcpp at:
-//
-//   http://www.rcpp.org/
-//   http://adv-r.had.co.nz/Rcpp.html
-//   http://gallery.rcpp.org/
-//
-
+//' Compute IDUtility
+//'
+//' @param bID numeric vector
+//' @param dID numeric vector
+//' @param aID numeric vector
+//' @param n numeric vector
+//' @param ok logical matrix 
+//' @param group named numeric vector 
+//' @param ID named numeric matrix or NULL by default
+//' @returns a numeric vector of 33 elements 
+//' @examples
+//' idUtility_rcpp(bID = 1.3, aID = 2, dID = 2, n = 1, ID = matrix(rnorm((33*5), mean = 4, sd =1), ncol = 33, nrow = 5, dimnames = list(c('A_1','a_1','b_1','B_1','C_1'))), ok = matrix(data = TRUE, nrow = 11, ncol = 3), group = c('A_1' = 1, 'a_1' = 2, 'b_1' = 3, 'B_1' = 4, 'C_1' = 5, 'c_1' = 6))
+//' idUtility_rcpp(bID = 0, aID = 2, dID = 2, n = 1, ID = NULL, ok = matrix(data = TRUE, nrow = 11, ncol = 3), group = c('A_1' = 1, 'a_1' = 2, 'b_1' = 3, 'B_1' = 4, 'C_1' = 5, 'c_1' = 6))
+//' idUtility_rcpp(bID = 1.3, aID = 2, dID = 2, n = 1, ID = NULL, ok = matrix(data = TRUE, nrow = 11, ncol = 3), group = c('A_1' = 1, 'a_1' = 2, 'b_1' = 3, 'B_1' = 4, 'C_1' = 5, 'c_1' = 6))
+//' @export
 // [[Rcpp::export]]
 NumericVector idUtility_rcpp(double bID, double dID, double aID, double n, 
                              const LogicalMatrix& ok, NumericVector group,
@@ -43,7 +48,7 @@ NumericVector idUtility_rcpp(double bID, double dID, double aID, double n,
     
   } else { 
     
-    NumericMatrix ID(ID_); //re-initialise ID because it is not NULL
+    NumericMatrix ID(ID_); //re-initialise ID if it is not NULL
     
     Rcpp::Function rownames("rownames");
     Rcpp::CharacterVector ID_row_names = rownames(ID);
@@ -79,7 +84,7 @@ NumericVector idUtility_rcpp(double bID, double dID, double aID, double n,
       }
       return out_as_vec;
        
-    } else{
+    } else {
       
       // Object or pedestrian clash
       const int ok_xcols = ok.ncol();
@@ -92,13 +97,19 @@ NumericVector idUtility_rcpp(double bID, double dID, double aID, double n,
           boolean_value = ok(i,j) & (ID(1,j)>0);
           if(boolean_value){
             out(i,j) = 0;
-          } else{
+          } else {
             out(i,j) = R_NegInf;
           }
         }
       }
-
-      return out;
+      
+      // Return a flattened array of the out matrix (i.e., as_vector(out))
+      for (int i = 0; i < ok_xrows; i++) { 
+        for (int j = 0; j < ok_xcols; j++) {
+          out_as_vec(i*ok_xrows+j) = out(i,j);
+        }
+      }
+      return out_as_vec;
     } 
   }
 }

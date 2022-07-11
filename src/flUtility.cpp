@@ -1,7 +1,18 @@
 #include <Rcpp.h>
 using namespace Rcpp;
-
+//' Compute flUtility
+//'
+//' @param aFL numeric vector
+//' @param bFL numeric vector
+//' @param dFL numeric vector
+//' @param leaders named numeric matrix 
+//' @param leaders named numeric matrix 
+//' @return numeric vector of 33 elements
+//' @examples
+//' flUtility_rcpp(1.5, 1, 4, leaders, dists)
+//' @export
 // [[Rcpp::export]]
+
 NumericVector flUtility_rcpp(double aFL, double bFL, double dFL, NumericMatrix leaders, NumericMatrix dists) {
   
   NumericVector b = (bFL + dFL * leaders(2, _)) * leaders(1, _);
