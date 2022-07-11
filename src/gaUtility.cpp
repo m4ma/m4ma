@@ -14,8 +14,14 @@ using namespace Rcpp;
 
 NumericVector gaUtility_rcpp(int bGA, int aGA, NumericVector GA) {
 
-  NumericVector GA_pow = pow(GA, aGA);
-  NumericVector output = rep(-(bGA * GA_pow), 3);
+  NumericVector output(3 * GA.length());
+  
+  for (int ix = 0; ix < GA.length(); ++ix) {
+    auto number = -bGA * std::pow(GA[ix], aGA);
+    output[ix] = number;
+    output[ix + GA.length()] = number;
+    output[ix + 2 * GA.length()] = number;
+  }
 
   return output;
 }
