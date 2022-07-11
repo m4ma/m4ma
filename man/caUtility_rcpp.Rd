@@ -16,6 +16,3 @@ caUtility_rcpp(aCA, bCA, bCAlr)
 \description{
 Compute caUtility
 }
-\examples{
-caUtility_rcpp(aCA = 1.5, bCA = 1, bCAlr = 10)
-}

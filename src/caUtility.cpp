@@ -5,8 +5,6 @@ using namespace Rcpp;
 //' @param aCA numeric vector
 //' @param bCA numeric vector
 //' @param bCAlr numeric vector
-//' @examples
-//' caUtility_rcpp(aCA = 1.5, bCA = 1, bCAlr = 10)
 // [[Rcpp::export]]
 NumericVector caUtility_rcpp(double aCA, double bCA, double bCAlr) {
   

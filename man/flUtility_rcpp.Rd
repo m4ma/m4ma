@@ -14,13 +14,12 @@ flUtility_rcpp(aFL, bFL, dFL, leaders, dists)
 \item{dFL}{numeric vector}
 
 \item{leaders}{named numeric matrix}
+
+\item{dists}{transposed numeric matrix}
 }
 \value{
 numeric vector of 33 elements
 }
 \description{
 Compute flUtility
-}
-\examples{
-flUtility_rcpp(1.5, 1, 4, leaders, dists)
 }

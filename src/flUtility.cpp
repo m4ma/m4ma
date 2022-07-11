@@ -8,9 +8,6 @@ using namespace Rcpp;
 //' @param leaders named numeric matrix 
 //' @param dists transposed numeric matrix 
 //' @return numeric vector of 33 elements
-//' @examples
-//' 
-//' flUtility_rcpp(1.5, 1, 4, leaders = matrix(c(9, 0.5, 0.5, 8, 0.5, 0.5), ncol = 2), dists = t(matrix(rep(runif(33), 2), ncol = 2)))
 //' @export
 // [[Rcpp::export]]
 

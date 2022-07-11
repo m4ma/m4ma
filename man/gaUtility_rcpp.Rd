@@ -19,6 +19,3 @@ a numeric vector of length equal to GA's length
 \description{
 Compute gaUtility (Goal angle utility)
 }
-\examples{
-gaUtility_rcpp(bGA = 10, aGA = 2, GA = rnorm(11, mean = .54, sd = 0.38))
-}

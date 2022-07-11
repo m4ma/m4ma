@@ -11,9 +11,6 @@ using namespace Rcpp;
 //' @param v numeric vector
 //' @param d numeric vector 
 //' @returns a numeric vector of length equals to d's length 
-//' @examples
-//' 
-//' psUtility_rcpp(aPS = 1, sPref = 3,  sSlow = 2, bPS = 1,  v = 1, d = 11.46)
 //' @export
 // [[Rcpp::export]]
 

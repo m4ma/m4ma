@@ -25,7 +25,3 @@ a numeric vector of length equals to d's length
 \description{
 Compute psUtility
 }
-\examples{
-
-psUtility_rcpp(aPS = 1, sPref = 3,  sSlow = 2, bPS = 1,  v = 1, d = 11.46)
-}

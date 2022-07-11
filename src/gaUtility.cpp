@@ -7,8 +7,6 @@ using namespace Rcpp;
 //' @param aGA integer
 //' @param GA numeric vector
 //' @returns a numeric vector of length equal to GA's length 
-//' @examples
-//' gaUtility_rcpp(bGA = 10, aGA = 2, GA = rnorm(11, mean = .54, sd = 0.38))
 //' @export
 // [[Rcpp::export]]
 
