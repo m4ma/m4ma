@@ -54,7 +54,8 @@ gaUtility_rcpp <- function(bGA, aGA, GA) {
 #' @param n numeric vector
 #' @param ok logical matrix 
 #' @param group named numeric vector 
-#' @param ID named numeric matrix or NULL by default
+#' @param ID named numeric matrix 
+#' @param ID_ is an empty matrix of the type NULL 
 #' @returns a numeric vector of 33 elements 
 #' @export
 idUtility_rcpp <- function(bID, dID, aID, n, ok, group, ID_ = NULL) {

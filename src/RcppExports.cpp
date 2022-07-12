@@ -53,13 +53,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // gaUtility_rcpp
-NumericVector gaUtility_rcpp(int bGA, int aGA, NumericVector GA);
+NumericVector gaUtility_rcpp(double bGA, double aGA, NumericVector GA);
 RcppExport SEXP _m4ma_gaUtility_rcpp(SEXP bGASEXP, SEXP aGASEXP, SEXP GASEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type bGA(bGASEXP);
-    Rcpp::traits::input_parameter< int >::type aGA(aGASEXP);
+    Rcpp::traits::input_parameter< double >::type bGA(bGASEXP);
+    Rcpp::traits::input_parameter< double >::type aGA(aGASEXP);
     Rcpp::traits::input_parameter< NumericVector >::type GA(GASEXP);
     rcpp_result_gen = Rcpp::wrap(gaUtility_rcpp(bGA, aGA, GA));
     return rcpp_result_gen;

@@ -19,7 +19,9 @@ idUtility_rcpp(bID, dID, aID, n, ok, group, ID_ = NULL)
 
 \item{group}{named numeric vector}
 
-\item{ID}{named numeric matrix or NULL by default}
+\item{ID_}{is an empty matrix of the type NULL}
+
+\item{ID}{named numeric matrix}
 }
 \value{
 a numeric vector of 33 elements
