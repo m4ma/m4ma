@@ -11,7 +11,8 @@ using namespace Rcpp;
 //' @param n numeric vector
 //' @param ok logical matrix 
 //' @param group named numeric vector 
-//' @param ID named numeric matrix or NULL by default
+//' @param ID named numeric matrix 
+//' @param ID_ is an empty matrix of the type NULL 
 //' @returns a numeric vector of 33 elements 
 //' @export
 // [[Rcpp::export]]

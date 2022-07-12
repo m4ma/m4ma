@@ -10,7 +10,7 @@ using namespace Rcpp;
 //' @export
 // [[Rcpp::export]]
 
-NumericVector gaUtility_rcpp(int bGA, int aGA, NumericVector GA) {
+NumericVector gaUtility_rcpp(double bGA, double aGA, NumericVector GA) {
 
   NumericVector GA_pow = pow(GA, aGA);
   NumericVector output = rep(-(bGA * GA_pow), 3);

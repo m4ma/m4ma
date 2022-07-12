@@ -1,0 +1,11 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+src/*.o
+src/*.so
+src/*.dll
+R/*.R
+bench/*.R
+utility_performance.Rmd
+utility_performance.html
