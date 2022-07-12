@@ -5,15 +5,17 @@ using namespace Rcpp;
 
 //' Compute IDUtility
 //'
-//' @param bID numeric vector
-//' @param dID numeric vector
-//' @param aID numeric vector
-//' @param n numeric vector
-//' @param ok logical matrix 
-//' @param group named numeric vector 
-//' @param ID named numeric matrix 
-//' @param ID_ is an empty matrix of the type NULL 
-//' @returns a numeric vector of 33 elements 
+//' Inter-personal distance utility for cell 1..33. b parameter divided by
+//' sum over power of distances between bodies for cell to all inFront peds.
+//' 
+//' @param bID Numeric scalar.
+//' @param dID Numeric scalar.
+//' @param aID Numeric scalar.
+//' @param n Numeric scalar indexing the subject in the state.
+//' @param ok Logical matrix indicating if cells are blocked.
+//' @param group Named numeric scalar with group indices for each pedestrian.
+//' @param ID_ Numeric matrix of the type NULL - if not NULL, ID_ is a Numeric matrix of predicted distances from the subject to other pedestrians in the front.
+//' @returns Numeric vector with interpersonal distance utilities for each cell.
 //' @export
 // [[Rcpp::export]]
 NumericVector idUtility_rcpp(double bID, double dID, double aID, double n, 
@@ -66,13 +68,13 @@ NumericVector idUtility_rcpp(double bID, double dID, double aID, double n,
         bID_2(row)= bID+dID;
       }
     }
-  
+    
     // Repulsion
     NumericVector out_as_vec(33);
     if(bID !=0){
       const int ID_xcols = ID.ncol();
       NumericMatrix out_temp(ID);
-
+      
       for (int col = 0; col < ID_xcols; col++){
         for(int row = 0; row < ID_xrows; row++){
           out_temp(row,col) = -(bID_2[row] / (std::pow(ID(row, col), aID)));
@@ -80,7 +82,7 @@ NumericVector idUtility_rcpp(double bID, double dID, double aID, double n,
         out_as_vec[col] = sum(out_temp(_, col));
       }
       return out_as_vec;
-       
+      
     } else {
       
       // Object or pedestrian clash
