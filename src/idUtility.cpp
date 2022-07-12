@@ -16,8 +16,6 @@ using namespace Rcpp;
 //' @param group Named numeric scalar with group indices for each pedestrian.
 //' @param ID_ Numeric matrix of the type NULL - if not NULL, ID_ is a Numeric matrix of predicted distances from the subject to other pedestrians in the front.
 //' @returns Numeric vector with interpersonal distance utilities for each cell.
-//' @rdname ID
-//' @aliases ID
 //' @export
 // [[Rcpp::export]]
 NumericVector idUtility_rcpp(double bID, double dID, double aID, double n, 

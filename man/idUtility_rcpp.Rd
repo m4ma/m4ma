@@ -7,25 +7,24 @@
 idUtility_rcpp(bID, dID, aID, n, ok, group, ID_ = NULL)
 }
 \arguments{
-\item{bID}{numeric vector}
+\item{bID}{Numeric scalar.}
 
-\item{dID}{numeric vector}
+\item{dID}{Numeric scalar.}
 
-\item{aID}{numeric vector}
+\item{aID}{Numeric scalar.}
 
-\item{n}{numeric vector}
+\item{n}{Numeric scalar indexing the subject in the state.}
 
-\item{ok}{logical matrix}
+\item{ok}{Logical matrix indicating if cells are blocked.}
 
-\item{group}{named numeric vector}
+\item{group}{Named numeric scalar with group indices for each pedestrian.}
 
-\item{ID_}{is an empty matrix of the type NULL}
-
-\item{ID}{named numeric matrix}
+\item{ID_}{Numeric matrix of the type NULL - if not NULL, ID_ is a Numeric matrix of predicted distances from the subject to other pedestrians in the front.}
 }
 \value{
-a numeric vector of 33 elements
+Numeric vector with interpersonal distance utilities for each cell.
 }
 \description{
-Compute IDUtility
+Inter-personal distance utility for cell 1..33. b parameter divided by
+sum over power of distances between bodies for cell to all inFront peds.
 }
