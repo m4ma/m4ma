@@ -58,20 +58,20 @@ NumericVector check_pnest(NumericVector p_nest) {
 //' Probability of the Conditional Nested Logit Model
 //'
 //' @param cell Alternative vector with nest indices.
-//' @param u Vector with utility for each alternative.
+//' @param utility Vector with utility for each alternative.
 //' @param mum Vector with nests associations ranging between 0 and 1.
 //' @param nests List of vectors with utility indices.
 //' @param alpha List of vectors with alpha values.
 //' @param mu General nest association ranging between 0 and 1.
 //'
-//' @return Probability of alternative \code{cell} given \code{u}, \code{alpha}, and parameters \code{mum} and \code{mu}.
+//' @return Probability of alternative \code{cell} given \code{utility}, \code{alpha}, and parameters \code{mum} and \code{mu}.
 //' @export
 // [[Rcpp::export]]
-double pcnl_rcpp(NumericVector cell, NumericVector u, 
+double pcnl_rcpp(NumericVector cell, NumericVector utility, 
                  NumericVector mum, List nests, List alpha, 
                  double mu) {
   
-  double max_u = max(u);
+  double max_utility = max(utility);
   int m = nests.length();
   NumericVector mu_mum = mu / mum;
   NumericVector p_nest (m);
@@ -80,10 +80,10 @@ double pcnl_rcpp(NumericVector cell, NumericVector u,
   // Loop over nests
   for(int i = 0; i < m; ++i) {
     IntegerVector nest_i = nests[i];
-    NumericVector u_i = u[nest_i]; // get nest u
-    NumericVector u_i_reg = u_i - max_u; // avoid numerical instabilities
-    p_nest[i] = pnest(u_i_reg, alpha[i], mum[i], mu_mum[i]); // nest prob
-    p_a_nest[i] = painnest(u_i_reg, alpha[i], mum[i]); // nest alternative probs
+    NumericVector utility_i = utility[nest_i]; // get nest u
+    NumericVector utility_i_reg = utility_i - max_utility; // avoid numerical instabilities
+    p_nest[i] = pnest(utility_i_reg, alpha[i], mum[i], mu_mum[i]); // nest prob
+    p_a_nest[i] = painnest(utility_i_reg, alpha[i], mum[i]); // nest alternative probs
   }
   
   p_nest = check_pnest(p_nest);
@@ -92,7 +92,8 @@ double pcnl_rcpp(NumericVector cell, NumericVector u,
   NumericVector p_a_nest_ang = p_a_nest[cell[1]]; // get probs for ang nests
   
   // Final probability of cell in nests
-  double p = p_a_nest_dir[cell[2]] * p_nest[cell[0]] + p_a_nest_ang[cell[3]] * p_nest[cell[1]];
+  double p = p_a_nest_dir[cell[2]] * p_nest[cell[0]] + 
+    p_a_nest_ang[cell[3]] * p_nest[cell[1]];
   
   return p;
 }

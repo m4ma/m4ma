@@ -10,25 +10,119 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// baUtility_rcpp
+NumericVector baUtility_rcpp(double aBA, double bBA, NumericVector BA, IntegerVector idx_BA);
+RcppExport SEXP _m4ma_baUtility_rcpp(SEXP aBASEXP, SEXP bBASEXP, SEXP BASEXP, SEXP idx_BASEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type aBA(aBASEXP);
+    Rcpp::traits::input_parameter< double >::type bBA(bBASEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type BA(BASEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type idx_BA(idx_BASEXP);
+    rcpp_result_gen = Rcpp::wrap(baUtility_rcpp(aBA, bBA, BA, idx_BA));
+    return rcpp_result_gen;
+END_RCPP
+}
+// caUtility_rcpp
+NumericVector caUtility_rcpp(double aCA, double bCA, double bCAlr);
+RcppExport SEXP _m4ma_caUtility_rcpp(SEXP aCASEXP, SEXP bCASEXP, SEXP bCAlrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type aCA(aCASEXP);
+    Rcpp::traits::input_parameter< double >::type bCA(bCASEXP);
+    Rcpp::traits::input_parameter< double >::type bCAlr(bCAlrSEXP);
+    rcpp_result_gen = Rcpp::wrap(caUtility_rcpp(aCA, bCA, bCAlr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// flUtility_rcpp
+NumericVector flUtility_rcpp(double aFL, double bFL, double dFL, NumericMatrix leaders, NumericMatrix dists);
+RcppExport SEXP _m4ma_flUtility_rcpp(SEXP aFLSEXP, SEXP bFLSEXP, SEXP dFLSEXP, SEXP leadersSEXP, SEXP distsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type aFL(aFLSEXP);
+    Rcpp::traits::input_parameter< double >::type bFL(bFLSEXP);
+    Rcpp::traits::input_parameter< double >::type dFL(dFLSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type leaders(leadersSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type dists(distsSEXP);
+    rcpp_result_gen = Rcpp::wrap(flUtility_rcpp(aFL, bFL, dFL, leaders, dists));
+    return rcpp_result_gen;
+END_RCPP
+}
+// gaUtility_rcpp
+NumericVector gaUtility_rcpp(double bGA, double aGA, NumericVector GA);
+RcppExport SEXP _m4ma_gaUtility_rcpp(SEXP bGASEXP, SEXP aGASEXP, SEXP GASEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type bGA(bGASEXP);
+    Rcpp::traits::input_parameter< double >::type aGA(aGASEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type GA(GASEXP);
+    rcpp_result_gen = Rcpp::wrap(gaUtility_rcpp(bGA, aGA, GA));
+    return rcpp_result_gen;
+END_RCPP
+}
+// idUtility_rcpp
+NumericVector idUtility_rcpp(double bID, double dID, double aID, double n, const LogicalMatrix& ok, NumericVector group, Nullable<NumericMatrix> ID_);
+RcppExport SEXP _m4ma_idUtility_rcpp(SEXP bIDSEXP, SEXP dIDSEXP, SEXP aIDSEXP, SEXP nSEXP, SEXP okSEXP, SEXP groupSEXP, SEXP ID_SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type bID(bIDSEXP);
+    Rcpp::traits::input_parameter< double >::type dID(dIDSEXP);
+    Rcpp::traits::input_parameter< double >::type aID(aIDSEXP);
+    Rcpp::traits::input_parameter< double >::type n(nSEXP);
+    Rcpp::traits::input_parameter< const LogicalMatrix& >::type ok(okSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< Nullable<NumericMatrix> >::type ID_(ID_SEXP);
+    rcpp_result_gen = Rcpp::wrap(idUtility_rcpp(bID, dID, aID, n, ok, group, ID_));
+    return rcpp_result_gen;
+END_RCPP
+}
 // pcnl_rcpp
-double pcnl_rcpp(NumericVector cell, NumericVector u, NumericVector mum, List nests, List alpha, double mu);
-RcppExport SEXP _m4ma_pcnl_rcpp(SEXP cellSEXP, SEXP uSEXP, SEXP mumSEXP, SEXP nestsSEXP, SEXP alphaSEXP, SEXP muSEXP) {
+double pcnl_rcpp(NumericVector cell, NumericVector utility, NumericVector mum, List nests, List alpha, double mu);
+RcppExport SEXP _m4ma_pcnl_rcpp(SEXP cellSEXP, SEXP utilitySEXP, SEXP mumSEXP, SEXP nestsSEXP, SEXP alphaSEXP, SEXP muSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type cell(cellSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type u(uSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type utility(utilitySEXP);
     Rcpp::traits::input_parameter< NumericVector >::type mum(mumSEXP);
     Rcpp::traits::input_parameter< List >::type nests(nestsSEXP);
     Rcpp::traits::input_parameter< List >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< double >::type mu(muSEXP);
-    rcpp_result_gen = Rcpp::wrap(pcnl_rcpp(cell, u, mum, nests, alpha, mu));
+    rcpp_result_gen = Rcpp::wrap(pcnl_rcpp(cell, utility, mum, nests, alpha, mu));
+    return rcpp_result_gen;
+END_RCPP
+}
+// psUtility_rcpp
+NumericVector psUtility_rcpp(double aPS, double sPref, double sSlow, double bPS, double v, NumericVector d);
+RcppExport SEXP _m4ma_psUtility_rcpp(SEXP aPSSEXP, SEXP sPrefSEXP, SEXP sSlowSEXP, SEXP bPSSEXP, SEXP vSEXP, SEXP dSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type aPS(aPSSEXP);
+    Rcpp::traits::input_parameter< double >::type sPref(sPrefSEXP);
+    Rcpp::traits::input_parameter< double >::type sSlow(sSlowSEXP);
+    Rcpp::traits::input_parameter< double >::type bPS(bPSSEXP);
+    Rcpp::traits::input_parameter< double >::type v(vSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type d(dSEXP);
+    rcpp_result_gen = Rcpp::wrap(psUtility_rcpp(aPS, sPref, sSlow, bPS, v, d));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_m4ma_baUtility_rcpp", (DL_FUNC) &_m4ma_baUtility_rcpp, 4},
+    {"_m4ma_caUtility_rcpp", (DL_FUNC) &_m4ma_caUtility_rcpp, 3},
+    {"_m4ma_flUtility_rcpp", (DL_FUNC) &_m4ma_flUtility_rcpp, 5},
+    {"_m4ma_gaUtility_rcpp", (DL_FUNC) &_m4ma_gaUtility_rcpp, 3},
+    {"_m4ma_idUtility_rcpp", (DL_FUNC) &_m4ma_idUtility_rcpp, 7},
     {"_m4ma_pcnl_rcpp", (DL_FUNC) &_m4ma_pcnl_rcpp, 6},
+    {"_m4ma_psUtility_rcpp", (DL_FUNC) &_m4ma_psUtility_rcpp, 6},
     {NULL, NULL, 0}
 };
 
