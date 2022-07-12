@@ -18,8 +18,6 @@ baUtility_rcpp <- function(aBA, bBA, BA, idx_BA) {
 #' @param aCA numeric vector
 #' @param bCA numeric vector
 #' @param bCAlr numeric vector
-#' @examples
-#' caUtility_rcpp(aCA = 1.5, bCA = 1, bCAlr = 10)
 caUtility_rcpp <- function(aCA, bCA, bCAlr) {
     .Call(`_m4ma_caUtility_rcpp`, aCA, bCA, bCAlr)
 }
@@ -32,8 +30,6 @@ caUtility_rcpp <- function(aCA, bCA, bCAlr) {
 #' @param leaders named numeric matrix 
 #' @param dists transposed numeric matrix 
 #' @return numeric vector of 33 elements
-#' @examples
-#' flUtility_rcpp(1.5, 1, 4, leaders = matrix(c(9, 0.5, 0.5, 8, 0.5, 0.5), ncol = 2), dists = t(matrix(rep(runif(33), 2), ncol = 2)))
 #' @export
 flUtility_rcpp <- function(aFL, bFL, dFL, leaders, dists) {
     .Call(`_m4ma_flUtility_rcpp`, aFL, bFL, dFL, leaders, dists)
@@ -45,8 +41,6 @@ flUtility_rcpp <- function(aFL, bFL, dFL, leaders, dists) {
 #' @param aGA integer
 #' @param GA numeric vector
 #' @returns a numeric vector of length equal to GA's length 
-#' @examples
-#' gaUtility_rcpp(bGA = 10, aGA = 2, GA = rnorm(11, mean = .54, sd = 0.38))
 #' @export
 gaUtility_rcpp <- function(bGA, aGA, GA) {
     .Call(`_m4ma_gaUtility_rcpp`, bGA, aGA, GA)
@@ -62,10 +56,6 @@ gaUtility_rcpp <- function(bGA, aGA, GA) {
 #' @param group named numeric vector 
 #' @param ID named numeric matrix or NULL by default
 #' @returns a numeric vector of 33 elements 
-#' @examples
-#' idUtility_rcpp(bID = 1.3, aID = 2, dID = 2, n = 1, ID = matrix(rnorm((33*5), mean = 4, sd =1), ncol = 33, nrow = 5, dimnames = list(c('A_1','a_1','b_1','B_1','C_1'))), ok = matrix(data = TRUE, nrow = 11, ncol = 3), group = c('A_1' = 1, 'a_1' = 2, 'b_1' = 3, 'B_1' = 4, 'C_1' = 5, 'c_1' = 6))
-#' idUtility_rcpp(bID = 0, aID = 2, dID = 2, n = 1, ID = NULL, ok = matrix(data = TRUE, nrow = 11, ncol = 3), group = c('A_1' = 1, 'a_1' = 2, 'b_1' = 3, 'B_1' = 4, 'C_1' = 5, 'c_1' = 6))
-#' idUtility_rcpp(bID = 1.3, aID = 2, dID = 2, n = 1, ID = NULL, ok = matrix(data = TRUE, nrow = 11, ncol = 3), group = c('A_1' = 1, 'a_1' = 2, 'b_1' = 3, 'B_1' = 4, 'C_1' = 5, 'c_1' = 6))
 #' @export
 idUtility_rcpp <- function(bID, dID, aID, n, ok, group, ID_ = NULL) {
     .Call(`_m4ma_idUtility_rcpp`, bID, dID, aID, n, ok, group, ID_)
@@ -95,9 +85,6 @@ pcnl_rcpp <- function(cell, utility, mum, nests, alpha, mu) {
 #' @param v numeric vector
 #' @param d numeric vector 
 #' @returns a numeric vector of length equals to d's length 
-#' @examples
-#' 
-#' psUtility_rcpp(aPS = 1, sPref = 3,  sSlow = 2, bPS = 1,  v = 1, d = 11.46)
 #' @export
 psUtility_rcpp <- function(aPS, sPref, sSlow, bPS, v, d) {
     .Call(`_m4ma_psUtility_rcpp`, aPS, sPref, sSlow, bPS, v, d)

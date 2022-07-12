@@ -1,8 +1,20 @@
 
+#' Nest Association
+#'
+#' @param p Numeric vector with subject parameters.
+#'
+#' @return Numeric vector with nest association parameters.
+#' @export
+#'
 get_mum <- function(p) {
   1 / (1 - p[c("Central", "NonCentral", "acc", "const", "dec")])
 }
 
+#' Cell Nest Association
+#'
+#' @return Integer matrix indicating which cells belong to which nests. Indices start at zero to match C++ indexing.
+#' @export
+#'
 get_cell_nest = function() {
   cell_nest_rcpp = cbind(
     t(matrix(c(c(1, 5),           # cell 0: Central, dec
@@ -23,6 +35,18 @@ get_cell_nest = function() {
   return(cell_nest_rcpp)
 }
 
+#' State Likelihood
+#'
+#' @param state List of state variables.
+#' @param p Numeric vector of subject parameters.
+#' @param n Integer scalar indexing the subject in the state.
+#' @param nests List of vectors with utility indices.
+#' @param alpha List of vectors with alpha values.
+#' @param cell_nest Integer matrix associating the cells with the nests.
+#'
+#' @return Probability of the state given the parameters.
+#' @export
+#'
 like_state_rcpp <- function(state, p, n, nests, alpha, cell_nest) {
   p_n <- p[names(state$v)[n], ]
   
@@ -37,6 +61,17 @@ like_state_rcpp <- function(state, p, n, nests, alpha, cell_nest) {
   return(prob)
 }
 
+#' Trace Likelihood
+#'
+#' @param trace List of lists with state variables.
+#' @param p Numeric matrix with subject parameters.
+#' @param nests List of vectors with utility indices.
+#' @param alpha List of vectors with alpha values.
+#' @param cell_nest Integer matrix associating the cells with the nests.
+#'
+#' @return List with a numeric vector for each state containing the state likelihoods.
+#' @export
+#'
 like_states_rcpp <- function(trace, p, nests, alpha, cell_nest) {
   
   lhoods <- lapply(trace, function(element) {
@@ -49,22 +84,25 @@ like_states_rcpp <- function(trace, p, nests, alpha, cell_nest) {
   return(lhoods)
 }
 
-msumlogLike_rcpp <- function(p, prepped_trace, minLike = 1e-10, 
-                             mult = -1) {
+#' Log-likelihood Sum
+#'
+#' @param trace List of lists with state variables.
+#' @param p Numeric matrix with subject parameters.
+#' @param minLike Numeric scalar indicating minimum likelihood value.
+#' @param mult Numeric scalar indicating likelihood sum multiplicator.
+#'
+#' @return Numeric scalar indicating log-likelihood sum of trace given parameters.
+#' @export
+#'
+msumlogLike_rcpp <- function(trace, p, minLike = 1e-10, mult = -1) {
   
-  imat <- suppressWarnings(matrix(1:length(prepped_trace), ncol = 1))
-  # Remove duplicated assignments
-  imat[duplicated(as.vector(imat))] <- NA 
-  
-  # Create lists of prepped_trace, collections of iterations to spread over cores
-  prepped_traces <- apply(imat, 2, function(x) {
-    prepped_trace[x[!is.na(x)]]
-  })
-  
-  out = lapply(prepped_traces, m4ma::like_states_rcpp, p = p,
-               nests = attr(prepped_trace, "nests"),
-               alpha = attr(prepped_trace, "alpha"),
-               cell_nest = m4ma::get_cell_nest())
+  out = m4ma::like_states_rcpp(
+    p = p,
+    trace = trace,
+    nests = attr(trace, "nests"),
+    alpha = attr(trace, "alpha"),
+    cell_nest = m4ma::get_cell_nest()
+  )
   
   return(mult * sum(log(pmax(unlist(out), minLike))))
 }

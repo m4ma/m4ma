@@ -1,3 +1,11 @@
+#' Walk-beside Utility
+#'
+#' @param p Numeric vector with subject parameters.
+#' @param WB Numeric vector of distances from cells' centers to closest buddy.
+#'
+#' @return Numeric vector with walk-beside utilities for each cell.
+#' @export
+#'
 wbUtility <- function(p, WB) {
   if (is.null(WB)) {
     return(numeric(33))

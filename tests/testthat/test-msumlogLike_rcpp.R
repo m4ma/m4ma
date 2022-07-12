@@ -44,6 +44,6 @@ testthat::test_that("State likelihood loop works", {
 
 testthat::test_that("Trace likelihood sum works", {
   ref = 176.738817
-  ll_sum = m4ma::msumlogLike_rcpp(p, trace_i, minLike = 1e-10, mult = -1)
+  ll_sum = m4ma::msumlogLike_rcpp(trace_i, p, minLike = 1e-10, mult = -1)
   testthat::expect_equal(ll_sum, ref)
 })

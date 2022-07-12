@@ -1,3 +1,15 @@
+#' Probability of the Conditional Nested Logit Model
+#'
+#' @param cell Alternative vector with nest indices.
+#' @param V Vector with utility for each alternative.
+#' @param muM Vector with nests associations ranging between 0 and 1.
+#' @param nests List of vectors with utility indices.
+#' @param alpha List of vectors with alpha values.
+#' @param mu General nest association ranging between 0 and 1.
+#' @param cellNest Integer matrix associating the cells with the nests.
+#'
+#' @return Probability of alternative \code{cell} given \code{V}, \code{alpha}, and parameters \code{muM} and \code{mu}.
+#' @export
 pCNL <- function(cell, V, muM = rep(1, length(nests)), nests, alpha, mu, cellNest) {
   
   # Probability of alternatives within nests
