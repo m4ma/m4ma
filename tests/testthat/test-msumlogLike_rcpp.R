@@ -20,14 +20,6 @@ alpha = list(
   dec = c(1/3, rep(0.5, 4), 1, 1/3, rep(0.5, 5))
 )
 
-cell_nest = cbind(
-  t(matrix(c(c(1, 5), rep(2:3, 5), c(1, 3), rep(2:3, 5), rep(c(2, 4), 5), 
-             c(1, 4), rep(c(2, 4), 5), rep(c(2, 5), 5), c(1, 5), 
-             rep(c(2, 5), 5)),
-           nrow = 2)),
-  cbind(c(1, 1:5, 2, 6:15, 3, 16:25, 4, 26:30), 
-        c(1, 1:11, 1:11, 2:12)))-1
-
 p = attr(get(test_obj_name), 'pMat')
 
 testthat::test_that("State likelihood works", {
