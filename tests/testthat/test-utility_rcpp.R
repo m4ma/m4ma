@@ -15,5 +15,5 @@ testthat::test_that("Utility computation works", {
     state$ID[[idx]],state$FL[[idx]], state$WB[[idx]], state$ok[[idx]],
     state$group
   )
-  testthat::expect_equal(sum(utility), ref)
+  testthat::expect_equal(sum(utility), ref, tolerance = 1e-5)
 })
