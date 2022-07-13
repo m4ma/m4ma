@@ -2,13 +2,11 @@
 using namespace Rcpp;
 //' dist_rcpp
 //'
-//' Compute the istance from p1 to p2, both xy column matrices
+//' Compute distance from p1 to p2, both xy column matrices
 //' @param p1 Numeric matrix
 //' @param p2 Numeric matrix
 //' @return Named numeric vector of length equal to the number of rows in p1
 //' @export
-
-
 // [[Rcpp::export]]
 NumericVector dist_rcpp(NumericMatrix p1, NumericMatrix p2) {
   

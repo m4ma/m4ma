@@ -15,5 +15,5 @@ dist_rcpp(p1, p2)
 Named numeric vector of length equal to the number of rows in p1
 }
 \description{
-Compute the istance from p1 to p2, both xy column matrices
+Compute distance from p1 to p2, both xy column matrices
 }
