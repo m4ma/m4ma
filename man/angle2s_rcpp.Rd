@@ -12,7 +12,7 @@ angle2s_rcpp(p1, p2)
 \item{p2}{Numeric matrix}
 }
 \value{
-Named numeric vector of length equal to the number of rows in p1
+Numeric vector of length equal to the number of rows in p1
 }
 \description{
 Compute Shortest angle anti-clockwise from p1 as origin to p2 (> -180 to 180)

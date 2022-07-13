@@ -7,7 +7,7 @@ using namespace Rcpp;
 //' Compute Shortest angle anti-clockwise from p1 as origin to p2 (> -180 to 180)
 //' @param p1 Numeric matrix
 //' @param p2 Numeric matrix
-//' @return Named numeric vector of length equal to the number of rows in p1
+//' @return Numeric vector of length equal to the number of rows in p1 
 //' @export
 // [[Rcpp::export]]
 NumericVector angle2s_rcpp(NumericMatrix p1, NumericMatrix p2) {
@@ -25,14 +25,9 @@ NumericVector angle2s_rcpp(NumericMatrix p1, NumericMatrix p2) {
  
   // return a numeric vector whose names match those of p1's rows
   // only if p1's rows have names
-  if(is_true(all(is_na(p1_names)))){
-    return(out);
-  } else {
+  if(is_false(all(is_na(p1_names)))){
     out.names() = p1_names;
-    return(out);
   }
   
-  
+  return(out);
 }
-
-
