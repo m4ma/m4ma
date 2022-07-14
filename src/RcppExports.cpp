@@ -10,6 +10,38 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// like_state
+double like_state(List state, NumericMatrix p, int n, List nests, List alpha, NumericMatrix cell_nest);
+RcppExport SEXP _m4ma_like_state(SEXP stateSEXP, SEXP pSEXP, SEXP nSEXP, SEXP nestsSEXP, SEXP alphaSEXP, SEXP cell_nestSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type state(stateSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type p(pSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< List >::type nests(nestsSEXP);
+    Rcpp::traits::input_parameter< List >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type cell_nest(cell_nestSEXP);
+    rcpp_result_gen = Rcpp::wrap(like_state(state, p, n, nests, alpha, cell_nest));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pcnl_rcpp
+double pcnl_rcpp(NumericVector cell, NumericVector utility, NumericVector mum, List nests, List alpha, double mu);
+RcppExport SEXP _m4ma_pcnl_rcpp(SEXP cellSEXP, SEXP utilitySEXP, SEXP mumSEXP, SEXP nestsSEXP, SEXP alphaSEXP, SEXP muSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type cell(cellSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type utility(utilitySEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type mum(mumSEXP);
+    Rcpp::traits::input_parameter< List >::type nests(nestsSEXP);
+    Rcpp::traits::input_parameter< List >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< double >::type mu(muSEXP);
+    rcpp_result_gen = Rcpp::wrap(pcnl_rcpp(cell, utility, mum, nests, alpha, mu));
+    return rcpp_result_gen;
+END_RCPP
+}
 // baUtility_rcpp
 NumericVector baUtility_rcpp(double aBA, double bBA, NumericVector BA, IntegerVector idx_BA);
 RcppExport SEXP _m4ma_baUtility_rcpp(SEXP aBASEXP, SEXP bBASEXP, SEXP BASEXP, SEXP idx_BASEXP) {
@@ -66,7 +98,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // idUtility_rcpp
-NumericVector idUtility_rcpp(double bID, double dID, double aID, double n, const LogicalMatrix& ok, NumericVector group, Nullable<NumericMatrix> ID_);
+NumericVector idUtility_rcpp(double bID, double dID, double aID, double n, const LogicalMatrix& ok, IntegerVector group, Nullable<NumericMatrix> ID_);
 RcppExport SEXP _m4ma_idUtility_rcpp(SEXP bIDSEXP, SEXP dIDSEXP, SEXP aIDSEXP, SEXP nSEXP, SEXP okSEXP, SEXP groupSEXP, SEXP ID_SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -76,53 +108,60 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type aID(aIDSEXP);
     Rcpp::traits::input_parameter< double >::type n(nSEXP);
     Rcpp::traits::input_parameter< const LogicalMatrix& >::type ok(okSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type group(groupSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type group(groupSEXP);
     Rcpp::traits::input_parameter< Nullable<NumericMatrix> >::type ID_(ID_SEXP);
     rcpp_result_gen = Rcpp::wrap(idUtility_rcpp(bID, dID, aID, n, ok, group, ID_));
     return rcpp_result_gen;
 END_RCPP
 }
-// pcnl_rcpp
-double pcnl_rcpp(NumericVector cell, NumericVector utility, NumericVector mum, List nests, List alpha, double mu);
-RcppExport SEXP _m4ma_pcnl_rcpp(SEXP cellSEXP, SEXP utilitySEXP, SEXP mumSEXP, SEXP nestsSEXP, SEXP alphaSEXP, SEXP muSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type cell(cellSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type utility(utilitySEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type mum(mumSEXP);
-    Rcpp::traits::input_parameter< List >::type nests(nestsSEXP);
-    Rcpp::traits::input_parameter< List >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< double >::type mu(muSEXP);
-    rcpp_result_gen = Rcpp::wrap(pcnl_rcpp(cell, utility, mum, nests, alpha, mu));
-    return rcpp_result_gen;
-END_RCPP
-}
 // psUtility_rcpp
-NumericVector psUtility_rcpp(double aPS, double sPref, double sSlow, double bPS, double v, NumericVector d);
-RcppExport SEXP _m4ma_psUtility_rcpp(SEXP aPSSEXP, SEXP sPrefSEXP, SEXP sSlowSEXP, SEXP bPSSEXP, SEXP vSEXP, SEXP dSEXP) {
+NumericVector psUtility_rcpp(double aPS, double bPS, double sPref, double sSlow, double v, double d);
+RcppExport SEXP _m4ma_psUtility_rcpp(SEXP aPSSEXP, SEXP bPSSEXP, SEXP sPrefSEXP, SEXP sSlowSEXP, SEXP vSEXP, SEXP dSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< double >::type aPS(aPSSEXP);
+    Rcpp::traits::input_parameter< double >::type bPS(bPSSEXP);
     Rcpp::traits::input_parameter< double >::type sPref(sPrefSEXP);
     Rcpp::traits::input_parameter< double >::type sSlow(sSlowSEXP);
-    Rcpp::traits::input_parameter< double >::type bPS(bPSSEXP);
     Rcpp::traits::input_parameter< double >::type v(vSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type d(dSEXP);
-    rcpp_result_gen = Rcpp::wrap(psUtility_rcpp(aPS, sPref, sSlow, bPS, v, d));
+    Rcpp::traits::input_parameter< double >::type d(dSEXP);
+    rcpp_result_gen = Rcpp::wrap(psUtility_rcpp(aPS, bPS, sPref, sSlow, v, d));
+    return rcpp_result_gen;
+END_RCPP
+}
+// utility
+NumericVector utility(NumericVector p, int n, double v, double d, Nullable<NumericVector> ba_, NumericVector ga, Nullable<NumericMatrix> id_, Nullable<List> fl_, Nullable<List> wb_, LogicalMatrix ok, IntegerVector group);
+RcppExport SEXP _m4ma_utility(SEXP pSEXP, SEXP nSEXP, SEXP vSEXP, SEXP dSEXP, SEXP ba_SEXP, SEXP gaSEXP, SEXP id_SEXP, SEXP fl_SEXP, SEXP wb_SEXP, SEXP okSEXP, SEXP groupSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type p(pSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< double >::type v(vSEXP);
+    Rcpp::traits::input_parameter< double >::type d(dSEXP);
+    Rcpp::traits::input_parameter< Nullable<NumericVector> >::type ba_(ba_SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type ga(gaSEXP);
+    Rcpp::traits::input_parameter< Nullable<NumericMatrix> >::type id_(id_SEXP);
+    Rcpp::traits::input_parameter< Nullable<List> >::type fl_(fl_SEXP);
+    Rcpp::traits::input_parameter< Nullable<List> >::type wb_(wb_SEXP);
+    Rcpp::traits::input_parameter< LogicalMatrix >::type ok(okSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type group(groupSEXP);
+    rcpp_result_gen = Rcpp::wrap(utility(p, n, v, d, ba_, ga, id_, fl_, wb_, ok, group));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_m4ma_like_state", (DL_FUNC) &_m4ma_like_state, 6},
+    {"_m4ma_pcnl_rcpp", (DL_FUNC) &_m4ma_pcnl_rcpp, 6},
     {"_m4ma_baUtility_rcpp", (DL_FUNC) &_m4ma_baUtility_rcpp, 4},
     {"_m4ma_caUtility_rcpp", (DL_FUNC) &_m4ma_caUtility_rcpp, 3},
     {"_m4ma_flUtility_rcpp", (DL_FUNC) &_m4ma_flUtility_rcpp, 5},
     {"_m4ma_gaUtility_rcpp", (DL_FUNC) &_m4ma_gaUtility_rcpp, 3},
     {"_m4ma_idUtility_rcpp", (DL_FUNC) &_m4ma_idUtility_rcpp, 7},
-    {"_m4ma_pcnl_rcpp", (DL_FUNC) &_m4ma_pcnl_rcpp, 6},
     {"_m4ma_psUtility_rcpp", (DL_FUNC) &_m4ma_psUtility_rcpp, 6},
+    {"_m4ma_utility", (DL_FUNC) &_m4ma_utility, 11},
     {NULL, NULL, 0}
 };
 
