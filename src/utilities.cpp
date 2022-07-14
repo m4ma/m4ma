@@ -138,7 +138,6 @@ NumericVector idUtility_rcpp(double bID, double dID, double aID, double n,
   
   // None in front return -Inf for cells blocked by objects
   if(Rf_isNull(ID_) || is_false(any(ok))) {
-    
     for(int row = 0; row < ok_rows; row++) {
       for(int col = 0; col < ok_cols; col++) {
         if(ok(row, col)){
@@ -156,19 +155,25 @@ NumericVector idUtility_rcpp(double bID, double dID, double aID, double n,
   int ID_rows = ID.nrow();
   int ID_cols = ID.ncol();
   
-  Rcpp::CharacterVector ID_row_names = rownames(ID);
+  CharacterVector ID_row_names = rownames(ID);
   
   IntegerVector group_excl_n = group;
   group_excl_n.erase(n); // remove nt element
   
   IntegerVector in_group = group_excl_n[group_excl_n == group[n]];
-  CharacterVector names_in_group = in_group.names();
   
+  CharacterVector names_in_group = {""};
+  
+  if (in_group.isNULL()) {
+    
+  } else {
+    CharacterVector names_in_group = in_group.names();
+  }
   NumericVector bID_2 = (ID_rows);
   
   // Group dependent b, bigger for outgroup by dID
   for(int row = 0; row < ID_rows; row++) {
-    if(ID_row_names[row] == names_in_group[row]) {
+    if(names_in_group.containsElementNamed(ID_row_names[row])) {
       
       bID_2[row] = bID;
       
