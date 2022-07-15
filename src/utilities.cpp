@@ -19,7 +19,7 @@ NumericVector baUtility_rcpp(double aBA, double bBA, NumericVector BA, IntegerVe
   int k = BA.length();
   
   for(int i = 0; i < k; i++) {
-    int idx = idx_BA[i]-1;
+    int idx = idx_BA[i];
     utility[idx] = -bBA / std::pow(std::max(BA[i], 0.0), aBA);
   }
   
@@ -141,9 +141,9 @@ NumericVector idUtility_rcpp(double bID, double dID, double aID, double n,
     for(int row = 0; row < ok_rows; row++) {
       for(int col = 0; col < ok_cols; col++) {
         if(ok(row, col)){
-          utility[row*ok_cols+col] = 0;
+          utility[col*ok_rows+row] = 0;
         } else{
-          utility[row*ok_cols+col] = R_NegInf;
+          utility[col*ok_rows+row] = R_NegInf;
         }
       }
     }
@@ -196,9 +196,9 @@ NumericVector idUtility_rcpp(double bID, double dID, double aID, double n,
     for(int col = 0; col < ok_cols; col++) {
       ok_clash(row, col) = ok(row, col) & ID_cols_gt_0[col*ok_rows+row]; // column-wise fill
       if(ok_clash(row, col)) {
-        utility[row*ok_cols+col] = 0;
+        utility[col*ok_rows+row] = 0;
       } else {
-        utility[row*ok_cols+col] = R_NegInf;
+        utility[col*ok_rows+row] = R_NegInf;
       }
     }
   }
@@ -318,8 +318,8 @@ NumericVector utility(NumericVector p, int n, double v, double d,
   
   if (ba_.isNotNull()) {
     NumericVector ba(ba_);
-    IntegerVector ba_names = char2int(ba.names()) - 1;
-    NumericVector ba_utility = baUtility_rcpp(p["aBA"], p["bBA"], ba, ba_names);
+    IntegerVector ba_names = char2int(ba.names()) - 1; // c++ indexing
+    ba_utility = baUtility_rcpp(p["aBA"], p["bBA"], ba, ba_names);
   }
   
   NumericVector ca_utility = caUtility_rcpp(p["aCA"], p["bCA"], p["bCAlr"]);
@@ -328,7 +328,7 @@ NumericVector utility(NumericVector p, int n, double v, double d,
   
   if (fl_.isNotNull()) {
     List fl(fl_);
-    NumericVector fl_utility = flUtility_rcpp(p["aFL"], p["bFL"], p["dFL"], fl["leaders"], fl["dists"]);
+    fl_utility = flUtility_rcpp(p["aFL"], p["bFL"], p["dFL"], fl["leaders"], fl["dists"]);
   }
   
   NumericVector ga_utility = gaUtility_rcpp(p["bGA"], p["aGA"], ga);
@@ -341,13 +341,11 @@ NumericVector utility(NumericVector p, int n, double v, double d,
   
   if (wb_.isNotNull()) {
     List wb(wb_);
-    NumericVector wb_utility = wbUtility_rcpp(p["aWB"], p["bWB"], wb["buddies"], wb["dists"]);
+    wb_utility = wbUtility_rcpp(p["aWB"], p["bWB"], wb["buddies"], wb["dists"]);
   }
   
   NumericVector total_utility = ps_utility + ga_utility + ca_utility + ba_utility + 
     id_utility + fl_utility + wb_utility;
-  
-  Rcout << id_utility;
   
   total_utility.push_front(-p["bS"]);
   
