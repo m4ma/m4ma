@@ -5,12 +5,12 @@ using namespace Rcpp;
 
 //' Blocked-angle Utility
 //'
-//' @param aBA Power parameter.
-//' @param bBA Scale parameter.
+//' @param aBA Numeric scalar power parameter.
+//' @param bBA Numeric scalar scale parameter.
 //' @param BA Numeric vector of distances from cells to closest pedestrians.
 //' @param idx_BA Integer vector of cell indices.
 //'
-//' @return Numeric Vector of utilities for each cell.
+//' @return Numeric vector of utilities for each cell.
 //' @export
 // [[Rcpp::export]]
 NumericVector baUtility_rcpp(double aBA, double bBA, NumericVector BA, IntegerVector idx_BA) {
@@ -27,10 +27,14 @@ NumericVector baUtility_rcpp(double aBA, double bBA, NumericVector BA, IntegerVe
 }
 
 
-//' Compute caUtility
-//' @param aCA numeric vector
-//' @param bCA numeric vector
-//' @param bCAlr numeric vector
+//' Current-angle Utility
+//' 
+//' @param aCA Numeric scalar power parameter.
+//' @param bCA Numeric scalar scale parameter.
+//' @param bCAlr Numeric scalar scale parameter.
+//' 
+//' @return Numeric vector of utilities for each cell.
+//' @export
 // [[Rcpp::export]]
 NumericVector caUtility_rcpp(double aCA, double bCA, double bCAlr) {
   
@@ -60,14 +64,14 @@ NumericVector caUtility_rcpp(double aCA, double bCA, double bCAlr) {
 }
 
 
-//' Compute flUtility
+//' Follow-leader Utility
 //'
-//' @param aFL numeric vector
-//' @param bFL numeric vector
-//' @param dFL numeric vector
-//' @param leaders named numeric matrix 
-//' @param dists transposed numeric matrix 
-//' @return numeric vector of 33 elements
+//' @param aFL Numeric scalar power parameter.
+//' @param bFL Numeric scalar scale parameter.
+//' @param dFL Numeric scalar direction parameter.
+//' @param leaders Named numeric matrix with columns per leader and rows of their normalized angle disagreement and in-group status.
+//' @param dists Named numeric matrix with rows per leader and columns per cell with distances from each cell to chosen cell. 
+//' @return Numeric vector of utilities for each cell.
 //' @export
 // [[Rcpp::export]]
 
@@ -95,12 +99,12 @@ NumericVector flUtility_rcpp(double aFL, double bFL, double dFL, NumericMatrix l
 }
 
 
-//' Compute gaUtility (Goal angle utility)
+//' Goal Angle Utility
 //'
-//' @param bGA integer
-//' @param aGA integer
-//' @param GA numeric vector
-//' @returns a numeric vector of length equal to GA's length 
+//' @param bGA Numeric scalar scale parameter.
+//' @param aGA Numeric scalar power parameter.
+//' @param GA Numeric vector of angles to next goal.
+//' @returns Numeric vector of utilities for each cell.
 //' @export
 // [[Rcpp::export]]
 NumericVector gaUtility_rcpp(double bGA, double aGA, NumericVector GA) {
@@ -112,19 +116,16 @@ NumericVector gaUtility_rcpp(double bGA, double aGA, NumericVector GA) {
 }
 
 
-//' Compute IDUtility
-//'
-//' Inter-personal distance utility for cell 1..33. b parameter divided by
-//' sum over power of distances between bodies for cell to all inFront peds.
+//' Interpersonal Distance Utility
 //' 
-//' @param bID Numeric scalar.
-//' @param dID Numeric scalar.
-//' @param aID Numeric scalar.
+//' @param bID Numeric scalar scale parameter.
+//' @param dID Numeric scalar direction parameter.
+//' @param aID Numeric scalar power parameter.
 //' @param n Numeric scalar indexing the subject in the state.
 //' @param ok Logical matrix indicating if cells are blocked.
 //' @param group Named numeric scalar with group indices for each pedestrian.
-//' @param ID_ Numeric matrix of the type NULL - if not NULL, ID_ is a Numeric matrix of predicted distances from the subject to other pedestrians in the front.
-//' @returns Numeric vector with interpersonal distance utilities for each cell.
+//' @param ID_ Numeric matrix or NULL; if not NULL, a numeric matrix of predicted distances from the subject to other pedestrians in the front.
+//' @returns Numeric vector of utilities for each cell.
 //' @export
 // [[Rcpp::export]]
 NumericVector idUtility_rcpp(double bID, double dID, double aID, double n, 
@@ -220,15 +221,15 @@ NumericVector idUtility_rcpp(double bID, double dID, double aID, double n,
 }
 
 
-//' Compute psUtility
+//' Preferred Speed Utility
 //'
-//' @param aPS numeric vector
-//' @param sPref numeric vector
-//' @param sSlow numeric vector
-//' @param bPS numeric vector
-//' @param v numeric vector
-//' @param d numeric vector 
-//' @returns a numeric vector of length equals to d's length 
+//' @param aPS Numeric scalar power parameter.
+//' @param bPS Numeric scalar scale parameter.
+//' @param sPref Numeric scalar preference parameter.
+//' @param sSlow Numeric scalar slowness parameter.
+//' @param v Numeric scalar current speed.
+//' @param d Numeric scalar distance to next goal.
+//' @returns Numeric vector of utilities for each cell.
 //' @export
 // [[Rcpp::export]]
 NumericVector psUtility_rcpp(double aPS, double bPS, double sPref, double sSlow,
@@ -250,6 +251,14 @@ NumericVector psUtility_rcpp(double aPS, double bPS, double sPref, double sSlow,
   
 }
 
+//' Walk-beside Utility
+//'
+//' @param aWB Numeric scalar power parameter.
+//' @param bWB Numeric scalar scale parameter.
+//' @param buddies Numeric matrix of buddy positions and angles. # needs rewrite
+//' @param dists Numeric matrix of distances from cells' centers to closest buddy. # needs rewrite
+//' @returns Numeric vector of utilities for each cell.
+//' @export
 // [[Rcpp::export]]
 NumericVector wbUtility_rcpp(double aWB, double bWB, NumericMatrix buddies,
                              NumericMatrix dists) {
@@ -289,15 +298,19 @@ IntegerVector char2int(CharacterVector char_vec) {
 //' @param n Integer scalar indexing the subject in the state.
 //' @param v Numeric scalar indicating the current speed.
 //' @param d Numeric scalar indicating the distance to next goal.
-//' @param ba_ Numeric vector of distances from each cell to closest pedestrian.
+//' @param ba_ NULL or numeric vector of distances from each cell to closest pedestrian.
 //' @param ga Numeric vector of angles to next goal.
-//' @param id_ Numeric matrix of predicted distances from the subject to other pedestrians in the front.
-//' @param fl_ List of numeric matrices:
+//' @param id_ NULL or numeric matrix of predicted distances from the subject to other pedestrians in the front.
+//' @param fl_ NULL or list of numeric matrices:
 //' \describe{
-//'   \item{leaders}{Matrix with columns per leader and rows of their normalized angle disagreement and in-group status.}
+//'   \item{leaders}{Numeric matrix of buddy positions and angles.}
 //'   \item{dists}{Matrix with rows per leader and columns per cell with distances from each cell to chosen cell.}
 //' }
-//' @param wb_ Numeric vector of distances from cells' centers to closest buddy.
+//' @param wb_ NULL or list of numeric matrices:
+//' \describe{
+//'   \item{buddies}{Matrix with columns per leader and rows of their normalized angle disagreement and in-group status. # needs rewrite}
+//'   \item{dists}{Numeric matrix of distances from cells' centers to closest buddy. # needs rewrite}
+//' }
 //' @param ok Logical matrix indicating if cells are blocked.
 //' @param group Integer vector with group indices for each pedestrian.
 //'

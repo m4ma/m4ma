@@ -27,20 +27,20 @@ test_trace_rcpp = m4ma::create_rcpp_trace(get(test_obj_name))
 
 ref = -176.738817
 
-testthat::test_that("State likelihood computation works", {
-  ll_state = sapply(1:length(test_trace_rcpp), function(i) {
+testthat::test_that("Subject likelihood computation works", {
+  ll_subject = sapply(1:length(test_trace_rcpp), function(i) {
     sum(sapply(1:length(test_trace_rcpp[[i]]), function(j) {
-      m4ma::like_state(test_trace_rcpp[[i]][[j]], p, n = j - 1, nests, alpha, m4ma::get_cell_nest())
+      m4ma::like_subject(test_trace_rcpp[[i]][[j]], p[j, ], n = j - 1, nests, alpha, m4ma::get_cell_nest())
     }))
   })
-  testthat::expect_equal(sum(ll_state), ref)
+  testthat::expect_equal(sum(ll_subject), ref)
 })
 
-testthat::test_that("States likelihood computation works", {
-  ll_states = sapply(test_trace_rcpp, function(states) {
-    m4ma::like_states(states, p, nests, alpha, m4ma::get_cell_nest())
+testthat::test_that("State likelihood computation works", {
+  ll_state = sapply(test_trace_rcpp, function(state) {
+    m4ma::like_state(state, p, nests, alpha, m4ma::get_cell_nest())
   })
-  testthat::expect_equal(sum(ll_states), ref)
+  testthat::expect_equal(sum(ll_state), ref)
 })
 
 testthat::test_that("Trace likelihood sum works", {
