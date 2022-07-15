@@ -250,7 +250,7 @@ NumericVector psUtility_rcpp(double aPS, double bPS, double sPref, double sSlow,
   
 }
 
-
+// [[Rcpp::export]]
 NumericVector wbUtility_rcpp(double aWB, double bWB, NumericMatrix buddies,
                              NumericMatrix dists) {
   
