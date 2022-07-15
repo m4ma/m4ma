@@ -162,25 +162,3 @@ testthat::test_that("Utility computation works", {
   
   testthat::expect_equal(u, ref)
 })
-
-
-testthat::test_that("State likelihood computation works", {
-  ref = c(-300907370, -301091391, -301180594)
-  
-  u = sapply(1:length(get(test_obj_name)), function(j) {
-    state = get(test_obj_name)[[j]]
-    out = sapply(1:length(state$v), function(i) {
-      u = m4ma::utility(
-        p[i, ], i - 1, state$v[i], state$d[i], state$BA[[i]], state$GA[[i]],
-        state$ID[[i]], state$FL[[i]], state$WB[[i]], state$ok[[i]],
-        state$group
-      )
-      
-      return(sum(u[is.finite(u)]))
-    })
-    
-    return(sum(out))
-  })
-  
-  testthat::expect_equal(u, ref)
-})
