@@ -1,5 +1,5 @@
 #include <Rcpp.h>
-#include <cmath>
+#include <math.h>
 
 using namespace Rcpp;
 
@@ -14,17 +14,18 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 NumericVector angle2_rcpp(NumericMatrix p1, NumericMatrix p2) {
   // initialise variable
-  int nrow = p1.nrow();
-  NumericVector out(nrow);
-  NumericVector temp(nrow);
-  
-  for(int row = 0; row < nrow; row++){
-    temp(row) = (180 / M_PI) * std::atan2((p2(_,1) - p1(_,1))[row], (p2(_,0) - p1(_,0))[row]) ;
-    Rcout << "The value of temp : " << temp(row) << "\n";
-    out(row) = std::fmodl(temp(row), 360);
-    Rcout << "The value of out : " << out << "\n";
-    
+  int n_rows = p1.nrow();
+  NumericVector angle(n_rows);
+
+  for(int row = 0; row < n_rows; ++row){
+    double angle_centered = (180.0 / M_PI) * std::atan2((p2(_, 1) - p1(_, 1))[row], (p2(_, 0) - p1(_, 0))[row]);
+    angle[row] = fmod(360.0 + angle_centered, 360.0);
+    // if(angle_centered < 0.0) {
+    //   angle[row] = 360.0 + angle_centered;
+    // } else {
+    //   angle[row] = angle_centered;
+    // }
   }
-  
-  return(out);
+
+  return angle;
 }
