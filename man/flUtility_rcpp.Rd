@@ -2,24 +2,24 @@
 % Please edit documentation in R/RcppExports.R
 \name{flUtility_rcpp}
 \alias{flUtility_rcpp}
-\title{Compute flUtility}
+\title{Follow-leader Utility}
 \usage{
 flUtility_rcpp(aFL, bFL, dFL, leaders, dists)
 }
 \arguments{
-\item{aFL}{numeric vector}
+\item{aFL}{Numeric scalar power parameter.}
 
-\item{bFL}{numeric vector}
+\item{bFL}{Numeric scalar scale parameter.}
 
-\item{dFL}{numeric vector}
+\item{dFL}{Numeric scalar direction parameter.}
 
-\item{leaders}{named numeric matrix}
+\item{leaders}{Named numeric matrix with columns per leader and rows of their normalized angle disagreement and in-group status.}
 
-\item{dists}{transposed numeric matrix}
+\item{dists}{Named numeric matrix with rows per leader and columns per cell with distances from each cell to chosen cell.}
 }
 \value{
-numeric vector of 33 elements
+Numeric vector of utilities for each cell.
 }
 \description{
-Compute flUtility
+Follow-leader Utility
 }
