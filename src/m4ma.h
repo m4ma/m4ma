@@ -5,6 +5,7 @@
 
 #include "utilities.h"
 #include "pCNL.h"
+#include "geometry.h"
 
 
 #endif // RCPP_m4ma
