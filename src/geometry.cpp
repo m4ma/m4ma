@@ -64,6 +64,7 @@ NumericVector dist1_rcpp(NumericMatrix p1, NumericMatrix p2) {
       out(j) = std::sqrt(sum(temp_matrix(_, j)));
     }
   }
+  out.names() = rownames(p2);
   return out;
 }
 
@@ -116,6 +117,9 @@ NumericVector angle2_rcpp(NumericMatrix p1, NumericMatrix p2) {
     double angle_centered = (180 / M_PI) * std::atan2((p2(_, 1) - p1(_, 1))[row], (p2(_, 0) - p1(_, 0))[row]);
     angle[row] = fmod(360 + angle_centered, 360);
   }
+  
+  // not clear here whether angle's names need to be p1 or p2' names
+  angle.names() = rownames(p1);
   return angle;
 }
 
@@ -198,7 +202,6 @@ NumericVector Dn_rcpp(NumericMatrix p_n, NumericMatrix P_n){
   
   NumericVector out(p_n.nrow());
   out = angle2_rcpp(p_n,P_n);
-  
   return(out);
   
 }
@@ -268,7 +271,7 @@ NumericMatrix headingAngle_rcpp(NumericVector a2, NumericVector a1){
 //' scaleVel
 //' 
 //' Scale velocity by time step (tStep)
-//' @param v1 Numeric vector 
+//' @param v Numeric vector 
 //' @param tStep double
 //' @return Numeric vector of scaled velocity of same length of v
 // [[Rcpp::export]]
