@@ -2,20 +2,20 @@
 % Please edit documentation in R/RcppExports.R
 \name{gaUtility_rcpp}
 \alias{gaUtility_rcpp}
-\title{Compute gaUtility (Goal angle utility)}
+\title{Goal Angle Utility}
 \usage{
 gaUtility_rcpp(bGA, aGA, GA)
 }
 \arguments{
-\item{bGA}{integer}
+\item{bGA}{Numeric scalar scale parameter.}
 
-\item{aGA}{integer}
+\item{aGA}{Numeric scalar power parameter.}
 
-\item{GA}{numeric vector}
+\item{GA}{Numeric vector of angles to next goal.}
 }
 \value{
-a numeric vector of length equal to GA's length
+Numeric vector of utilities for each cell.
 }
 \description{
-Compute gaUtility (Goal angle utility)
+Goal Angle Utility
 }

@@ -7,16 +7,16 @@
 baUtility_rcpp(aBA, bBA, BA, idx_BA)
 }
 \arguments{
-\item{aBA}{Power parameter.}
+\item{aBA}{Numeric scalar power parameter.}
 
-\item{bBA}{Scale parameter.}
+\item{bBA}{Numeric scalar scale parameter.}
 
 \item{BA}{Numeric vector of distances from cells to closest pedestrians.}
 
 \item{idx_BA}{Integer vector of cell indices.}
 }
 \value{
-Numeric Vector of utilities for each cell.
+Numeric vector of utilities for each cell.
 }
 \description{
 Blocked-angle Utility
