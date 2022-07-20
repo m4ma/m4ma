@@ -265,24 +265,102 @@ NumericMatrix headingAngle_rcpp(NumericVector a2, NumericVector a1){
   }
   
   return(output_angles);
-
+  
 }
 
 //' scaleVel
 //' 
 //' Scale velocity by time step (tStep)
-//' @param v Numeric vector 
+//' @param v double
 //' @param tStep double
-//' @return Numeric vector of scaled velocity of same length of v
+//' @return Scalar of scaled velocity of same length of v
 // [[Rcpp::export]]
 
-NumericVector scaleVel_rcpp(NumericVector v, double tStep){
+double scaleVel_rcpp(double v, double tStep){
   
-  // NOTE: not clear whether v is a vector, or a single value. 
-  // this affects the choice of the output's type
-  NumericVector scaled_v = v * tStep;
+  double scaled_v = v * tStep;
   
   return(scaled_v);
 }
 
+//' c_vd
+//'
+//' Calculate cell centres for set of cells (index 1..33) for p1 heading at velocity v1 at angle a1 given time step tStep seconds.
+//' @param cells Integer vector indicating the set of pedestrian's cells 
+//' @param p1 Numeric vector of pedestrian's xy coordinates 
+//' @param v1 Scalar value of current velocity
+//' @param a1_double Float of the current angle
+//' @param vels Numeric matrix of velocities
+//' @param angles Numeric matrix (33x3) of possible directions expressed in grades from 0 to 360
+//' @return Numeric matrix (33x2) of xy coordinates for each cell 
+//' @export
+// [[Rcpp::export]]
 
+NumericMatrix c_vd_rcpp(IntegerVector cells, NumericVector p1, double v1, 
+                        double a1_double, NumericMatrix vels, NumericMatrix angles){
+  
+  // allocate output
+  int outNrows = cells.length();
+  int outNcols = p1.length();
+  int velNcols = vels.ncol();
+  int velNrows = vels.nrow();
+  NumericMatrix cell_centres(outNrows, outNcols);
+  CharacterVector outNames = p1.names();
+  
+  
+  // compute scaled velocity with default parameter 0.5
+  double scaled_velocity = v1 * 0.5;
+  
+  for(int i = 0; i < velNcols;  i++){
+    for(int j = 0; j < velNrows; j++){
+      double angles_ = angles(j,i) + a1_double;
+      double angles_centred = fmod(360 + angles_, 360);
+      // x coordinate
+      cell_centres(i*velNrows+j,0) = p1[0] + scaled_velocity * vels(j,i) * cos(angles_centred * (M_PI / 180));
+      // y coordinate
+      cell_centres(i*velNrows+j,1) = p1[1] + scaled_velocity * vels(j,i) * sin(angles_centred * (M_PI / 180));
+    }
+  }
+  colnames(cell_centres) = outNames;
+  return(cell_centres);
+  
+}
+
+
+//' coneNum
+//'
+//' Find equivalent cone number from a vector of angles indices
+//' @param k Numeric vector going from 1 to 33
+//' @return Numeric vector of length equal to 33 
+//' @export
+// [[Rcpp::export]]
+
+NumericVector coneNum_rcpp(NumericVector k){
+  int k_len = k.length();
+  NumericVector cone_number(k_len);
+  
+  for(int i = 0; i < k_len; i++){
+    cone_number(i) = 1 + fmod(k[i]-1, 11);
+  }
+  
+  return(cone_number);
+}
+
+//' ringNum
+//'
+//' Find equivalent cone number from a vector of angles indices going from 1 to 33
+//' @param k Numeric vector going from 1 to 33
+//' @return Numeric vector of length equal to 33
+//' @export
+// [[Rcpp::export]]
+
+NumericVector ringNum_rcpp(NumericVector k){
+  int k_len = k.length();
+  NumericVector ring_number(k_len);
+
+  for(int i = 0; i < k_len; i++){
+    ring_number(i) = std::floor(1 + (k[i]-1) / 11);
+  }
+
+  return(ring_number);
+}

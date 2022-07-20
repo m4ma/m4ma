@@ -119,14 +119,52 @@ BEGIN_RCPP
 END_RCPP
 }
 // scaleVel_rcpp
-NumericVector scaleVel_rcpp(NumericVector v, double tStep);
+double scaleVel_rcpp(double v, double tStep);
 RcppExport SEXP _m4ma_scaleVel_rcpp(SEXP vSEXP, SEXP tStepSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type v(vSEXP);
+    Rcpp::traits::input_parameter< double >::type v(vSEXP);
     Rcpp::traits::input_parameter< double >::type tStep(tStepSEXP);
     rcpp_result_gen = Rcpp::wrap(scaleVel_rcpp(v, tStep));
+    return rcpp_result_gen;
+END_RCPP
+}
+// c_vd_rcpp
+NumericMatrix c_vd_rcpp(IntegerVector cells, NumericVector p1, double v1, double a1_double, NumericMatrix vels, NumericMatrix angles);
+RcppExport SEXP _m4ma_c_vd_rcpp(SEXP cellsSEXP, SEXP p1SEXP, SEXP v1SEXP, SEXP a1_doubleSEXP, SEXP velsSEXP, SEXP anglesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerVector >::type cells(cellsSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type p1(p1SEXP);
+    Rcpp::traits::input_parameter< double >::type v1(v1SEXP);
+    Rcpp::traits::input_parameter< double >::type a1_double(a1_doubleSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type vels(velsSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type angles(anglesSEXP);
+    rcpp_result_gen = Rcpp::wrap(c_vd_rcpp(cells, p1, v1, a1_double, vels, angles));
+    return rcpp_result_gen;
+END_RCPP
+}
+// coneNum_rcpp
+NumericVector coneNum_rcpp(NumericVector k);
+RcppExport SEXP _m4ma_coneNum_rcpp(SEXP kSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type k(kSEXP);
+    rcpp_result_gen = Rcpp::wrap(coneNum_rcpp(k));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ringNum_rcpp
+NumericVector ringNum_rcpp(NumericVector k);
+RcppExport SEXP _m4ma_ringNum_rcpp(SEXP kSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type k(kSEXP);
+    rcpp_result_gen = Rcpp::wrap(ringNum_rcpp(k));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -331,6 +369,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_m4ma_minAngle_rcpp", (DL_FUNC) &_m4ma_minAngle_rcpp, 2},
     {"_m4ma_headingAngle_rcpp", (DL_FUNC) &_m4ma_headingAngle_rcpp, 2},
     {"_m4ma_scaleVel_rcpp", (DL_FUNC) &_m4ma_scaleVel_rcpp, 2},
+    {"_m4ma_c_vd_rcpp", (DL_FUNC) &_m4ma_c_vd_rcpp, 6},
+    {"_m4ma_coneNum_rcpp", (DL_FUNC) &_m4ma_coneNum_rcpp, 1},
+    {"_m4ma_ringNum_rcpp", (DL_FUNC) &_m4ma_ringNum_rcpp, 1},
     {"_m4ma_like_subject", (DL_FUNC) &_m4ma_like_subject, 7},
     {"_m4ma_like_state", (DL_FUNC) &_m4ma_like_state, 6},
     {"_m4ma_msumlogLike", (DL_FUNC) &_m4ma_msumlogLike, 7},

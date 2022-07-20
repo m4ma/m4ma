@@ -97,11 +97,46 @@ headingAngle_rcpp <- function(a2, a1) {
 #' scaleVel
 #' 
 #' Scale velocity by time step (tStep)
-#' @param v Numeric vector 
+#' @param v double
 #' @param tStep double
-#' @return Numeric vector of scaled velocity of same length of v
+#' @return Scalar of scaled velocity of same length of v
 scaleVel_rcpp <- function(v, tStep) {
     .Call(`_m4ma_scaleVel_rcpp`, v, tStep)
+}
+
+#' c_vd
+#'
+#' Calculate cell centres for set of cells (index 1..33) for p1 heading at velocity v1 at angle a1 given time step tStep seconds.
+#' @param cells Integer vector indicating the set of pedestrian's cells 
+#' @param p1 Numeric vector of pedestrian's xy coordinates 
+#' @param v1 Scalar value of current velocity
+#' @param a1_double Float of the current angle
+#' @param vels Numeric matrix of velocities
+#' @param angles Numeric matrix (33x3) of possible directions expressed in grades from 0 to 360
+#' @return Numeric matrix (33x2) of xy coordinates for each cell 
+#' @export
+c_vd_rcpp <- function(cells, p1, v1, a1_double, vels, angles) {
+    .Call(`_m4ma_c_vd_rcpp`, cells, p1, v1, a1_double, vels, angles)
+}
+
+#' coneNum
+#'
+#' Find equivalent cone number from a vector of angles indices
+#' @param k Numeric vector going from 1 to 33
+#' @return Numeric vector of length equal to 33 
+#' @export
+coneNum_rcpp <- function(k) {
+    .Call(`_m4ma_coneNum_rcpp`, k)
+}
+
+#' ringNum
+#'
+#' Find equivalent cone number from a vector of angles indices going from 1 to 33
+#' @param k Numeric vector going from 1 to 33
+#' @return Numeric vector of length equal to 33
+#' @export
+ringNum_rcpp <- function(k) {
+    .Call(`_m4ma_ringNum_rcpp`, k)
 }
 
 #' Subject Log-likelihood

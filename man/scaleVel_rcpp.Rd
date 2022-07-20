@@ -7,12 +7,12 @@
 scaleVel_rcpp(v, tStep)
 }
 \arguments{
-\item{v}{Numeric vector}
+\item{v}{double}
 
 \item{tStep}{double}
 }
 \value{
-Numeric vector of scaled velocity of same length of v
+Scalar of scaled velocity of same length of v
 }
 \description{
 Scale velocity by time step (tStep)
