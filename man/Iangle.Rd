@@ -17,6 +17,8 @@ Iangle(
 \item{a1}{Numeric vector - angles in degrees between 0 and 360}
 
 \item{p2}{Numeric matrix}
+
+\item{border}{Numeric vector - perimeter boundaries}
 }
 \value{
 Numeric Vector of indices whereby the angle is within border's bins

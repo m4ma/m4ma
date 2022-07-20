@@ -7,9 +7,9 @@
 minAngle(a1, a2)
 }
 \arguments{
-\item{a2}{Numeric vector}
+\item{a1}{scalar vector}
 
-\item{a1_double}{scalar vector}
+\item{a2}{Numeric vector}
 }
 \value{
 Numeric vector of length equal to a1

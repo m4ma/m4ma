@@ -1,4 +1,8 @@
-# Helper functions for testing
+#' create_rcpp_states
+#' 
+#' Helper functions for creating an empty trace container for subsequent testing
+#' @param states takes a loaded object of the .rda type
+#' @return an empty trace list of lists
 
 create_rcpp_states = function(states) {
   rcpp_states = lapply(1:length(states$v), function(i) {
@@ -20,6 +24,13 @@ create_rcpp_states = function(states) {
   
   return(rcpp_states)
 }
+
+#' create_rcpp_trace
+#' 
+#' Helper functions for filling the list created by create_rcpp_states for subsequent testing
+#' @param trace takes a loaded object of the .rda type
+#' @return a list of lists containing the .rda's elements
+
 
 create_rcpp_trace = function(trace) {
   return(lapply(trace, create_rcpp_states))

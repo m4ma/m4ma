@@ -14,6 +14,8 @@ headingAngle(
 \item{a2}{Numeric vector}
 
 \item{a1}{Numeric vector}
+
+\item{angles}{Numeric vector of angle directions}
 }
 \value{
 Numeric matrix whose rows and columns are the same length of a2 and a1
