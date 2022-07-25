@@ -48,8 +48,15 @@ alpha = list(
 # Get subject parameter matrix
 p = attr(get(trace_name), 'pMat')
 
+# Get nest indices for cells
+cell_nest = m4ma::get_cell_nest()
+
+# Transform trace into format for C++ processing
+trace_rcpp = m4ma::create_rcpp_trace(get(trace_name))
+
+
 # Compute log likelihood of trace given subject parameters
-m4ma::msumlogLike_rcpp(trace_i, p, minLike = 1e-10, mult = -1)
+m4ma::msumlogLike(trace_rcpp, p, nests, alpha, cell_nest)
 
 # 176.7388
 

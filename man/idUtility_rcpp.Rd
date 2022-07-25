@@ -2,16 +2,16 @@
 % Please edit documentation in R/RcppExports.R
 \name{idUtility_rcpp}
 \alias{idUtility_rcpp}
-\title{Compute IDUtility}
+\title{Interpersonal Distance Utility}
 \usage{
-idUtility_rcpp(bID, dID, aID, n, ok, group, ID_ = NULL)
+idUtility_rcpp(bID, dID, aID, n, ok, group, ID_)
 }
 \arguments{
-\item{bID}{Numeric scalar.}
+\item{bID}{Numeric scalar scale parameter.}
 
-\item{dID}{Numeric scalar.}
+\item{dID}{Numeric scalar direction parameter.}
 
-\item{aID}{Numeric scalar.}
+\item{aID}{Numeric scalar power parameter.}
 
 \item{n}{Numeric scalar indexing the subject in the state.}
 
@@ -19,12 +19,11 @@ idUtility_rcpp(bID, dID, aID, n, ok, group, ID_ = NULL)
 
 \item{group}{Named numeric scalar with group indices for each pedestrian.}
 
-\item{ID_}{Numeric matrix of the type NULL - if not NULL, ID_ is a Numeric matrix of predicted distances from the subject to other pedestrians in the front.}
+\item{ID_}{Numeric matrix or NULL; if not NULL, a numeric matrix of predicted distances from the subject to other pedestrians in the front.}
 }
 \value{
-Numeric vector with interpersonal distance utilities for each cell.
+Numeric vector of utilities for each cell.
 }
 \description{
-Inter-personal distance utility for cell 1..33. b parameter divided by
-sum over power of distances between bodies for cell to all inFront peds.
+Interpersonal Distance Utility
 }

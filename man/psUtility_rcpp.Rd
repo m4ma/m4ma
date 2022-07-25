@@ -2,26 +2,26 @@
 % Please edit documentation in R/RcppExports.R
 \name{psUtility_rcpp}
 \alias{psUtility_rcpp}
-\title{Compute psUtility}
+\title{Preferred Speed Utility}
 \usage{
-psUtility_rcpp(aPS, sPref, sSlow, bPS, v, d)
+psUtility_rcpp(aPS, bPS, sPref, sSlow, v, d)
 }
 \arguments{
-\item{aPS}{numeric vector}
+\item{aPS}{Numeric scalar power parameter.}
 
-\item{sPref}{numeric vector}
+\item{bPS}{Numeric scalar scale parameter.}
 
-\item{sSlow}{numeric vector}
+\item{sPref}{Numeric scalar preference parameter.}
 
-\item{bPS}{numeric vector}
+\item{sSlow}{Numeric scalar slowness parameter.}
 
-\item{v}{numeric vector}
+\item{v}{Numeric scalar current speed.}
 
-\item{d}{numeric vector}
+\item{d}{Numeric scalar distance to next goal.}
 }
 \value{
-a numeric vector of length equals to d's length
+Numeric vector of utilities for each cell.
 }
 \description{
-Compute psUtility
+Preferred Speed Utility
 }

@@ -2,17 +2,20 @@
 % Please edit documentation in R/RcppExports.R
 \name{caUtility_rcpp}
 \alias{caUtility_rcpp}
-\title{Compute caUtility}
+\title{Current-angle Utility}
 \usage{
 caUtility_rcpp(aCA, bCA, bCAlr)
 }
 \arguments{
-\item{aCA}{numeric vector}
+\item{aCA}{Numeric scalar power parameter.}
 
-\item{bCA}{numeric vector}
+\item{bCA}{Numeric scalar scale parameter.}
 
-\item{bCAlr}{numeric vector}
+\item{bCAlr}{Numeric scalar scale parameter.}
+}
+\value{
+Numeric vector of utilities for each cell.
 }
 \description{
-Compute caUtility
+Current-angle Utility
 }
