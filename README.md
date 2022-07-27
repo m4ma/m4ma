@@ -2,6 +2,7 @@
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/m4ma/m4ma/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/m4ma/m4ma/actions/workflows/R-CMD-check.yaml)
+[![codecov](https://codecov.io/gh/m4ma/m4ma/branch/main/graph/badge.svg?token=PWCVRIDAH7)](https://codecov.io/gh/m4ma/m4ma)
 <!-- badges: end -->
 
 An R package for Rcpp compatible functions used in the Minds for Mobile Agents project.
