@@ -3,3 +3,6 @@
 ^\.github$
 ^LICENSE\.md$
 ^bench$
+^data$
+^utility_performance\.Rmd$
+^codecov\.yml$
