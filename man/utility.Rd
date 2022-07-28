@@ -23,14 +23,14 @@ utility(p, n, v, d, ba_, ga, id_, fl_, wb_, ok, group)
 
 \item{fl_}{NULL or list of numeric matrices:
 \describe{
-  \item{leaders}{Numeric matrix of buddy positions and angles.}
-  \item{dists}{Matrix with rows per leader and columns per cell with distances from each cell to chosen cell.}
+\item{leaders}{Numeric matrix of buddy positions and angles.}
+\item{dists}{Matrix with rows per leader and columns per cell with distances from each cell to chosen cell.}
 }}
 
 \item{wb_}{NULL or list of numeric matrices:
 \describe{
-  \item{buddies}{Matrix with columns per leader and rows of their normalized angle disagreement and in-group status. # needs rewrite}
-  \item{dists}{Numeric matrix of distances from cells' centers to closest buddy. # needs rewrite}
+\item{buddies}{Matrix with columns per leader and rows of their normalized angle disagreement and in-group status. # needs rewrite}
+\item{dists}{Numeric matrix of distances from cells' centers to closest buddy. # needs rewrite}
 }}
 
 \item{ok}{Logical matrix indicating if cells are blocked.}

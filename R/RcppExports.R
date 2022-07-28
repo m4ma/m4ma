@@ -9,7 +9,7 @@
 #' @return Named numeric vector of length equal to the number of rows in p1
 #' @export
 dist_rcpp <- function(p1, p2) {
-    .Call(`_m4ma_dist_rcpp`, p1, p2)
+    .Call('_m4ma_dist_rcpp', PACKAGE = 'm4ma', p1, p2)
 }
 
 #' dist1_rcpp
@@ -20,7 +20,7 @@ dist_rcpp <- function(p1, p2) {
 #' @return Named numeric vector of length equal to the number of rows in p2
 #' @export
 dist1_rcpp <- function(p1, p2) {
-    .Call(`_m4ma_dist1_rcpp`, p1, p2)
+    .Call('_m4ma_dist1_rcpp', PACKAGE = 'm4ma', p1, p2)
 }
 
 #' angle2s_rcpp
@@ -31,7 +31,7 @@ dist1_rcpp <- function(p1, p2) {
 #' @return Numeric vector of length equal to the number of rows in p1 
 #' @export
 angle2s_rcpp <- function(p1, p2) {
-    .Call(`_m4ma_angle2s_rcpp`, p1, p2)
+    .Call('_m4ma_angle2s_rcpp', PACKAGE = 'm4ma', p1, p2)
 }
 
 #' angle2
@@ -41,7 +41,7 @@ angle2s_rcpp <- function(p1, p2) {
 #' @param p2 Numeric matrix
 #' @return Named numeric vector of length equal to the number of rows in p1
 angle2_rcpp <- function(p1, p2) {
-    .Call(`_m4ma_angle2_rcpp`, p1, p2)
+    .Call('_m4ma_angle2_rcpp', PACKAGE = 'm4ma', p1, p2)
 }
 
 #' aTOd
@@ -50,7 +50,7 @@ angle2_rcpp <- function(p1, p2) {
 #' @param a Numeric vector - angles in degrees between 0 and 360
 #' @return Numeric Matrix of x and y coordinates (between -1 and 1) that are the signed (i.e., +/-) normalised difference between the xy points that generated the angle a
 aTOd_rcpp <- function(a) {
-    .Call(`_m4ma_aTOd_rcpp`, a)
+    .Call('_m4ma_aTOd_rcpp', PACKAGE = 'm4ma', a)
 }
 
 #' Iangle
@@ -61,7 +61,7 @@ aTOd_rcpp <- function(a) {
 #' @param a1 Numeric vector - angles in degrees between 0 and 360
 #' @return Numeric Vector of indices whereby the angle is within border's bins
 Iangle_rcpp <- function(p1, p2, a1) {
-    .Call(`_m4ma_Iangle_rcpp`, p1, p2, a1)
+    .Call('_m4ma_Iangle_rcpp', PACKAGE = 'm4ma', p1, p2, a1)
 }
 
 #' Dn
@@ -71,7 +71,7 @@ Iangle_rcpp <- function(p1, p2, a1) {
 #' @param P_n Numeric matrix of x and y coordinates
 #' @return Named numeric vector of length equal to the number of rows in p1
 Dn_rcpp <- function(p_n, P_n) {
-    .Call(`_m4ma_Dn_rcpp`, p_n, P_n)
+    .Call('_m4ma_Dn_rcpp', PACKAGE = 'm4ma', p_n, P_n)
 }
 
 #' minAngle
@@ -81,7 +81,7 @@ Dn_rcpp <- function(p_n, P_n) {
 #' @param a2 Numeric vector 
 #' @return Numeric vector of length equal to a1
 minAngle_rcpp <- function(a1_double, a2) {
-    .Call(`_m4ma_minAngle_rcpp`, a1_double, a2)
+    .Call('_m4ma_minAngle_rcpp', PACKAGE = 'm4ma', a1_double, a2)
 }
 
 #' headingAngle
@@ -91,7 +91,7 @@ minAngle_rcpp <- function(a1_double, a2) {
 #' @param a2 Numeric vector 
 #' @return Numeric matrix whose rows and columns are the same length of a2 and a1
 headingAngle_rcpp <- function(a2, a1) {
-    .Call(`_m4ma_headingAngle_rcpp`, a2, a1)
+    .Call('_m4ma_headingAngle_rcpp', PACKAGE = 'm4ma', a2, a1)
 }
 
 #' scaleVel
@@ -101,7 +101,7 @@ headingAngle_rcpp <- function(a2, a1) {
 #' @param tStep double
 #' @return Scalar of scaled velocity of same length of v
 scaleVel_rcpp <- function(v, tStep) {
-    .Call(`_m4ma_scaleVel_rcpp`, v, tStep)
+    .Call('_m4ma_scaleVel_rcpp', PACKAGE = 'm4ma', v, tStep)
 }
 
 #' c_vd
@@ -116,7 +116,7 @@ scaleVel_rcpp <- function(v, tStep) {
 #' @return Numeric matrix (33x2) of xy coordinates for each cell 
 #' @export
 c_vd_rcpp <- function(cells, p1, v1, a1_double, vels, angles) {
-    .Call(`_m4ma_c_vd_rcpp`, cells, p1, v1, a1_double, vels, angles)
+    .Call('_m4ma_c_vd_rcpp', PACKAGE = 'm4ma', cells, p1, v1, a1_double, vels, angles)
 }
 
 #' coneNum
@@ -126,7 +126,7 @@ c_vd_rcpp <- function(cells, p1, v1, a1_double, vels, angles) {
 #' @return Numeric vector of length equal to 33 
 #' @export
 coneNum_rcpp <- function(k) {
-    .Call(`_m4ma_coneNum_rcpp`, k)
+    .Call('_m4ma_coneNum_rcpp', PACKAGE = 'm4ma', k)
 }
 
 #' ringNum
@@ -136,7 +136,7 @@ coneNum_rcpp <- function(k) {
 #' @return Numeric vector of length equal to 33
 #' @export
 ringNum_rcpp <- function(k) {
-    .Call(`_m4ma_ringNum_rcpp`, k)
+    .Call('_m4ma_ringNum_rcpp', PACKAGE = 'm4ma', k)
 }
 
 #' Subject Log-likelihood
@@ -154,7 +154,7 @@ ringNum_rcpp <- function(k) {
 #' @returns Numeric scalar subject log likelihood.
 #' @export
 like_subject <- function(subject, p, n, nests, alpha, cell_nest, min_like = 1e-10) {
-    .Call(`_m4ma_like_subject`, subject, p, n, nests, alpha, cell_nest, min_like)
+    .Call('_m4ma_like_subject', PACKAGE = 'm4ma', subject, p, n, nests, alpha, cell_nest, min_like)
 }
 
 #' State Log-likelihood
@@ -171,7 +171,7 @@ like_subject <- function(subject, p, n, nests, alpha, cell_nest, min_like = 1e-1
 #' @returns Numeric vector of state subject likelihoods.
 #' @export
 like_state <- function(state, p, nests, alpha, cell_nest, min_like = 1e-10) {
-    .Call(`_m4ma_like_state`, state, p, nests, alpha, cell_nest, min_like)
+    .Call('_m4ma_like_state', PACKAGE = 'm4ma', state, p, nests, alpha, cell_nest, min_like)
 }
 
 #' Trace Log-likelihood
@@ -189,7 +189,7 @@ like_state <- function(state, p, nests, alpha, cell_nest, min_like = 1e-10) {
 #' @returns Numeric scalar trace log-likelihood.
 #' @export
 msumlogLike <- function(trace, p, nests, alpha, cell_nest, min_like = 1e-10, mult = -1.0) {
-    .Call(`_m4ma_msumlogLike`, trace, p, nests, alpha, cell_nest, min_like, mult)
+    .Call('_m4ma_msumlogLike', PACKAGE = 'm4ma', trace, p, nests, alpha, cell_nest, min_like, mult)
 }
 
 #' Probability of the Conditional Nested Logit Model
@@ -204,7 +204,7 @@ msumlogLike <- function(trace, p, nests, alpha, cell_nest, min_like = 1e-10, mul
 #' @return Probability of alternative \code{cell} given \code{utility}, \code{alpha}, and parameters \code{mum} and \code{mu}.
 #' @export
 pcnl_rcpp <- function(cell, utility, mum, nests, alpha, mu) {
-    .Call(`_m4ma_pcnl_rcpp`, cell, utility, mum, nests, alpha, mu)
+    .Call('_m4ma_pcnl_rcpp', PACKAGE = 'm4ma', cell, utility, mum, nests, alpha, mu)
 }
 
 #' Blocked-angle Utility
@@ -217,7 +217,7 @@ pcnl_rcpp <- function(cell, utility, mum, nests, alpha, mu) {
 #' @return Numeric vector of utilities for each cell.
 #' @export
 baUtility_rcpp <- function(aBA, bBA, BA, idx_BA) {
-    .Call(`_m4ma_baUtility_rcpp`, aBA, bBA, BA, idx_BA)
+    .Call('_m4ma_baUtility_rcpp', PACKAGE = 'm4ma', aBA, bBA, BA, idx_BA)
 }
 
 #' Current-angle Utility
@@ -229,7 +229,7 @@ baUtility_rcpp <- function(aBA, bBA, BA, idx_BA) {
 #' @return Numeric vector of utilities for each cell.
 #' @export
 caUtility_rcpp <- function(aCA, bCA, bCAlr) {
-    .Call(`_m4ma_caUtility_rcpp`, aCA, bCA, bCAlr)
+    .Call('_m4ma_caUtility_rcpp', PACKAGE = 'm4ma', aCA, bCA, bCAlr)
 }
 
 #' Follow-leader Utility
@@ -242,7 +242,7 @@ caUtility_rcpp <- function(aCA, bCA, bCAlr) {
 #' @return Numeric vector of utilities for each cell.
 #' @export
 flUtility_rcpp <- function(aFL, bFL, dFL, leaders, dists) {
-    .Call(`_m4ma_flUtility_rcpp`, aFL, bFL, dFL, leaders, dists)
+    .Call('_m4ma_flUtility_rcpp', PACKAGE = 'm4ma', aFL, bFL, dFL, leaders, dists)
 }
 
 #' Goal Angle Utility
@@ -253,7 +253,7 @@ flUtility_rcpp <- function(aFL, bFL, dFL, leaders, dists) {
 #' @returns Numeric vector of utilities for each cell.
 #' @export
 gaUtility_rcpp <- function(bGA, aGA, GA) {
-    .Call(`_m4ma_gaUtility_rcpp`, bGA, aGA, GA)
+    .Call('_m4ma_gaUtility_rcpp', PACKAGE = 'm4ma', bGA, aGA, GA)
 }
 
 #' Interpersonal Distance Utility
@@ -268,7 +268,7 @@ gaUtility_rcpp <- function(bGA, aGA, GA) {
 #' @returns Numeric vector of utilities for each cell.
 #' @export
 idUtility_rcpp <- function(bID, dID, aID, n, ok, group, ID_) {
-    .Call(`_m4ma_idUtility_rcpp`, bID, dID, aID, n, ok, group, ID_)
+    .Call('_m4ma_idUtility_rcpp', PACKAGE = 'm4ma', bID, dID, aID, n, ok, group, ID_)
 }
 
 #' Preferred Speed Utility
@@ -282,7 +282,7 @@ idUtility_rcpp <- function(bID, dID, aID, n, ok, group, ID_) {
 #' @returns Numeric vector of utilities for each cell.
 #' @export
 psUtility_rcpp <- function(aPS, bPS, sPref, sSlow, v, d) {
-    .Call(`_m4ma_psUtility_rcpp`, aPS, bPS, sPref, sSlow, v, d)
+    .Call('_m4ma_psUtility_rcpp', PACKAGE = 'm4ma', aPS, bPS, sPref, sSlow, v, d)
 }
 
 #' Walk-beside Utility
@@ -294,7 +294,7 @@ psUtility_rcpp <- function(aPS, bPS, sPref, sSlow, v, d) {
 #' @returns Numeric vector of utilities for each cell.
 #' @export
 wbUtility_rcpp <- function(aWB, bWB, buddies, dists) {
-    .Call(`_m4ma_wbUtility_rcpp`, aWB, bWB, buddies, dists)
+    .Call('_m4ma_wbUtility_rcpp', PACKAGE = 'm4ma', aWB, bWB, buddies, dists)
 }
 
 #' Total Utility of Cells
@@ -323,6 +323,6 @@ wbUtility_rcpp <- function(aWB, bWB, buddies, dists) {
 #' @export
 #'
 utility <- function(p, n, v, d, ba_, ga, id_, fl_, wb_, ok, group) {
-    .Call(`_m4ma_utility`, p, n, v, d, ba_, ga, id_, fl_, wb_, ok, group)
+    .Call('_m4ma_utility', PACKAGE = 'm4ma', p, n, v, d, ba_, ga, id_, fl_, wb_, ok, group)
 }
 

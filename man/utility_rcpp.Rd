@@ -23,8 +23,8 @@ utility_rcpp(p, n, v, d, ga, ba, id, fl, wb, ok, group)
 
 \item{fl}{List of numeric matrices:
 \describe{
-  \item{leaders}{Matrix with columns per leader and rows of their normalized angle disagreement and in-group status.}
-  \item{dists}{Matrix with rows per leader and columns per cell with distances from each cell to chosen cell.}
+\item{leaders}{Matrix with columns per leader and rows of their normalized angle disagreement and in-group status.}
+\item{dists}{Matrix with rows per leader and columns per cell with distances from each cell to chosen cell.}
 }}
 
 \item{wb}{Numeric vector of distances from cells' centers to closest buddy.}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/c_vd.R
 \name{c_vd}
 \alias{c_vd}
-\title{c_vd 
+\title{c_vd
 Calculate cell centres for set of cells (index 1..33) for p1 heading at velocity v1 at angle a1 given time step tStep seconds.}
 \usage{
 c_vd(
@@ -32,6 +32,6 @@ c_vd(
 Numeric matrix (33x2) of xy coordinates for each cell
 }
 \description{
-c_vd 
+c_vd
 Calculate cell centres for set of cells (index 1..33) for p1 heading at velocity v1 at angle a1 given time step tStep seconds.
 }
