@@ -3,32 +3,34 @@
 \alias{m4ma}
 \docType{package}
 \title{
-  A short title line describing what the package does
+  Implementation of the predictive pedestrian agent model
 }
 \description{
-  A more detailed description of what the package does. A length
-  of about one to five lines is recommended.
+  The Minds for Mobile Agents (M4MA) project
+    aims to realistically model how pedestrians with diverse individual
+    characteristics move around spatial and social environments while
+    fulfilling complex goals. M4MA’s “predictive pedestrian” agent model
+    simulates and explains the causes of pedestrian movement by
+    combining tools from cognitive decision modelling and behavioural 
+    data science.
 }
 \details{
-  This section should provide a more detailed overview of how to use the
-  package, including the most important functions.
+  
 }
 \author{
-Your Name, email optional.
+Malte Luken <m.luken@esciencecenter.nl> and Eva Viviani <e.viviani@esciencecenter.nl>
 
-Maintainer: Your Name <your@email.com>
+Maintainer: Charlotte Tanis <c.c.tanis@uva.nl>
 }
 \references{
-  This optional section can contain literature or other references for
-  background information.
+  
 }
 \keyword{ package }
 \seealso{
-  Optional links to other man pages
+  
 }
 \examples{
   \dontrun{
-     ## Optional simple examples of the most important functions
-     ## These can be in \dontrun{} and \donttest{} blocks.   
+     
   }
 }

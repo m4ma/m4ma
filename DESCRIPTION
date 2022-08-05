@@ -1,17 +1,25 @@
 Package: m4ma
-Type: Package
-Title: What the Package Does in One 'Title Case'
-     Line
-Version: 0.1
-Date: 2022-06-23
-Author: Your Name
-Maintainer: Your Name <your@email.com>
-Description: One paragraph description of what the
-     package does as one or more full sentences.
+Title: Implementation of the predictive pedestrian agent model
+Version: 0.0.0.9000
+Authors@R: c(
+    person("Malte", "Luken", email = "m.luken@esciencecenter.nl", role = "cre"),
+    person("Eva", "Viviani", email = "e.viviani@esciencecenter.nl", role = "aut"),
+    person("eScience center", role = c("cph", "fnd")))
+Description: The Minds for Mobile Agents (M4MA) project
+    aims to realistically model how pedestrians with diverse individual
+    characteristics move around spatial and social environments while
+    fulfilling complex goals. M4MA’s “predictive pedestrian” agent model
+    simulates and explains the causes of pedestrian movement by
+    combining tools from cognitive decision modelling and behavioural 
+    data science.
 License: Apache License (>= 2)
 Imports: Rcpp (>= 1.0.8)
 LinkingTo: Rcpp
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.0
-Suggests: 
+Depends: R (>= 4.1.0)
+Suggests:
+    covr, 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

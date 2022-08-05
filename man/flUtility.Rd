@@ -11,8 +11,8 @@ flUtility(p, FL)
 
 \item{FL}{List of two numeric matrices:
 \describe{
-  \item{leaders}{Matrix with columns per leader and rows of their normalized angle disagreement and in-group status.}
-  \item{dists}{Matrix with rows per leader and columns per cell with distances from each cell to chosen cell.}
+\item{leaders}{Matrix with columns per leader and rows of their normalized angle disagreement and in-group status.}
+\item{dists}{Matrix with rows per leader and columns per cell with distances from each cell to chosen cell.}
 }}
 }
 \value{
