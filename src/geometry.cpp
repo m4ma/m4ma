@@ -276,12 +276,19 @@ NumericMatrix headingAngle_rcpp(NumericVector a2, NumericVector a1){
 //' @return Scalar of scaled velocity of same length of v
 // [[Rcpp::export]]
 
-double scaleVel_rcpp(double v, double tStep){
+NumericVector scaleVel_rcpp(NumericVector v, double tStep){
   
-  double scaled_v = v * tStep;
+  double v_len = v.length();
+  NumericVector scaled_v(v_len);
+  
+  for(int i = 0; i < v_len;  i++){
+    scaled_v[i] = v[i] * tStep;
+  }
   
   return(scaled_v);
 }
+
+
 
 //' c_vd
 //'

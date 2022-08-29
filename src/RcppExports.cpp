@@ -119,12 +119,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // scaleVel_rcpp
-double scaleVel_rcpp(double v, double tStep);
+NumericVector scaleVel_rcpp(NumericVector v, double tStep);
 RcppExport SEXP _m4ma_scaleVel_rcpp(SEXP vSEXP, SEXP tStepSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type v(vSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type v(vSEXP);
     Rcpp::traits::input_parameter< double >::type tStep(tStepSEXP);
     rcpp_result_gen = Rcpp::wrap(scaleVel_rcpp(v, tStep));
     return rcpp_result_gen;
