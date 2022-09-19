@@ -21,6 +21,13 @@ headingAngle(..., use = "cpp")
 \item{a2}{Numeric vector of angles between >0 and 360 degrees.}
 
 \item{a1}{Numeric scalar angles between >0 and 360 degrees.}
+
+\item{angles}{Numeric vector indicating the angle of different directions.
+Must be of length 11.}
+
+\item{...}{Arguments passed to the function implementation.}
+
+\item{use}{Whether the R or C++ implementation is called.}
 }
 \value{
 Numeric matrix of shape Nx11 where N is the length of \code{a2}.

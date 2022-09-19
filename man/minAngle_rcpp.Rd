@@ -14,9 +14,13 @@ minAngle_r(a1, a2)
 minAngle(..., use = "cpp")
 }
 \arguments{
-\item{a1_double}{Numeric scalar angle in between $>0$ and 360 degrees.}
-
 \item{a2}{Numeric vector of angles in between $>0$ and 360 degrees.}
+
+\item{a1, a1_double}{Numeric scalar angle in between $>0$ and 360 degrees.}
+
+\item{...}{Arguments passed to the function implementation.}
+
+\item{use}{Whether the R or C++ implementation is called.}
 }
 \value{
 Numeric vector of length equal to \code{a2} with angles in between

@@ -104,7 +104,7 @@ NumericVector dist1_rcpp(NumericVector p1, NumericMatrix p2) {
 //' between $>0$ and 360 degrees. `angle2s` computes the angle in between 
 //' $>-180$ to 180 degrees and `angle2` in between $>0$ and 360 degrees. 
 //' 
-//' @param p1, p2, p_n, P_n Numeric matrices with shape Nx2 (x and y).
+//' @param p1,p2,p_n,P_n Numeric matrices with shape Nx2 (x and y).
 //' 
 //' @return Named numeric vector of length equal to the number of rows in `p2`
 //' or `p_n`.
@@ -238,8 +238,10 @@ NumericVector bin_angle(NumericVector a, NumericVector border) {
 //' left and includes the right border of every bin.
 //' 
 //' @param p1 Numeric matrix with shape Nx2 (x and y).
+//' @param a1 Numeric vector containing angles in degrees between $>0$ and 360.
 //' @param p2 Numeric matrix with shape Nx2 (x and y).
-//' @param a1 Numeric vector containing angles in degrees between 0 and 360.
+//' @param border Numeric vector of angles indicating the breaks between bins
+//' for different directions. Must be of length 11.
 //' 
 //' @return Numeric vector of bin indices.
 // [[Rcpp::export]]
@@ -302,7 +304,7 @@ NumericVector Dn_rcpp(NumericMatrix p_n, NumericMatrix P_n){
 //' Compute smallest absolute angles between a scalar angle and an angle
 //' vector.
 //' 
-//' @param a1_double Numeric scalar angle in between $>0$ and 360 degrees.
+//' @param a1,a1_double Numeric scalar angle in between $>0$ and 360 degrees.
 //' @param a2 Numeric vector of angles in between $>0$ and 360 degrees.
 //' 
 //' @return Numeric vector of length equal to `a2` with angles in between 
@@ -340,6 +342,8 @@ NumericVector minAngle_rcpp(double a1_double, NumericVector a2){
 //' 
 //' @param a2 Numeric vector of angles between >0 and 360 degrees.
 //' @param a1 Numeric scalar angles between >0 and 360 degrees.
+//' @param angles Numeric vector indicating the angle of different directions.
+//' Must be of length 11.
 //' 
 //' @return Numeric matrix of shape Nx11 where N is the length of `a2`.
 // [[Rcpp::export]]

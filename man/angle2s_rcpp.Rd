@@ -32,7 +32,11 @@ angle2(..., use = "cpp")
 Dn(..., use = "cpp")
 }
 \arguments{
-\item{p1, }{p2, p_n, P_n Numeric matrices with shape Nx2 (x and y).}
+\item{p1, p2, p_n, P_n}{Numeric matrices with shape Nx2 (x and y).}
+
+\item{...}{Arguments passed to the function implementation.}
+
+\item{use}{Whether the R or C++ implementation is called.}
 }
 \value{
 Named numeric vector of length equal to the number of rows in \code{p2}

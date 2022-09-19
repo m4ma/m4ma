@@ -17,6 +17,10 @@ dist(..., use = "cpp")
 \item{p1}{Numeric matrix with shape Nx2 (x and y).}
 
 \item{p2}{Numeric matrix with shape Nx2 (x and y).}
+
+\item{...}{Arguments passed to the function implementation.}
+
+\item{use}{Whether the R or C++ implementation is called.}
 }
 \value{
 Named numeric vector of length equal to the number of

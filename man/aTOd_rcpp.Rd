@@ -15,6 +15,10 @@ aTOd(..., use = "cpp")
 }
 \arguments{
 \item{a}{Numeric vector containing angles in degrees between 0 and 360.}
+
+\item{...}{Arguments passed to the function implementation.}
+
+\item{use}{Whether the R or C++ implementation is called.}
 }
 \value{
 Numeric matrix of x and y values (between -1 and 1) that are

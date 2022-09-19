@@ -17,6 +17,10 @@ scaleVel(..., use = "cpp")
 \item{v}{Numeric vector with velocities.}
 
 \item{tStep}{Numeric scalar scaling factor.}
+
+\item{...}{Arguments passed to the function implementation.}
+
+\item{use}{Whether the R or C++ implementation is called.}
 }
 \value{
 Numeric vector with scaled velocities of same length as \code{v}.

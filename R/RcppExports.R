@@ -44,7 +44,7 @@ dist1_rcpp <- function(p1, p2) {
 #' between $>0$ and 360 degrees. `angle2s` computes the angle in between 
 #' $>-180$ to 180 degrees and `angle2` in between $>0$ and 360 degrees. 
 #' 
-#' @param p1, p2, p_n, P_n Numeric matrices with shape Nx2 (x and y).
+#' @param p1,p2,p_n,P_n Numeric matrices with shape Nx2 (x and y).
 #' 
 #' @return Named numeric vector of length equal to the number of rows in `p2`
 #' or `p_n`.
@@ -81,8 +81,10 @@ aTOd_rcpp <- function(a) {
 #' left and includes the right border of every bin.
 #' 
 #' @param p1 Numeric matrix with shape Nx2 (x and y).
+#' @param a1 Numeric vector containing angles in degrees between $>0$ and 360.
 #' @param p2 Numeric matrix with shape Nx2 (x and y).
-#' @param a1 Numeric vector containing angles in degrees between 0 and 360.
+#' @param border Numeric vector of angles indicating the breaks between bins
+#' for different directions. Must be of length 11.
 #' 
 #' @return Numeric vector of bin indices.
 Iangle_rcpp <- function(p1, a1, p2) {
@@ -99,7 +101,7 @@ Dn_rcpp <- function(p_n, P_n) {
 #' Compute smallest absolute angles between a scalar angle and an angle
 #' vector.
 #' 
-#' @param a1_double Numeric scalar angle in between $>0$ and 360 degrees.
+#' @param a1,a1_double Numeric scalar angle in between $>0$ and 360 degrees.
 #' @param a2 Numeric vector of angles in between $>0$ and 360 degrees.
 #' 
 #' @return Numeric vector of length equal to `a2` with angles in between 
@@ -117,6 +119,8 @@ minAngle_rcpp <- function(a1_double, a2) {
 #' 
 #' @param a2 Numeric vector of angles between >0 and 360 degrees.
 #' @param a1 Numeric scalar angles between >0 and 360 degrees.
+#' @param angles Numeric vector indicating the angle of different directions.
+#' Must be of length 11.
 #' 
 #' @return Numeric matrix of shape Nx11 where N is the length of `a2`.
 headingAngle_rcpp <- function(a2, a1) {

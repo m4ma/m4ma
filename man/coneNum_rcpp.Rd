@@ -15,6 +15,10 @@ coneNum(..., use = "cpp")
 }
 \arguments{
 \item{k}{Numeric vector between 1 and 33.}
+
+\item{...}{Arguments passed to the function implementation.}
+
+\item{use}{Whether the R or C++ implementation is called.}
 }
 \value{
 Numeric vector of length equal to k with cone numbers between

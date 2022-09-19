@@ -21,9 +21,16 @@ Iangle(..., use = "cpp")
 \arguments{
 \item{p1}{Numeric matrix with shape Nx2 (x and y).}
 
-\item{a1}{Numeric vector containing angles in degrees between 0 and 360.}
+\item{a1}{Numeric vector containing angles in degrees between $>0$ and 360.}
 
 \item{p2}{Numeric matrix with shape Nx2 (x and y).}
+
+\item{border}{Numeric vector of angles indicating the breaks between bins
+for different directions. Must be of length 11.}
+
+\item{...}{Arguments passed to the function implementation.}
+
+\item{use}{Whether the R or C++ implementation is called.}
 }
 \value{
 Numeric vector of bin indices.
