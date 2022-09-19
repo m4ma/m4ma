@@ -31,7 +31,7 @@ Numeric vector of bin indices.
 \description{
 Compute anti-clockwise angles between two Nx2 matrices with the first
 column in each matrix containing x- and the second column y-coordinates
-(> 0 to 360 degrees) using \link[=dest]{angle2} in relation to a scalar
+(> 0 to 360 degrees) using \link[=angle2]{angle2} in relation to a scalar
 angle. Bin relative angles according to a numeric vector of breaks.
 }
 \details{

@@ -33,14 +33,16 @@ dist1_rcpp <- function(p1, p2) {
 
 #' Anti-clockwise Angle
 #'
-#' Compute the anti-clockwise angles between rows of two Nx2 matrices with 
+#' Compute the anti-clockwise angles between two matrices with 
 #' the first column in each matrix containing x- and the second column 
 #' y-coordinates.
 #' 
 #' For `angle2s` and `angle2`, the angle is calculated from `p1` as origin to 
-#' `p2`. `Dn` calculates the angle between rows with the same index in 
-#' between >0 and 360 degrees. `angle2s` computes the angle in between 
-#' >-180 to 180 degrees and `angle2` in between >0 and 360 degrees. 
+#' `p2`. Therefore, `p1` must be a 1x2 matrix. 
+#' 
+#' `Dn` calculates the angle between rows with the same index in 
+#' between $>0$ and 360 degrees. `angle2s` computes the angle in between 
+#' $>-180$ to 180 degrees and `angle2` in between $>0$ and 360 degrees. 
 #' 
 #' @param p1, p2, p_n, P_n Numeric matrices with shape Nx2 (x and y).
 #' 
@@ -72,7 +74,7 @@ aTOd_rcpp <- function(a) {
 #' 
 #' Compute anti-clockwise angles between two Nx2 matrices with the first
 #' column in each matrix containing x- and the second column y-coordinates
-#' (> 0 to 360 degrees) using \link[=dest]{angle2} in relation to a scalar
+#' (> 0 to 360 degrees) using \link[=angle2]{angle2} in relation to a scalar
 #' angle. Bin relative angles according to a numeric vector of breaks.
 #' 
 #' Returns `NA` if relative angle is `NA` or outside the breaks. Excludes the
@@ -97,12 +99,11 @@ Dn_rcpp <- function(p_n, P_n) {
 #' Compute smallest absolute angles between a scalar angle and an angle
 #' vector.
 #' 
-#' @param a1_double Numeric scalar angle in between >0 and 360 degrees.
-#' @param a2 Numeric vector of angles in between >0 and 360 degrees.
+#' @param a1_double Numeric scalar angle in between $>0$ and 360 degrees.
+#' @param a2 Numeric vector of angles in between $>0$ and 360 degrees.
 #' 
 #' @return Numeric vector of length equal to `a2` with angles in between 
-#' >0 and 360 degrees.
-#' @export
+#' $>0$ and 360 degrees.
 minAngle_rcpp <- function(a1_double, a2) {
     .Call(`_m4ma_minAngle_rcpp`, a1_double, a2)
 }
@@ -145,6 +146,7 @@ scaleVel_rcpp <- function(v, tStep = 0.5) {
 #' @param a1 Numeric scalar angle.
 #' @param vels Numeric matrix (33x3) of velocities for each cell.
 #' @param angles Numeric matrix (33x3) of angles for each cell.
+#' @param tStep Numeric scalar velocity scaling factor.
 #' 
 #' @return Numeric matrix (Nx2) of xy-coordinates for centers of each cell.
 #' @export

@@ -33,6 +33,8 @@ c_vd(...)
 \item{vels}{Numeric matrix (33x3) of velocities for each cell.}
 
 \item{angles}{Numeric matrix (33x3) of angles for each cell.}
+
+\item{tStep}{Numeric scalar velocity scaling factor.}
 }
 \value{
 Numeric matrix (Nx2) of xy-coordinates for centers of each cell.

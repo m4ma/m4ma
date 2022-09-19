@@ -39,12 +39,15 @@ Named numeric vector of length equal to the number of rows in \code{p2}
 or \code{p_n}.
 }
 \description{
-Compute the anti-clockwise angles between rows of two Nx2 matrices with
+Compute the anti-clockwise angles between two matrices with
 the first column in each matrix containing x- and the second column
 y-coordinates.
 }
 \details{
 For \code{angle2s} and \code{angle2}, the angle is calculated from \code{p1} as origin to
-\code{p2}. \code{Dn} calculates the angle between rows with the same index in
-between >0 and 360 degrees. \code{angle2s} computes the angle in between-180 to 180 degrees and angle2 in between >0 and 360 degrees.
+\code{p2}. Therefore, \code{p1} must be a 1x2 matrix.
+
+\code{Dn} calculates the angle between rows with the same index in
+between $>0$ and 360 degrees. \code{angle2s} computes the angle in between
+$>-180$ to 180 degrees and \code{angle2} in between $>0$ and 360 degrees.
 }

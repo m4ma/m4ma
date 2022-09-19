@@ -14,12 +14,13 @@ minAngle_r(a1, a2)
 minAngle(..., use = "cpp")
 }
 \arguments{
-\item{a1_double}{Numeric scalar angle in between >0 and 360 degrees.}
+\item{a1_double}{Numeric scalar angle in between $>0$ and 360 degrees.}
 
-\item{a2}{Numeric vector of angles in between >0 and 360 degrees.}
+\item{a2}{Numeric vector of angles in between $>0$ and 360 degrees.}
 }
 \value{
-Numeric vector of length equal to \code{a2} with angles in between0 and 360 degrees.
+Numeric vector of length equal to \code{a2} with angles in between
+$>0$ and 360 degrees.
 }
 \description{
 Compute smallest absolute angles between a scalar angle and an angle
