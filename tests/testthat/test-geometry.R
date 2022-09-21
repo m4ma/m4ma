@@ -26,6 +26,14 @@ v = c(a_i = 1)
 tStep = 0.5
 
 
+testthat::test_that("geometry wrapper works", {
+  fun = m4ma::wrapper('dist1')
+  res_rcpp = fun(single_point, p2, use = 'cpp')
+  res_r = fun(single_point, p2, use = 'r')
+  testthat::expect_equal(res_rcpp, res_r)
+})
+
+
 testthat::test_that("dist geometry function works", {
   ref = m4ma::dist_r(p1, p2)
   res = m4ma::dist_rcpp(p1, p2)
