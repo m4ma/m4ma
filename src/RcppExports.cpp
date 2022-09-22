@@ -23,12 +23,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // dist1_rcpp
-NumericVector dist1_rcpp(NumericMatrix p1, NumericMatrix p2);
+NumericVector dist1_rcpp(NumericVector p1, NumericMatrix p2);
 RcppExport SEXP _m4ma_dist1_rcpp(SEXP p1SEXP, SEXP p2SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type p1(p1SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type p1(p1SEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type p2(p2SEXP);
     rcpp_result_gen = Rcpp::wrap(dist1_rcpp(p1, p2));
     return rcpp_result_gen;
@@ -59,7 +59,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // aTOd_rcpp
-NumericVector aTOd_rcpp(NumericVector a);
+NumericMatrix aTOd_rcpp(NumericVector a);
 RcppExport SEXP _m4ma_aTOd_rcpp(SEXP aSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -70,15 +70,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // Iangle_rcpp
-NumericVector Iangle_rcpp(NumericMatrix p1, NumericMatrix p2, NumericVector a1);
-RcppExport SEXP _m4ma_Iangle_rcpp(SEXP p1SEXP, SEXP p2SEXP, SEXP a1SEXP) {
+NumericVector Iangle_rcpp(NumericMatrix p1, NumericVector a1, NumericMatrix p2);
+RcppExport SEXP _m4ma_Iangle_rcpp(SEXP p1SEXP, SEXP a1SEXP, SEXP p2SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericMatrix >::type p1(p1SEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type p2(p2SEXP);
     Rcpp::traits::input_parameter< NumericVector >::type a1(a1SEXP);
-    rcpp_result_gen = Rcpp::wrap(Iangle_rcpp(p1, p2, a1));
+    Rcpp::traits::input_parameter< NumericMatrix >::type p2(p2SEXP);
+    rcpp_result_gen = Rcpp::wrap(Iangle_rcpp(p1, a1, p2));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -107,13 +107,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // headingAngle_rcpp
-NumericMatrix headingAngle_rcpp(NumericVector a2, NumericVector a1);
+NumericMatrix headingAngle_rcpp(NumericVector a2, double a1);
 RcppExport SEXP _m4ma_headingAngle_rcpp(SEXP a2SEXP, SEXP a1SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type a2(a2SEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type a1(a1SEXP);
+    Rcpp::traits::input_parameter< double >::type a1(a1SEXP);
     rcpp_result_gen = Rcpp::wrap(headingAngle_rcpp(a2, a1));
     return rcpp_result_gen;
 END_RCPP
@@ -131,18 +131,19 @@ BEGIN_RCPP
 END_RCPP
 }
 // c_vd_rcpp
-NumericMatrix c_vd_rcpp(IntegerVector cells, NumericVector p1, double v1, double a1_double, NumericMatrix vels, NumericMatrix angles);
-RcppExport SEXP _m4ma_c_vd_rcpp(SEXP cellsSEXP, SEXP p1SEXP, SEXP v1SEXP, SEXP a1_doubleSEXP, SEXP velsSEXP, SEXP anglesSEXP) {
+NumericMatrix c_vd_rcpp(IntegerVector cells, NumericVector p1, NumericVector v1, double a1, NumericMatrix vels, NumericMatrix angles, double tStep);
+RcppExport SEXP _m4ma_c_vd_rcpp(SEXP cellsSEXP, SEXP p1SEXP, SEXP v1SEXP, SEXP a1SEXP, SEXP velsSEXP, SEXP anglesSEXP, SEXP tStepSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< IntegerVector >::type cells(cellsSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type p1(p1SEXP);
-    Rcpp::traits::input_parameter< double >::type v1(v1SEXP);
-    Rcpp::traits::input_parameter< double >::type a1_double(a1_doubleSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type v1(v1SEXP);
+    Rcpp::traits::input_parameter< double >::type a1(a1SEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type vels(velsSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type angles(anglesSEXP);
-    rcpp_result_gen = Rcpp::wrap(c_vd_rcpp(cells, p1, v1, a1_double, vels, angles));
+    Rcpp::traits::input_parameter< double >::type tStep(tStepSEXP);
+    rcpp_result_gen = Rcpp::wrap(c_vd_rcpp(cells, p1, v1, a1, vels, angles, tStep));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -369,7 +370,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_m4ma_minAngle_rcpp", (DL_FUNC) &_m4ma_minAngle_rcpp, 2},
     {"_m4ma_headingAngle_rcpp", (DL_FUNC) &_m4ma_headingAngle_rcpp, 2},
     {"_m4ma_scaleVel_rcpp", (DL_FUNC) &_m4ma_scaleVel_rcpp, 2},
-    {"_m4ma_c_vd_rcpp", (DL_FUNC) &_m4ma_c_vd_rcpp, 6},
+    {"_m4ma_c_vd_rcpp", (DL_FUNC) &_m4ma_c_vd_rcpp, 7},
     {"_m4ma_coneNum_rcpp", (DL_FUNC) &_m4ma_coneNum_rcpp, 1},
     {"_m4ma_ringNum_rcpp", (DL_FUNC) &_m4ma_ringNum_rcpp, 1},
     {"_m4ma_like_subject", (DL_FUNC) &_m4ma_like_subject, 7},

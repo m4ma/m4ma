@@ -4,285 +4,402 @@
 
 using namespace Rcpp;
 
-//' dist_rcpp
+// IMPORTANT: The geometry C++ functions are currently directly integrated into the
+// predped R code. That is, instead of the predped pp_geometry.R functions,
+// the C++ functions are called. Thus, the arguments of the functions and their 
+// order must not be changed for the integration to work. Moreover, the output 
+// must be *exactly* the same as from the R functions, including the
+// types, shapes, and names of dimensions (col and row names).
+
+
+//' Matrix-to-matrix Distance
 //'
-//' Compute distance from p1 to p2, both xy column matrices
-//' @param p1 Numeric matrix
-//' @param p2 Numeric matrix
-//' @return Named numeric vector of length equal to the number of rows in p1
-//' @export
+//' Compute the Euclidian distance between two Nx2 matrices with the first
+//' column in each matrix containing x- and the second column y-coordinates.
+//' 
+//' The matrices `p1` and `p2` must have the same shape.
+//' 
+//' @param p1 Numeric matrix with shape Nx2 (x and y).
+//' @param p2 Numeric matrix with shape Nx2 (x and y).
+//' 
+//' @return Named numeric vector of length equal to the number of 
+//' rows N in `p1`.
 // [[Rcpp::export]]
 NumericVector dist_rcpp(NumericMatrix p1, NumericMatrix p2) {
   
-  // initialise variables
-  int ncols = p1.ncol();
-  int nrows = p1.nrow();
+  int n_rows = p1.nrow();
   NumericMatrix temp(p1);
-  CharacterVector p1_names = rownames(p1);
-  NumericVector out(nrows);
-  out.names() = p1_names;
+  NumericVector out(n_rows);
   
   // difference between the rows of p1 and p2 elevated to the power of 2
-  for(int i = 0; i < nrows; i++){
-    for(int j = 0; j < ncols; j++){
-      temp(i,j) = std::pow(p1(i,j) - p2(i,j),2);
-    }
+  for(int i = 0; i < n_rows; i++){
+    temp(i, _) = pow(p1(i, _) - p2(i, _), 2);
   }
   
   // apply square root of the sum of the rows of x and y
-  for(int i = 0; i < nrows; i++){
-    out(i) = std::sqrt(temp(i,0) + temp(i,1));
+  for(int i = 0; i < n_rows; i++){
+    out[i] = std::sqrt(temp(i, 0) + temp(i, 1));
+  }
+  
+  // assign row names of p1 if they exist
+  if(rownames(p1) != R_NilValue) {
+    out.names() = rownames(p1);
   }
   
   return out;
 }
 
 
-//' dist1_rcpp
+//' Vector-to-matrix Distance
 //'
-//' Compute distance from p1 to p2
-//' @param p1 Numeric matrix of a single point (i.e., 1 row, 2 xy columns)
-//' @param p2 Numeric matrix of multiple xy points
-//' @return Named numeric vector of length equal to the number of rows in p2
-//' @export
+//' Compute the Euclidian distance between a two-element vector and a Nx2 
+//' matrix with the first column/element containing x- and the second 
+//' column/element y-coordinates.
+//' 
+//' @param p1 Numeric vector of length two (x and y).
+//' @param p2 Numeric matrix with shape Nx2 (x and y).
+//' 
+//' @return Named numeric vector of length equal to the number of rows in `p2`.
 // [[Rcpp::export]]
-NumericVector dist1_rcpp(NumericMatrix p1, NumericMatrix p2) {
+NumericVector dist1_rcpp(NumericVector p1, NumericMatrix p2) {
   
-  // allocate transposed matrix
-  NumericMatrix t_p2 = transpose(p2);
-  // allocate indices
-  int ncols = t_p2.ncol();
-  int nrows = t_p2.nrow();
-  // allocate temporary matrix
-  NumericMatrix temp_matrix(t_p2);
-  // allocate output
-  NumericVector out(ncols); 
+  // transpose matrix
+  NumericMatrix p2_t = transpose(p2);
   
-  for(int i = 0; i < nrows; i++){
-    for(int j = 0; j < ncols; j++){
-      temp_matrix(i,j) = std::pow(t_p2(i,j) - p1(0,i),2);
-      out(j) = std::sqrt(sum(temp_matrix(_, j)));
-    }
+  int n_rows = p2_t.nrow();
+  int n_cols = p2_t.ncol();
+  
+  NumericMatrix tmp(n_rows, n_cols);
+  NumericVector out(n_cols);
+  
+  // difference between rows of p2_t and elements of p1 to the power 2
+  for(int i = 0; i < n_rows; i++){
+    tmp(i, _) = pow(p2_t(i, _) - p1[i], 2);
   }
-  out.names() = rownames(p2);
+  
+  // square root of the column-wise sum 
+  for(int j = 0; j < n_cols; j++){
+    out[j] = std::sqrt(sum(tmp(_, j)));
+  }
+  
+  // assign col names of p2_t if they exist
+  if(colnames(p2_t) != R_NilValue) {
+    out.names() = colnames(p2_t);
+  }
+  
   return out;
 }
 
 
-//' angle2s_rcpp
+//' Anti-clockwise Angle
 //'
-//' Compute Shortest angle anti-clockwise from p1 as origin to p2 (> -180 to 180)
-//' @param p1 Numeric matrix
-//' @param p2 Numeric matrix
-//' @return Numeric vector of length equal to the number of rows in p1 
-//' @export
+//' Compute the anti-clockwise angles between two matrices with 
+//' the first column in each matrix containing x- and the second column 
+//' y-coordinates.
+//' 
+//' For `angle2s` and `angle2`, the angle is calculated from `p1` as origin to 
+//' `p2`. Therefore, `p1` must be a 1x2 matrix. 
+//' 
+//' `Dn` calculates the angle between rows with the same index in 
+//' between $>0$ and 360 degrees. `angle2s` computes the angle in between 
+//' $>-180$ to 180 degrees and `angle2` in between $>0$ and 360 degrees. 
+//' 
+//' @param p1,p2,p_n,P_n Numeric matrices with shape Nx2 (x and y).
+//' 
+//' @return Named numeric vector of length equal to the number of rows in `p2`
+//' or `p_n`.
 // [[Rcpp::export]]
 NumericVector angle2s_rcpp(NumericMatrix p1, NumericMatrix p2) {
   
-  // initialise variable
-  NumericVector out(p1.nrow());
-  CharacterVector p1_names = rownames(p1);
-  int nrow = p1.nrow();
+  int n_rows = p2.nrow();
+  NumericVector out(n_rows);
   
-  for(int row = 0; row < nrow; row++){
-    out(row) = (180 / M_PI) * std::atan2((p2(_,1) - p1(_,1))[row], (p2(_,0) - p1(_,0))[row]);
+  // angle as arc tan from difference in x and y
+  for(int i = 0; i < n_rows; i++){
+    out[i] = (180 / M_PI) * std::atan2(
+      (p2(i, 1) - p1[1]), (p2(i, 0) - p1[0])
+    );
   }
   
+  // round to ten decimals
   out = round(out, 10);
   
-  // return a numeric vector whose names match those of p1's rows
-  // only if p1's rows have names
-  if(is_false(all(is_na(p1_names)))){
-    out.names() = p1_names;
+  // assign row names of p1 if they exist
+  if(rownames(p2) != R_NilValue) {
+    out.names() = rownames(p2);
   }
   
   return(out);
 }
 
 
-
-//' angle2
-//' 
-//' Anti-clockwise angle from p1 as origin to p2 (x,y pairs matrices). The angle goes from 0 to 360.
-//' @param p1 Numeric matrix
-//' @param p2 Numeric matrix
-//' @return Named numeric vector of length equal to the number of rows in p1
+//' @rdname angle2s_rcpp
 // [[Rcpp::export]]
 NumericVector angle2_rcpp(NumericMatrix p1, NumericMatrix p2) {
-  // initialise variable
-  int n_rows = p1.nrow();
-  NumericVector angle(n_rows);
   
-  for(int row = 0; row < n_rows; ++row){
-    double angle_centered = (180 / M_PI) * std::atan2((p2(_, 1) - p1(_, 1))[row], (p2(_, 0) - p1(_, 0))[row]);
-    angle[row] = fmod(360 + angle_centered, 360);
+  int n_rows = p2.nrow();
+  NumericVector angle_centered(n_rows);
+  
+  // angle as arc tan from difference in x and y
+  for(int i = 0; i < n_rows; i++){
+    double angle = (180 / M_PI) * std::atan2(
+      (p2(i, 1) - p1[1]), (p2(i, 0) - p1[0])
+    );
+    angle_centered[i] = fmod(360 + angle, 360);
   }
   
-  // not clear here whether angle's names need to be p1 or p2' names
-  angle.names() = rownames(p1);
-  return angle;
+  // assign row names of p2 if they exist 
+  if(rownames(p2) != R_NilValue) {
+    angle_centered.names() = rownames(p2);
+  }
+  
+  return angle_centered;
 }
 
-//' aTOd
+
+//' Sine and Cosine
 //' 
-//' Compute sine and cosine of an angle.
-//' @param a Numeric vector - angles in degrees between 0 and 360
-//' @return Numeric Matrix of x and y coordinates (between -1 and 1) that are the signed (i.e., +/-) normalised difference between the xy points that generated the angle a
+//' Compute sine and cosine of angles.
+//' 
+//' @param a Numeric vector containing angles in degrees between 0 and 360.
+//' 
+//' @return Numeric matrix of x and y values (between -1 and 1) that are 
+//' the signed normalized differences between the xy-points leading to
+//' the angles `a`.
 // [[Rcpp::export]]
-NumericVector aTOd_rcpp(NumericVector a) {
+NumericMatrix aTOd_rcpp(NumericVector a) {
   
-  int rows = a.length();
+  int n_rows = a.length();
   double radians = (M_PI / 180);
-  NumericMatrix coordinates(rows,2);
+  NumericMatrix coordinates(n_rows,2);
+  
+  // sine and cosine of radians
+  for(int i = 0; i < n_rows; i++){
+    coordinates(i, 0) = cos(a[i] * radians);
+    coordinates(i, 1) = sin(a[i] * radians);
+  }
+  
+  // output matrix has x and y coordinates
   colnames(coordinates) = CharacterVector::create("x", "y");
   
-  for(int i = 0; i < rows; i++){
-    coordinates(i,0) = cos(a[i] * radians);
-    coordinates(i,1) = sin(a[i] * radians);
+  // assign names of a if they exist
+  if(a.hasAttribute("names")) {
+    CharacterVector a_names = a.names();
+    rownames(coordinates) = a_names;
   }
   
   return(coordinates); 
 }
 
-//' Iangle
-//' 
-//' Which angle cone (1..11, NA means outside of view) is p2 in relative to p1 heading at angel a1 
-//' @param p1 Numeric matrix
-//' @param p2 Numeric matrix
-//' @param a1 Numeric vector - angles in degrees between 0 and 360
-//' @return Numeric Vector of indices whereby the angle is within border's bins
-// [[Rcpp::export]]
 
-NumericVector Iangle_rcpp(NumericMatrix p1, NumericMatrix p2, NumericVector a1) {
+// Helper function that converts angles to > -180 to 180
+NumericVector tomp_rcpp(NumericVector x) {
   
-  int rows = a1.length();
-  NumericVector angle = angle2_rcpp(p1,p2);
-  NumericVector a(rows);
+  NumericVector out = ifelse(x <= -180.0, x + 360.0,
+                             ifelse(x > 180.0, x - 360.0,
+                                    x));
+  
+  return(out);
+}
+
+
+// Helper function that bins angles according to borders and returns bin indices
+NumericVector bin_angle(NumericVector a, NumericVector border) {
+  int l = a.length();
+  int b = border.length();
+  NumericVector out(l);
+  
+  for(int i = 0; i < l; i++) {
+    // set to NA if outside borders
+    double idx = NA_REAL;
+    
+    // iterate over borders
+    for(int j = 1; j < b; j++) {
+      // if angle is > left border and <= right border
+      if(a[i] > border[j-1] && a[i] <= border[j]) {
+        idx = j;
+      }
+      out[i] = idx;
+    }
+  }
+  
+  return(out);
+}
+
+
+//' Bin Angles between Matrices
+//' 
+//' Compute anti-clockwise angles between two Nx2 matrices with the first
+//' column in each matrix containing x- and the second column y-coordinates
+//' (> 0 to 360 degrees) using \link[=angle2]{angle2} in relation to a scalar
+//' angle. Bin relative angles according to a numeric vector of breaks.
+//' 
+//' Returns `NA` if relative angle is `NA` or outside the breaks. Excludes the
+//' left and includes the right border of every bin.
+//' 
+//' @param p1 Numeric matrix with shape Nx2 (x and y).
+//' @param a1 Numeric vector containing angles in degrees between $>0$ and 360.
+//' @param p2 Numeric matrix with shape Nx2 (x and y).
+//' @param border Numeric vector of angles indicating the breaks between bins
+//' for different directions. Must be of length 11.
+//' 
+//' @return Numeric vector of bin indices.
+// [[Rcpp::export]]
+NumericVector Iangle_rcpp(NumericMatrix p1, NumericVector a1, NumericMatrix p2) {
   
   // NOTE: border was hand-coded in the original R function with the values provided below.
   NumericVector border = NumericVector::create(-85, -60, -40, -25, -15, -5, 5, 15, 
                                                25, 40, 60, 85);
   
-  for(int i = 0; i < rows; i++){
-    double a_temp = angle(i) - a1(i);
-    if(a_temp < -180){
-      a_temp = a_temp + 360;
-      
-    } else if (a_temp > 180){
-      a_temp =  a_temp - 360; 
-    }
-    
-    double a_bin = NA_REAL;
-    for(int j = 0; j < border.length()-1; j++){
-      // if a_temp is within border j (lower bound) and border j + 1 (upper bound)
-      if(((a_temp - border(j)) * (a_temp - border(j+1))) <= 0){
-        a_bin = 12 - (j+1);
-      } 
-    }
-    
-    a(i) = a_bin;
+  // calculate angle
+  NumericVector angle = angle2_rcpp(p1, p2) - a1;
+  
+  // convert to -180 to 180
+  NumericVector tmp = tomp_rcpp(angle);
+  
+  // bin angle
+  NumericVector out = 12 - bin_angle(tmp, border);
+  
+  // assign row names of p2 if they exist
+  if(rownames(p2) != R_NilValue) {
+    out.names() = rownames(p2);
   }
-  a.names() = rownames(p2);
-  return(a);
+  
+  return(out);
 }
 
 
-//' Dn
-//' 
-//' Anti-clockwise angle to destination for all pedestrians. The angle goes from 0 to 360
-//' @param p_n Numeric matrix of x and y coordinates
-//' @param P_n Numeric matrix of x and y coordinates
-//' @return Named numeric vector of length equal to the number of rows in p1
+//' @rdname angle2s_rcpp
 // [[Rcpp::export]]
-
 NumericVector Dn_rcpp(NumericMatrix p_n, NumericMatrix P_n){
-  // NOTE: this function may need more explanations?
-  // the Dn function seems to do the same thing of angle2_rcpp
-  // maybe the way the angle2 R function was previously written did not permit ciclying across rows?
+  // NOTE: In contrast to angle2, this function computes the angle between the
+  // pairwise rows of both matrices whereas angle2 treats one matrix as a vector
+  // and computes the angle with the vector as the origin
   
-  NumericVector out(p_n.nrow());
-  out = angle2_rcpp(p_n,P_n);
-  return(out);
+  int p_n_rows = p_n.nrow();
+  int p_n_cols = p_n.ncol();
+  int P_n_cols = P_n.ncol();
+  NumericVector out(p_n_rows);
   
-}
-
-//' minAngle
-//' 
-//' Shortest absolute angle between a1 and a2
-//' @param a1_double scalar vector 
-//' @param a2 Numeric vector 
-//' @return Numeric vector of length equal to a1
-// [[Rcpp::export]]
-
-NumericVector minAngle_rcpp(double a1_double, NumericVector a2){
-  // NOTE: it is not clear whether a1 has to be a double or a numeric vector like a2
-  // I am opting for the former interpretation because of the way minAngles() was used in R within headingAngles()
-  // i.e., headingAngles() in R included a for loop to provide a single element to minAngles's a1 parameter.
-  
-  NumericVector out(a2.length());
-  
-  for(int i = 0; i < a2.length(); i++){
-    out(i) = std::min(abs(a1_double - a2(i)), abs(std::min(a1_double, a2(i)) + (360 - std::max(a1_double, a2(i)))));
+  for(int i = 0; i < p_n_rows; i++){
+    // create 1xN NumericMatrices required by angle_2
+    NumericMatrix p_n_i(1, p_n_cols);
+    p_n_i(0, _) = p_n(i, _);
     
+    NumericMatrix P_n_i(1, P_n_cols);
+    P_n_i(0, _) = P_n(i, _);
+    
+    // compute angle between rows of *both* matrices
+    NumericVector angle = angle2_rcpp(p_n_i, P_n_i);
+    
+    out[i] = angle[0];
   }
+  
   return(out);
   
 }
 
-//' headingAngle
+//' Minimum Angle
 //' 
-//' Absolute angular difference between 11 directions with zero cone having angle a1 and a2
-//' @param a1 Numeric vector 
-//' @param a2 Numeric vector 
-//' @return Numeric matrix whose rows and columns are the same length of a2 and a1
+//' Compute smallest absolute angles between a scalar angle and an angle
+//' vector.
+//' 
+//' @param a1,a1_double Numeric scalar angle in between $>0$ and 360 degrees.
+//' @param a2 Numeric vector of angles in between $>0$ and 360 degrees.
+//' 
+//' @return Numeric vector of length equal to `a2` with angles in between 
+//' $>0$ and 360 degrees.
 // [[Rcpp::export]]
-
-NumericMatrix headingAngle_rcpp(NumericVector a2, NumericVector a1){
+NumericVector minAngle_rcpp(double a1_double, NumericVector a2){
   
-  // NOTE: angles was hand-coded in the original R function with the values provided below.
-  // consider whether angles needs to be ever used as a parameter
+  int l = a2.length();
+  NumericVector out(l);
+  
+  // compute parallel minima and maxima
+  for(int i = 0; i < l; i++){
+    out[i] = std::min(
+      abs(a1_double - a2[i]),
+      abs(std::min(a1_double, a2[i]) + (360 - std::max(a1_double, a2[i])))
+    );
+  }
+  
+  // assign names of a2 if they exist
+  if(a2.hasAttribute("names")) {
+    CharacterVector a2_names = a2.names();
+    out.names() = a2_names;
+  }
+  
+  return(out);
+  
+}
+
+//' Heading Angle
+//' 
+//' Compute absolute angular differences between 11 standard angles and a 
+//' vector of angles.
+//' 
+//' Angle `a1` is added to the standard angles.
+//' 
+//' @param a2 Numeric vector of angles between >0 and 360 degrees.
+//' @param a1 Numeric scalar angles between >0 and 360 degrees.
+//' @param angles Numeric vector indicating the angle of different directions.
+//' Must be of length 11.
+//' 
+//' @return Numeric matrix of shape Nx11 where N is the length of `a2`.
+// [[Rcpp::export]]
+NumericMatrix headingAngle_rcpp(NumericVector a2, double a1){
+  
+  // NOTE: angles was hand-coded in the original R function with the values 
+  // provided below. Consider whether angles needs to be ever used as 
+  // a parameter
   
   NumericVector angles = NumericVector::create(72.5, 50, 32.5, 20, 10, 0, 350, 
                                                340, 327.5, 310, 287.5);
-  int rows = a2.length();
-  int cols = angles.length();
+  int n_rows = a2.length();
+  int n_cols = angles.length();
   
-  // output 
-  NumericMatrix output_angles(rows, cols); 
-  // NOTE: not clear what is the correspondence between a1 and a2 names with the output's rows' and columns' names
-  CharacterVector out_angles_rownames = a2.names();
-  CharacterVector out_angles_colnames = a1.names();
-  rownames(output_angles) = out_angles_rownames;
-  colnames(output_angles) = out_angles_rownames;
+  NumericMatrix output_angles(n_rows, n_cols);
   
-  for(int i = 0; i < cols;i++){
-    // sum a1 to all angles in angles
-    double ang_temp = angles(i) + a1(i);
-    // compute module
-    ang_temp = fmod(360 + ang_temp, 360);
-    // find the minAngle between ang_temp and a2 and append the output by columns in the output
-    output_angles(_,i) = minAngle_rcpp(ang_temp, a2);
+  for(int i = 0; i < n_cols; i++){
+    // add a1 to default angles
+    double ang_temp = angles[i] + a1;
+    // compute modulo
+    ang_temp = fmod(360.0 + ang_temp, 360.0);
+    // find the shortest absolute angle between ang_temp and a2
+    output_angles(_, i) = minAngle_rcpp(ang_temp, a2);
+  }
+  
+  // assign names of a2 if they exist
+  if(a2.hasAttribute("names")) {
+    CharacterVector a2_names = a2.names();
+    rownames(output_angles) = a2_names;
   }
   
   return(output_angles);
   
 }
 
-//' scaleVel
+//' Scaled Velocity
 //' 
-//' Scale velocity by time step (tStep)
-//' @param v double
-//' @param tStep double
-//' @return Scalar of scaled velocity of same length of v
+//' Scale velocities by a factor.
+//' 
+//' @param v Numeric vector with velocities.
+//' @param tStep Numeric scalar scaling factor.
+//' 
+//' @return Numeric vector with scaled velocities of same length as `v`.
 // [[Rcpp::export]]
-
-NumericVector scaleVel_rcpp(NumericVector v, double tStep){
+NumericVector scaleVel_rcpp(NumericVector v, double tStep = 0.5){
   
   double v_len = v.length();
   NumericVector scaled_v(v_len);
-  
+
   for(int i = 0; i < v_len;  i++){
     scaled_v[i] = v[i] * tStep;
+  }
+  
+  if(v.hasAttribute("names")) {
+    CharacterVector v_names = v.names();
+    scaled_v.names() = v_names;
   }
   
   return(scaled_v);
@@ -290,58 +407,77 @@ NumericVector scaleVel_rcpp(NumericVector v, double tStep){
 
 
 
-//' c_vd
-//'
-//' Calculate cell centres for set of cells (index 1..33) for p1 heading at velocity v1 at angle a1 given time step tStep seconds.
-//' @param cells Integer vector indicating the set of pedestrian's cells 
-//' @param p1 Numeric vector of pedestrian's xy coordinates 
-//' @param v1 Scalar value of current velocity
-//' @param a1_double Float of the current angle
-//' @param vels Numeric matrix of velocities
-//' @param angles Numeric matrix (33x3) of possible directions expressed in grades from 0 to 360
-//' @return Numeric matrix (33x2) of xy coordinates for each cell 
+//' Cell Centers
+//' 
+//' Calculate centers of `cells` (index 1 to 33) given a xy-point `p1`
+//' moving at velocity `v1` with angle `a1`.
+//' 
+//' @param cells Integer vector indicating cell indices between 1 and 33.
+//' @param p1 Numeric vector of length two (x and y).
+//' @param v1 Numeric scalar velocity.
+//' @param a1 Numeric scalar angle.
+//' @param vels Numeric matrix (33x3) of velocities for each cell.
+//' @param angles Numeric matrix (33x3) of angles for each cell.
+//' @param tStep Numeric scalar velocity scaling factor.
+//' 
+//' @return Numeric matrix (Nx2) of xy-coordinates for centers of each cell.
 //' @export
 // [[Rcpp::export]]
+NumericMatrix c_vd_rcpp(IntegerVector cells, NumericVector p1, NumericVector v1,
+                        double a1, NumericMatrix vels, NumericMatrix angles,
+                        double tStep = 0.5) {
+  
+  IntegerVector cells_0 = cells - 1;
+  
+  int n_rows = cells.length();
+  int n_cols = p1.length();
+  NumericMatrix cell_centres(n_rows, n_cols);
 
-NumericMatrix c_vd_rcpp(IntegerVector cells, NumericVector p1, double v1, 
-                        double a1_double, NumericMatrix vels, NumericMatrix angles){
+  NumericVector cell_angles(n_rows);
+  NumericVector cell_vels(n_rows);
   
-  // allocate output
-  int outNrows = cells.length();
-  int outNcols = p1.length();
-  int velNcols = vels.ncol();
-  int velNrows = vels.nrow();
-  NumericMatrix cell_centres(outNrows, outNcols);
-  CharacterVector outNames = p1.names();
-  
-  
-  // compute scaled velocity with default parameter 0.5
-  double scaled_velocity = v1 * 0.5;
-  
-  for(int i = 0; i < velNcols;  i++){
-    for(int j = 0; j < velNrows; j++){
-      double angles_ = angles(j,i) + a1_double;
-      double angles_centred = fmod(360 + angles_, 360);
-      // x coordinate
-      cell_centres(i*velNrows+j,0) = p1[0] + scaled_velocity * vels(j,i) * cos(angles_centred * (M_PI / 180));
-      // y coordinate
-      cell_centres(i*velNrows+j,1) = p1[1] + scaled_velocity * vels(j,i) * sin(angles_centred * (M_PI / 180));
-    }
+  for(int i = 0; i < n_rows; i++) {
+    // compute scaled velocity with default parameter 0.5
+    cell_vels[i] = tStep * vels[cells_0[i]];
+    // compute modulo
+    cell_angles[i] = fmod(360.0 + (angles[cells_0[i]] + a1), 360.0);
   }
-  colnames(cell_centres) = outNames;
-  return(cell_centres);
   
+  // compute cosine and sine
+  NumericMatrix cos_sin = aTOd_rcpp(cell_angles);
+  
+  // multiply cosine and sine with velocities
+  for(int i = 0; i < n_rows; i++) {
+    cell_centres(i, _) = cell_vels[i] * cos_sin(i, _);
+  }
+  
+  // transpose 
+  NumericMatrix cell_centres_t = transpose(cell_centres);
+  
+  // add p1 coordinates to centers
+  for(int j = 0; j < n_cols; j++) {
+    cell_centres_t(j, _) = cell_centres_t(j, _) + p1[j];
+  }
+  
+  // transpose back
+  NumericMatrix cell_centres_t_t = transpose(cell_centres_t);
+  
+  // assign names of p1 if they exist
+  if(p1.hasAttribute("names")) {
+    CharacterVector p1_names = p1.names();
+    colnames(cell_centres_t_t) = p1_names;
+  }
+  
+  return(cell_centres_t_t);
 }
 
 
-//' coneNum
+//' Cone Number
 //'
-//' Find equivalent cone number from a vector of angles indices
-//' @param k Numeric vector going from 1 to 33
-//' @return Numeric vector of length equal to 33 
-//' @export
+//' @param k Numeric vector between 1 and 33.
+//' @return Numeric vector of length equal to k with cone numbers between 
+//' 1 and 11.
 // [[Rcpp::export]]
-
 NumericVector coneNum_rcpp(NumericVector k){
   int k_len = k.length();
   NumericVector cone_number(k_len);
@@ -353,14 +489,12 @@ NumericVector coneNum_rcpp(NumericVector k){
   return(cone_number);
 }
 
-//' ringNum
-//'
-//' Find equivalent cone number from a vector of angles indices going from 1 to 33
-//' @param k Numeric vector going from 1 to 33
-//' @return Numeric vector of length equal to 33
-//' @export
+//' Ring Number
+//' 
+//' @param k Numeric vector between 1 and 33.
+//' @return Numeric vector of length equal to k with ring numbers between 
+//' 1 and 3.
 // [[Rcpp::export]]
-
 NumericVector ringNum_rcpp(NumericVector k){
   int k_len = k.length();
   NumericVector ring_number(k_len);
