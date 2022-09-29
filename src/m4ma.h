@@ -3,7 +3,7 @@
 #define RCPP_m4ma
 
 
-#include "utilities.h"
+#include "utility.h"
 #include "pCNL.h"
 #include "geometry.h"
 
