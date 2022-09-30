@@ -2,16 +2,17 @@
 % Please edit documentation in R/utils.R
 \name{create_rcpp_trace}
 \alias{create_rcpp_trace}
-\title{create_rcpp_trace}
+\title{Rcpp Trace}
 \usage{
 create_rcpp_trace(trace)
 }
 \arguments{
-\item{trace}{takes a loaded object of the .rda type}
+\item{trace}{List of states in the simulation.}
 }
 \value{
-a list of lists containing the .rda's elements
+List of simulation iterations containing subject states.
 }
 \description{
-Helper functions for filling the list created by create_rcpp_states for subsequent testing
+Helper function that transforms a trace list simulated by predped into the
+format required to do likelihood estimation.
 }

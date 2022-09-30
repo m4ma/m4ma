@@ -1,6 +1,6 @@
 
-#ifndef UTILITIES
-#define UTILITIES
+#ifndef UTILITY
+#define UTILITY
 
 #include <Rcpp.h>
 
@@ -13,4 +13,4 @@ Rcpp::NumericVector utility(Rcpp::NumericVector p, int n, double v, double d,
                             Rcpp::LogicalMatrix ok,
                             Rcpp::IntegerVector group);
 
-#endif // UTILITIES
+#endif // UTILITY

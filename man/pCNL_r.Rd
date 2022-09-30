@@ -7,7 +7,16 @@
 \usage{
 pCNL_r(cell, V, muM = rep(1, length(nests)), nests, alpha, mu, cellNest)
 
-pCNL(cell, V, muM = rep(1, length(nests)), nests, alpha, mu, cellNest)
+pCNL(
+  cell,
+  V,
+  muM = rep(1, length(nests)),
+  nests,
+  alpha,
+  mu,
+  cellNest,
+  use = "cpp"
+)
 }
 \arguments{
 \item{cell}{Alternative vector with nest indices.}
