@@ -44,6 +44,6 @@ testthat::test_that("State likelihood computation works", {
 })
 
 testthat::test_that("Trace likelihood sum works", {
-  ll_sum = m4ma::msumlogLike(test_trace_rcpp, p, nests, alpha, m4ma::get_cell_nest())
+  ll_sum = m4ma::msumlogLike(p, test_trace_rcpp, nests, alpha, m4ma::get_cell_nest())
   testthat::expect_equal(-ll_sum, ref)
 })
