@@ -215,8 +215,8 @@ like_state <- function(state, p, nests, alpha, cell_nest, min_like = 1e-10) {
 #' 
 #' Calculate the log-likelihood of a trace of states as the sum over states and subject log-likelihoods.
 #'
-#' @param trace List of lists of lists with subject data.
 #' @param p Numeric matrix with subject parameters for each subject.
+#' @param trace List of lists of lists with subject data.
 #' @param nests List of vectors with utility indices.
 #' @param alpha List of vectors with alpha values.
 #' @param cell_nest Numeric matrix with nest indices for each cell.
@@ -225,8 +225,8 @@ like_state <- function(state, p, nests, alpha, cell_nest, min_like = 1e-10) {
 #' 
 #' @returns Numeric scalar trace log-likelihood.
 #' @export
-msumlogLike <- function(trace, p, nests, alpha, cell_nest, min_like = 1e-10, mult = -1.0) {
-    .Call(`_m4ma_msumlogLike`, trace, p, nests, alpha, cell_nest, min_like, mult)
+msumlogLike <- function(p, trace, nests, alpha, cell_nest, min_like = 1e-10, mult = -1.0) {
+    .Call(`_m4ma_msumlogLike`, p, trace, nests, alpha, cell_nest, min_like, mult)
 }
 
 #' Probability of the Conditional Nested Logit Model
@@ -242,6 +242,26 @@ msumlogLike <- function(trace, p, nests, alpha, cell_nest, min_like = 1e-10, mul
 #' @export
 pcnl_rcpp <- function(cell, utility, mum, nests, alpha, mu) {
     .Call(`_m4ma_pcnl_rcpp`, cell, utility, mum, nests, alpha, mu)
+}
+
+line_line_intersection_rcpp <- function(P1, P2, P3, P4, interior_only = FALSE) {
+    .Call(`_m4ma_line_line_intersection_rcpp`, P1, P2, P3, P4, interior_only)
+}
+
+seesGoal_rcpp <- function(p_n, P_n, objects) {
+    .Call(`_m4ma_seesGoal_rcpp`, p_n, P_n, objects)
+}
+
+seesCurrentGoal_rcpp <- function(n, state, objects, offset = 0L) {
+    .Call(`_m4ma_seesCurrentGoal_rcpp`, n, state, objects, offset)
+}
+
+seesMany_rcpp <- function(p1, ps, objects) {
+    .Call(`_m4ma_seesMany_rcpp`, p1, ps, objects)
+}
+
+seesGoalOK_rcpp <- function(n, objects, state, centres, ok) {
+    .Call(`_m4ma_seesGoalOK_rcpp`, n, objects, state, centres, ok)
 }
 
 #' Blocked-angle Utility
@@ -361,5 +381,29 @@ wbUtility_rcpp <- function(aWB, bWB, buddies, dists) {
 #'
 utility <- function(p, n, v, d, ba_, ga, id_, fl_, wb_, ok, group) {
     .Call(`_m4ma_utility`, p, n, v, d, ba_, ga, id_, fl_, wb_, ok, group)
+}
+
+destinationAngle_rcpp <- function(a, p1, P1) {
+    .Call(`_m4ma_destinationAngle_rcpp`, a, p1, P1)
+}
+
+predClose_rcpp <- function(n, p1, a1, p2, r, centres, p_pred, objects) {
+    .Call(`_m4ma_predClose_rcpp`, n, p1, a1, p2, r, centres, p_pred, objects)
+}
+
+eObjects_rcpp <- function(p1, p2, r) {
+    .Call(`_m4ma_eObjects_rcpp`, p1, p2, r)
+}
+
+iCones_rcpp <- function(p1, a, p2, r, objects) {
+    .Call(`_m4ma_iCones_rcpp`, p1, a, p2, r, objects)
+}
+
+iCones2Cells_rcpp <- function(iC, v, tStep = 0.5) {
+    .Call(`_m4ma_iCones2Cells_rcpp`, iC, v, tStep)
+}
+
+blockedAngle_rcpp <- function(n, state, p_pred, objects) {
+    .Call(`_m4ma_blockedAngle_rcpp`, n, state, p_pred, objects)
 }
 
