@@ -1,4 +1,5 @@
 #include <Rcpp.h>
+#include "utils.h"
 
 using namespace Rcpp;
 
@@ -276,19 +277,6 @@ NumericVector wbUtility_rcpp(double aWB, double bWB, NumericMatrix buddies,
   }
   
   return utility;
-}
-
-
-IntegerVector char2int(CharacterVector char_vec) {
-  int k = char_vec.length();
-  
-  IntegerVector int_vec (k);
-  
-  for(int i = 0;  i < k; ++i) {
-    int_vec[i] = std::stoi(std::string(char_vec[i]));
-  }
-  
-  return int_vec;
 }
 
 
