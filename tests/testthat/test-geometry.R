@@ -65,8 +65,8 @@ testthat::test_that("aTOd geometry function works", {
 })
 
 testthat::test_that("Iangle geometry function works", {
-  ref = m4ma::Iangle_r(p1, a, p2)
-  res = m4ma::Iangle_rcpp(p1, a, p2)
+  ref = m4ma::Iangle_r(single_point, a_double, p2)
+  res = m4ma::Iangle_rcpp(single_point, a_double, p2)
   testthat::expect_equal(res, ref)
 })
 
@@ -108,9 +108,10 @@ testthat::test_that("c_vd geometry function works", {
   ref = m4ma::c_vd_r(cells = 1:33, p1 = single_point[1, ],
                    v1 = v, a1 = a_double) 
   res = m4ma::c_vd_rcpp(cells = 1:33, p1 = single_point[1, ],
-                             v1 = v, a1 = a_double,
-                             vels = vels,
-                             angles = angles)
+                        v1 = v, a1 = a_double,
+                        vels = vels,
+                        angles = angles,
+                        tStep = 0.5)
   testthat::expect_equal(res, ref)
 })
 

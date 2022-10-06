@@ -195,7 +195,7 @@ NumericMatrix aTOd_rcpp(NumericVector a) {
 // Helper function that converts angles to > -180 to 180
 NumericVector tomp_rcpp(NumericVector x) {
   
-  NumericVector out = ifelse(x <= -180.0, x + 360.0,
+  NumericVector out = ifelse(x <= -180.0, 360.0 + x,
                              ifelse(x > 180.0, x - 360.0,
                                     x));
   
@@ -245,7 +245,7 @@ NumericVector bin_angle(NumericVector a, NumericVector border) {
 //' 
 //' @return Numeric vector of bin indices.
 // [[Rcpp::export]]
-NumericVector Iangle_rcpp(NumericMatrix p1, NumericVector a1, NumericMatrix p2) {
+NumericVector Iangle_rcpp(NumericMatrix p1, double a1, NumericMatrix p2) {
   
   // NOTE: border was hand-coded in the original R function with the values provided below.
   NumericVector border = NumericVector::create(-85, -60, -40, -25, -15, -5, 5, 15, 
@@ -388,14 +388,9 @@ NumericMatrix headingAngle_rcpp(NumericVector a2, double a1){
 //' 
 //' @return Numeric vector with scaled velocities of same length as `v`.
 // [[Rcpp::export]]
-NumericVector scaleVel_rcpp(NumericVector v, double tStep = 0.5){
+NumericVector scaleVel_rcpp(NumericVector v, double tStep = 0.5) {
   
-  double v_len = v.length();
-  NumericVector scaled_v(v_len);
-
-  for(int i = 0; i < v_len;  i++){
-    scaled_v[i] = v[i] * tStep;
-  }
+  NumericVector scaled_v = v * tStep;
   
   if(v.hasAttribute("names")) {
     CharacterVector v_names = v.names();
@@ -489,6 +484,7 @@ NumericVector coneNum_rcpp(NumericVector k){
   return(cone_number);
 }
 
+
 //' Ring Number
 //' 
 //' @param k Numeric vector between 1 and 33.
@@ -504,4 +500,28 @@ NumericVector ringNum_rcpp(NumericVector k){
   }
 
   return(ring_number);
+}
+
+
+NumericMatrix get_vels() {
+  NumericMatrix vels(11, 3);
+  
+  for(int i = 0; i < vels.nrow(); i++) {
+    vels(i, _) = NumericVector::create(1.5, 1.0, 0.5);
+  }
+  
+  return(vels);
+}
+
+
+NumericMatrix get_angles() {
+  NumericMatrix angles(11, 3);
+  
+  for(int i = 0; i < angles.ncol(); i++) {
+    angles(_, i) = NumericVector::create(
+      72.5, 50, 32.5, 20, 10, 0, 350, 340,327.5, 310, 287.5
+    );
+  }
+  
+  return(angles);
 }
