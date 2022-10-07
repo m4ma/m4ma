@@ -19,7 +19,7 @@ NumericVector destinationAngle_rcpp(
   return(dest_angle);
 }
 
-
+// [[Rcpp::export]]
 NumericMatrix omit_rows(NumericMatrix mat, IntegerVector omit) {
   int n_rows = mat.nrow();
   int n_cols = mat.ncol();
@@ -353,12 +353,21 @@ NumericVector iCones2Cells_rcpp(NumericVector iC, double v, double tStep = 0.5) 
 }
 
 
-// [[Rcpp::export]]
-Nullable<NumericVector> blockedAngle_rcpp(int n, List state, NumericMatrix p_pred, List objects) {
-  NumericMatrix p_mat = state["p"];
+NumericMatrix get_p1(int n, NumericMatrix p_mat) {
   NumericVector p1_vec = p_mat(n, _);
   p1_vec.attr("dim") = Dimension(1, 2);
   NumericMatrix p1 = as<NumericMatrix>(p1_vec);
+  CharacterVector p_mat_rownames = rownames(p_mat);
+  rownames(p1) = as<CharacterVector>(p_mat_rownames[n]);
+  
+  return(p1);
+}
+
+
+// [[Rcpp::export]]
+Nullable<NumericVector> blockedAngle_rcpp(int n, List state, NumericMatrix p_pred, List objects) {
+  NumericMatrix p_mat = state["p"];
+  NumericMatrix p1 = get_p1(n, p_mat);
   NumericVector a = state["a"];
   NumericMatrix p2 = omit_rows(p_pred, n);
   NumericVector r = state["r"];
@@ -373,3 +382,189 @@ Nullable<NumericVector> blockedAngle_rcpp(int n, List state, NumericMatrix p_pre
   
   return(cells);
 }
+
+
+// [[Rcpp::export]]
+Nullable<List> getLeaders_rcpp(
+  int n,
+  List state,
+  NumericMatrix centres,
+  List objects,
+  bool onlyGroup = false,
+  bool preferGroup = true,
+  bool pickBest = false
+) {
+  NumericMatrix p_mat = state["p"];
+  NumericMatrix p1 = get_p1(n, p_mat);
+  NumericVector a = state["a"];
+  NumericVector v = state["v"];
+  double a1 = a[n];
+  double v1 = v[n];
+  IntegerVector n_vec = IntegerVector::create(n);
+  NumericMatrix ps = omit_rows(p_mat, n_vec);
+  
+  IntegerVector occluded = seq_along(v) - 1;
+  occluded.erase(n);
+  LogicalVector is_seen = seesMany_rcpp(p1, ps, objects);
+  occluded = occluded[!is_seen];
+  occluded.push_front(n);
+  
+  CharacterVector a_names = a.names();
+  NumericVector a2;
+  CharacterVector a2_names;
+  for(int i = 0; i < a.length(); i++) {
+    if(is_false(any(i == occluded))) {
+      a2.push_back(a[i]);
+      a2_names.push_back(a_names[i]);
+    }
+  }
+  a2.names() = a2_names;
+  
+  NumericMatrix p2 = omit_rows(p_mat, occluded);
+  if (p2.nrow() == 0) {
+    return(R_NilValue);
+  }
+  
+  NumericMatrix P1;
+  
+  if (is<List>(state["P"])) {
+    List P1_list = state["P"];
+    NumericMatrix P1_mat = P1_list[n];
+    int attr_i = P1_mat.attr("i");
+    P1 = P1_mat(Range(attr_i - 1, attr_i - 1), Range(0, 1));
+  } else {
+    NumericMatrix P1_mat = state["P"];
+    P1 = P1_mat(Range(n, n), Range(0, 1));
+  }
+  
+  NumericVector I_n = Iangle_rcpp(p1, a1, p2);
+  I_n = I_n[!is_na(I_n)];
+  if (I_n.length() == 0) {
+    return(R_NilValue);
+  }
+  
+  CharacterVector I_n_names = I_n.names();
+  CharacterVector p2_rownames = rownames(p2);
+  
+  NumericMatrix p2_ring(I_n_names.length(), p2.ncol());
+  
+  for(int i = 0; i < I_n_names.length(); i++) {
+    for(int j = 0; j < p2_rownames.length(); j++) {
+      if (I_n_names[i] == p2_rownames[j]) {
+        p2_ring(i, _) = p2(j, _);
+      }
+    }
+  }
+  
+  NumericVector d_ring = dist1_rcpp(p1, p2_ring);
+  
+  NumericVector bins_ring = NumericVector::create(0, 0.5, 1, 5) * v1 * 0.5;
+  
+  NumericVector ring = 4 - bin_vector(d_ring, bins_ring);
+  ring.names() = I_n_names;
+  ring = ring[!is_na(ring)];
+  if (ring.length() == 0) {
+    return(R_NilValue);
+  }
+  
+  CharacterVector ring_names = ring.names();
+  NumericVector candidates = I_n[ring_names];
+  candidates = candidates + 11 * (ring - 1);
+  
+  CharacterVector candidates_names = candidates.names();
+  NumericVector group = state["group"];
+  NumericVector group_candidates = group[candidates_names];
+  LogicalVector inGroup = group_candidates == group[n];
+  inGroup.names() = group_candidates.names();
+  
+  if (onlyGroup) {
+    if (is_false(any(inGroup))) {
+      return(R_NilValue);
+    } else {
+      candidates = candidates[inGroup];
+    } 
+  } else if (preferGroup && is_true(any(inGroup))) {
+    candidates = candidates[inGroup];
+  }
+  
+  NumericVector a2_candidates = a2[candidates_names];
+  NumericVector d_n = Dn_rcpp(p1, P1);
+  NumericVector angles(a2_candidates.length());
+  
+  for(int i = 0; i < a2_candidates.length(); i++) {
+    NumericVector a2_canidates_min_angle = minAngle_rcpp(a2_candidates[i], d_n);
+    angles[i] = a2_canidates_min_angle[0];
+  }
+  angles.names() = candidates_names;
+  
+  LogicalVector ok = angles < 90.0;
+  if (is_false(any(ok))) {
+    return(R_NilValue);
+  }
+  
+  candidates = candidates[ok];
+  angles = angles[ok];
+  
+  NumericVector leaders;
+  CharacterVector leaders_names;
+  if(is_false(any(duplicated(candidates)))) {
+    leaders = candidates;
+    leaders_names = leaders.names();
+  } else {
+    leaders = unique(candidates);
+    leaders_names = leaders.names();
+    for(int i = 0; i < leaders.length(); i++) {
+      double leaders_i = leaders[i];
+      NumericVector leaders_angles_i = angles[candidates == leaders_i];
+      double min_angle_i = which_min(leaders_angles_i);
+      CharacterVector candidates_names_i = candidates_names[candidates == leaders_i];
+      leaders_names[i] = candidates_names_i[min_angle_i];
+    }
+    angles = angles[leaders_names];
+  }
+  
+  NumericMatrix d(leaders.length(), 33);
+  rownames(d) = leaders_names;
+  for(int i = 0; i < leaders.length(); i++) {
+    double leaders_i = leaders[i];
+    NumericVector centres_i = centres(leaders_i - 1, _);
+    d(i, _) = dist1_rcpp(centres_i, centres);
+  }
+  
+  IntegerVector best;
+  if (pickBest) {
+    best = which_min(angles);
+  } else {
+    best = seq_along(angles) - 1;
+  }
+  
+  NumericVector leaders_best = leaders[best];
+  CharacterVector leaders_names_best = leaders_best.names();
+  
+  NumericMatrix dists(best.length(), d.ncol());
+  for(int i = 0; i < best.length(); i++) {
+    dists(i, _) = d(best[i], _);
+  }
+  rownames(dists) = leaders_names_best;
+  colnames(dists) = int2char(seq_len(33));
+  
+  NumericMatrix leaders_out(3, best.length());
+  leaders_out(0, _) = leaders_best;
+  NumericVector leaders_angles = angles[leaders_names_best];
+  leaders_out(1, _) = leaders_angles / 90.0;
+  LogicalVector leaders_inGroup = inGroup[leaders_names_best];
+  leaders_out(2, _) = as<NumericVector>(leaders_inGroup);
+  rownames(leaders_out) = CharacterVector::create(
+    "cell", "angleDisagree", "inGroup"
+  );
+  colnames(leaders_out) = leaders_names_best;
+  
+  List out_list = List::create(
+    Named("dists") = dists,
+    Named("leaders") = leaders_out
+  );
+  
+  return(out_list);
+}
+  
+  

@@ -26,3 +26,25 @@ CharacterVector int2char(IntegerVector int_vec) {
   
   return char_vec;
 }
+
+
+// Helper function that bins vector according to borders and returns bin indices
+NumericVector bin_vector(NumericVector x, NumericVector bins) {
+  NumericVector out(x.length());
+  
+  for(int i = 0; i < x.length(); i++) {
+    // set to NA if outside borders
+    double idx = NA_REAL;
+    
+    // iterate over borders
+    for(int j = 1; j < bins.length(); j++) {
+      // if angle is > left border and <= right border
+      if(x[i] > bins[j-1] && x[i] <= bins[j]) {
+        idx = j;
+      }
+      out[i] = idx;
+    }
+  }
+  
+  return(out);
+}

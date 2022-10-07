@@ -1,6 +1,7 @@
 #include <Rcpp.h>
 #include <math.h>
 #include "m4ma.h"
+#include "utils.h"
 
 using namespace Rcpp;
 
@@ -203,30 +204,6 @@ NumericVector tomp_rcpp(NumericVector x) {
 }
 
 
-// Helper function that bins angles according to borders and returns bin indices
-NumericVector bin_angle(NumericVector a, NumericVector border) {
-  int l = a.length();
-  int b = border.length();
-  NumericVector out(l);
-  
-  for(int i = 0; i < l; i++) {
-    // set to NA if outside borders
-    double idx = NA_REAL;
-    
-    // iterate over borders
-    for(int j = 1; j < b; j++) {
-      // if angle is > left border and <= right border
-      if(a[i] > border[j-1] && a[i] <= border[j]) {
-        idx = j;
-      }
-      out[i] = idx;
-    }
-  }
-  
-  return(out);
-}
-
-
 //' Bin Angles between Matrices
 //' 
 //' Compute anti-clockwise angles between two Nx2 matrices with the first
@@ -258,7 +235,7 @@ NumericVector Iangle_rcpp(NumericMatrix p1, double a1, NumericMatrix p2) {
   NumericVector tmp = tomp_rcpp(angle);
   
   // bin angle
-  NumericVector out = 12 - bin_angle(tmp, border);
+  NumericVector out = 12 - bin_vector(tmp, border);
   
   // assign row names of p2 if they exist
   if(rownames(p2) != R_NilValue) {
@@ -293,6 +270,11 @@ NumericVector Dn_rcpp(NumericMatrix p_n, NumericMatrix P_n){
     NumericVector angle = angle2_rcpp(p_n_i, P_n_i);
     
     out[i] = angle[0];
+  }
+  
+  // assign row names of p2 if they exist 
+  if(rownames(p_n) != R_NilValue) {
+    out.names() = rownames(p_n);
   }
   
   return(out);

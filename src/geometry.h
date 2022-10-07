@@ -16,6 +16,8 @@ Rcpp::NumericVector Iangle_rcpp(
     Rcpp::NumericMatrix p2
 );
 
+Rcpp::NumericVector Dn_rcpp(Rcpp::NumericMatrix p_n, Rcpp::NumericMatrix P_n);
+
 Rcpp::NumericVector minAngle_rcpp(double a1_double, Rcpp::NumericVector a2);
 
 Rcpp::NumericMatrix headingAngle_rcpp(Rcpp::NumericVector a2, double a1);
