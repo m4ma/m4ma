@@ -11,7 +11,7 @@ testthat::test_that("Blocked-angle utility computation works", {
   lapply(get(test_obj_name), function(state) {
     for (i in 1:length(state$v)) {
       if (!is.null(state$FL[[i]])) {
-        ref = m4ma::baUtility(p[i, ], state$BA[[i]])
+        ref = m4ma::baUtility_r(p[i, ], state$BA[[i]])
         ba_utility = m4ma::baUtility_rcpp(
           p[i, "aBA"],
           p[i, "bBA"],
@@ -28,7 +28,7 @@ testthat::test_that("Blocked-angle utility computation works", {
 testthat::test_that("Current-angle utility computation works", {
   lapply(get(test_obj_name), function(state) {
     for (i in 1:length(state$v)) {
-      ref = unname(m4ma::caUtility(p[i, ]))
+      ref = unname(m4ma::caUtility_r(p[i, ]))
       ca_utility = m4ma::caUtility_rcpp(
         p[i, "aCA"],
         p[i, "bCA"],
@@ -44,7 +44,7 @@ testthat::test_that("Follow-leader utility computation works", {
   lapply(get(test_obj_name), function(state) {
     for (i in 1:length(state$v)) {
       if (!is.null(state$FL[[i]])) {
-        ref = unname(m4ma::flUtility(p[i, ], state$FL[[i]]))
+        ref = unname(m4ma::flUtility_r(p[i, ], state$FL[[i]]))
         fl_utility = m4ma::flUtility_rcpp(
           p[i, "aFL"],
           p[i, "bFL"],
@@ -62,7 +62,7 @@ testthat::test_that("Follow-leader utility computation works", {
 testthat::test_that("Goal-angle utility computation works", {
   lapply(get(test_obj_name), function(state) {
     for (i in 1:length(state$v)) {
-      ref = m4ma::gaUtility(p[i, ], state$GA[[i]])
+      ref = m4ma::gaUtility_r(p[i, ], state$GA[[i]])
       ga_utility = m4ma::gaUtility_rcpp(
         p[i, "bGA"],
         p[i, "aGA"],
@@ -77,7 +77,7 @@ testthat::test_that("Goal-angle utility computation works", {
 testthat::test_that("Interpersonal distance utility computation works", {
   lapply(get(test_obj_name), function(state) {
     for (i in 1:length(state$v)) {
-      ref = m4ma::idUtility(p[i, ], i, state$ID[[i]], state$ok[[i]], state$group)
+      ref = m4ma::idUtility_r(p[i, ], i, state$ID[[i]], state$ok[[i]], state$group)
       id_utility = m4ma::idUtility_rcpp(
         p[i, "bID"],
         p[i, "dID"],
@@ -96,7 +96,7 @@ testthat::test_that("Interpersonal distance utility computation works", {
 testthat::test_that("Preferred speed utility computation works", {
   lapply(get(test_obj_name), function(state) {
     for (i in 1:length(state$v)) {
-      ref = unname(m4ma::psUtility(p[i, ], state$v[i], state$d[i]))
+      ref = unname(m4ma::psUtility_r(p[i, ], state$v[i], state$d[i]))
       ps_utility = m4ma::psUtility_rcpp(
         p[i, "aPS"],
         p[i, "bPS"],
@@ -115,7 +115,7 @@ testthat::test_that("Walk-beside utility computation works", {
   lapply(get(test_obj_name), function(state) {
     for (i in 1:length(state$v)) {
       if (!is.null(state$WB[[i]])) {
-        ref = unname(m4ma::wbUtility(p[i, ], state$WB[[i]]))
+        ref = unname(m4ma::wbUtility_r(p[i, ], state$WB[[i]]))
         wb_utility = m4ma::wbUtility_rcpp(
           p[i, "aWB"],
           p[i, "bWB"],

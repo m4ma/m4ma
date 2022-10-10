@@ -10,7 +10,7 @@
 #'
 #' @return Probability of alternative \code{cell} given \code{V}, \code{alpha}, and parameters \code{muM} and \code{mu}.
 #' @export
-pCNL <- function(cell, V, muM = rep(1, length(nests)), nests, alpha, mu, cellNest) {
+pCNL_r <- function(cell, V, muM = rep(1, length(nests)), nests, alpha, mu, cellNest) {
   
   # Probability of alternatives within nests
   pAinNest <- function(Vlist, nests, alpha, muM) {

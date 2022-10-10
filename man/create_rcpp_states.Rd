@@ -2,16 +2,18 @@
 % Please edit documentation in R/utils.R
 \name{create_rcpp_states}
 \alias{create_rcpp_states}
-\title{create_rcpp_states}
+\title{Rcpp States}
 \usage{
 create_rcpp_states(states)
 }
 \arguments{
-\item{states}{takes a loaded object of the .rda type}
+\item{states}{List of variables representing a
+state in the simulation.}
 }
 \value{
-an empty trace list of lists
+List of subjects states.
 }
 \description{
-Helper functions for creating an empty trace container for subsequent testing
+Helper function that transforms a state list simulated by predped into the
+format required to do likelihood estimation.
 }
