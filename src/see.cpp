@@ -74,7 +74,7 @@ NumericVector line_line_intersection_rcpp(
 //' occluded by \code{objects}.
 //'
 //' @param p_n,P_n Numeric vector with x- and y-coordinates.
-//' @param objects List containing a list for each object. An object
+//' @param objects List containing a list for each object. An object has
 //' two length-two numeric vectors of x- and y-coordinates.
 //' 
 //' @returns \code{TRUE} if the goal is in sight, \code{FALSE} otherwise.
@@ -142,7 +142,7 @@ NumericVector get_state_P_n(int n, List state, int offset=0) {
 //'
 //' @param n Integer scalar subject index.
 //' @param state List of list with state data.
-//' @param objects List containing a list for each object. An object
+//' @param objects List containing a list for each object. An object has
 //' two length-two numeric vectors of x- and y-coordinates.
 //' 
 //' @returns \code{TRUE} if the goal is in sight, \code{FALSE} otherwise.
@@ -182,7 +182,7 @@ bool seesCurrentGoal_rcpp(int n, List state, List objects, int offset=0) {
 //' @param p1 Numeric vector with x- and y-coordinates.
 //' @param ps Numeric Matrix with a row for every goal and x- and y-coordinates
 //' as columns.
-//' @param objects List containing a list for each object. An object
+//' @param objects List containing a list for each object. An object has
 //' two length-two numeric vectors of x- and y-coordinates.
 //' 
 //' @returns Logical vector with \code{TRUE} if a goal is in sight, \code{FALSE}
@@ -221,7 +221,7 @@ LogicalVector seesMany_rcpp(NumericVector p1, NumericMatrix ps, List objects) {
 //'  or if it is occluded by \code{objects}.
 //'
 //' @param n Integer scalar subject index.
-//' @param objects List containing a list for each object. An object
+//' @param objects List containing a list for each object. An object has
 //' two length-two numeric vectors of x- and y-coordinates.
 //' @param state List of list with state data.
 //' @param centres Numeric matrix with 33 cell centres as rows and 
