@@ -19,7 +19,7 @@ NumericVector destinationAngle_rcpp(
   return(dest_angle);
 }
 
-// [[Rcpp::export]]
+
 NumericMatrix omit_rows(NumericMatrix mat, IntegerVector omit) {
   int n_rows = mat.nrow();
   int n_cols = mat.ncol();
@@ -63,7 +63,7 @@ Nullable<NumericMatrix> predClose_rcpp(
     return(R_NilValue);
   }
   
-  NumericMatrix ps = omit_rows(p2, n);
+  NumericMatrix ps = omit_rows(p2, IntegerVector::create(n));
   
   int p2_n_rows = p2.nrow();
   
@@ -74,7 +74,7 @@ Nullable<NumericMatrix> predClose_rcpp(
   LogicalVector is_seen = seesMany_rcpp(p1, ps, objects);
   
   occluded = occluded[!is_seen];
-  
+
   occluded.push_front(n);
   
   p_pred = omit_rows(p_pred, occluded);
@@ -99,6 +99,7 @@ Nullable<NumericMatrix> predClose_rcpp(
   NumericVector r_in_front = r[names_in_front];
   
   NumericMatrix dist(r_in_front.length(), centres.nrow());
+  rownames(dist) = names_in_front;
   
   for(int i = 0; i < centres.nrow(); i++) {
      dist(_, i) = dist1_rcpp(centres(i, _), p_pred_in_front);
@@ -149,7 +150,11 @@ List eObjects_rcpp(NumericMatrix p1, NumericMatrix p2, NumericVector r) {
   }
   
   NumericMatrix ac_t_t = transpose(ac_t);
+  rownames(ac_t_t) = rownames(p2);
+  colnames(ac_t_t) = CharacterVector::create("x", "y");
   NumericMatrix cw_t_t = transpose(cw_t);
+  rownames(cw_t_t) = rownames(p2);
+  colnames(cw_t_t) = CharacterVector::create("x", "y");
   
   List ac_cw = List::create(Named("ac") = ac_t_t, Named("cw") = cw_t_t);
   
@@ -157,18 +162,19 @@ List eObjects_rcpp(NumericMatrix p1, NumericMatrix p2, NumericVector r) {
 }
 
 
-IntegerVector fix(IntegerVector x) {
+NumericVector fix(NumericVector x) {
   if (is_true(all(is_na(x)))) {
-    IntegerVector na_res = IntegerVector::create(NA_REAL);
+    NumericVector na_res = NumericVector::create(NA_REAL);
     return(na_res);
   }
   LogicalVector false_true = LogicalVector::create(false, true);
   LogicalVector true_false = LogicalVector::create(true, false);
-  if (is_true(all(is_na(x) == false_true))) {
-    x = IntegerVector::create(x[0], 11);
-  } else if (is_true(all(is_na(x) == true_false))) {
-    x = IntegerVector::create(1, x[1]); 
-  } else if (x.length() > 1) {
+  if (is_true(all(is_na(x) == false_true)) | is_true(all(is_nan(x) == false_true))) {
+    x = NumericVector::create(x[0], 10);
+  } else if (is_true(all(is_na(x) == true_false)) | is_true(all(is_nan(x) == true_false))) {
+    x = NumericVector::create(0, x[1]); 
+  }
+  if (x.length() > 1) {
     x = seq(x[0], x[1]); 
   }
   return(x);
@@ -178,7 +184,8 @@ IntegerVector fix(IntegerVector x) {
 List check_list_na(List x) {
   LogicalVector valid(x.length());
   for(int i = 0; i < x.length(); i++) {
-    if (is_false(any(is_na(x)))) {
+    NumericVector x_i = x[i];
+    if (is_false(any(is_na(x_i))) & is_false(any(is_nan(x_i)))) {
       valid[i] = true;
     }
   }
@@ -224,19 +231,22 @@ Nullable<NumericVector> iCones_rcpp(
     return(R_NilValue);
   }
   
+  CharacterVector p2_row_names = rownames(p2);
+  p2_row_names.names() = p2_row_names;
+  
   List ends = eObjects_rcpp(p1, p2, r);
   NumericMatrix ends_ac = ends[0];
   NumericMatrix ends_cw = ends[1];
   
-  IntegerMatrix endCones(p2.nrow(), ends.length());
-  rownames(endCones) = rownames(p2);
+  NumericMatrix endCones(p2.nrow(), ends.length());
+  rownames(endCones) = p2_row_names;
   
   for(int i = 0; i < ends.length(); i++) {
-    endCones(_, i) = Iangle_rcpp(p1, a, ends[i]);
+    endCones(_, i) = Iangle_rcpp(p1, a, ends[i]) - 1;
   }
   
   List cList(p2.nrow());
-  cList.names() = rownames(p2);
+  cList.names() = p2_row_names;
   
   for(int i = 0; i < cList.length(); i++) {
     cList[i] = fix(endCones(i, _));
@@ -255,26 +265,30 @@ Nullable<NumericVector> iCones_rcpp(
   }
   
   NumericMatrix coneLineEnds = c_vd_rcpp(
-    seq_len(11) - 1, p1, rep(1.0, 11), a, get_vels(), get_angles(), 0.5
+    seq_len(11), p1, rep(1.0, 11), a, get_vels(), get_angles(), 0.5
   );
   
+  CharacterVector cList_names = cList.names();
   List cDist(cList.length());
   
   for(int i = 0; i < cList.length(); i++) {
     NumericVector cList_i = cList[i];
+    String name_i = cList_names[i];
+    int idx = p2_row_names.offset(name_i);
+    
     if (cList_i.length() == 1) {
-      bool sees_goal = seesGoal_rcpp(p1, p2(i, _), objects);
+      bool sees_goal = seesGoal_rcpp(p1, p2(idx, _), objects);
+      
       if (!sees_goal) {
         cList[i] = NumericVector::create();
       } else {
-        cDist[i] = dist1_rcpp(p1, p2(Range(i, i), _));
+        cDist[i] = dist1_rcpp(p1, p2(Range(idx, idx), _));
       }
     } else {
       for(int j = 0; j < cList_i.length(); j++) {
         NumericVector P_n_vec = line_line_intersection_rcpp(
-          p1, coneLineEnds(cList_i[j], _), ends_ac(i, _), ends_cw(i, _)
+          p1, coneLineEnds(cList_i[j], _), ends_ac(idx, _), ends_cw(idx, _)
         );
-        
         bool sees_goal = seesGoal_rcpp(p1, P_n_vec, objects);
         if (!sees_goal) {
           cList_i[j] = NA_REAL;
@@ -284,10 +298,13 @@ Nullable<NumericVector> iCones_rcpp(
           if (j == 0) {
             cDist[i] = dist1_rcpp(p1, P_n);
           } else {
-            NumericVector d = dist1_rcpp(p1, P_n);
-            for(int k = 0; k < d.length(); k++) {
-              NumericVector cDist_i = cDist[i];
-              cDist_i.push_back(d[k]);
+            Nullable<NumericVector> _cDist_i = cDist[i];
+            if (_cDist_i == R_NilValue) {
+              cDist[i] = dist1_rcpp(p1, P_n);
+            } else {
+              NumericVector cDist_i = as<NumericVector>(_cDist_i);
+              NumericVector d = dist1_rcpp(p1, P_n);
+              cDist_i.push_back(d[0]);
               cDist[i] = cDist_i;
             }
           }
@@ -308,10 +325,11 @@ Nullable<NumericVector> iCones_rcpp(
   for(int i = 0; i < cList.length(); i++) {
     NumericVector cDist_i = cDist[i];
     cDist_i.names() = int2char(cList[i]);
+    cDist[i] = cDist_i;
   }
   
-  IntegerVector outCones = IntegerVector::create();
-  NumericVector out = NumericVector::create();
+  IntegerVector outCones;
+  NumericVector out;
   
   for(int i = 0; i < 11; i++) {
     NumericVector d;
@@ -333,7 +351,7 @@ Nullable<NumericVector> iCones_rcpp(
     }
   }
   
-  out.names() = int2char(outCones);
+  out.names() = int2char(outCones + 1);
   
   return(out);
 }
@@ -365,16 +383,17 @@ NumericMatrix get_p1(int n, NumericMatrix p_mat) {
 
 
 // [[Rcpp::export]]
-Nullable<NumericVector> blockedAngle_rcpp(int n, List state, NumericMatrix p_pred, List objects) {
+NumericVector blockedAngle_rcpp(int n, List state, NumericMatrix p_pred, List objects) {
   NumericMatrix p_mat = state["p"];
   NumericMatrix p1 = get_p1(n, p_mat);
   NumericVector a = state["a"];
-  NumericMatrix p2 = omit_rows(p_pred, n);
+  NumericMatrix p2 = omit_rows(p_pred, IntegerVector::create(n));
   NumericVector r = state["r"];
   
   Nullable<NumericVector> _iC = iCones_rcpp(p1, a[n], p2, r, objects);
   if (_iC == R_NilValue) {
-    return(R_NilValue);
+    NumericVector out_empty;
+    return(out_empty);
   }
   NumericVector iC = as<NumericVector>(_iC);
   NumericVector v = state["v"];
@@ -400,8 +419,7 @@ Nullable<List> getLeaders_rcpp(
   NumericVector v = state["v"];
   double a1 = a[n];
   double v1 = v[n];
-  IntegerVector n_vec = IntegerVector::create(n);
-  NumericMatrix ps = omit_rows(p_mat, n_vec);
+  NumericMatrix ps = omit_rows(p_mat, IntegerVector::create(n));
   
   IntegerVector occluded = seq_along(v) - 1;
   occluded.erase(n);
@@ -509,10 +527,10 @@ Nullable<List> getLeaders_rcpp(
   CharacterVector leaders_names;
   if(is_false(any(duplicated(candidates)))) {
     leaders = candidates;
-    leaders_names = leaders.names();
+    leaders_names = candidates_names;
   } else {
     leaders = unique(candidates);
-    leaders_names = leaders.names();
+    leaders_names = unique(candidates_names);
     for(int i = 0; i < leaders.length(); i++) {
       double leaders_i = leaders[i];
       NumericVector leaders_angles_i = angles[candidates == leaders_i];
@@ -525,6 +543,7 @@ Nullable<List> getLeaders_rcpp(
   
   NumericMatrix d(leaders.length(), 33);
   rownames(d) = leaders_names;
+  
   for(int i = 0; i < leaders.length(); i++) {
     double leaders_i = leaders[i];
     NumericVector centres_i = centres(leaders_i - 1, _);
@@ -539,7 +558,7 @@ Nullable<List> getLeaders_rcpp(
   }
   
   NumericVector leaders_best = leaders[best];
-  CharacterVector leaders_names_best = leaders_best.names();
+  CharacterVector leaders_names_best = leaders_names[best];
   
   NumericMatrix dists(best.length(), d.ncol());
   for(int i = 0; i < best.length(); i++) {
@@ -566,5 +585,130 @@ Nullable<List> getLeaders_rcpp(
   
   return(out_list);
 }
+
+
+// [[Rcpp::export]]
+Nullable<List> getBuddy_rcpp(
+  int n,
+  NumericVector group,
+  NumericVector a,
+  NumericMatrix p_pred,
+  NumericMatrix centres,
+  List objects,
+  bool pickBest,
+  List state
+) {
+  NumericMatrix p_mat = state["p"];
+  NumericMatrix p1 = get_p1(n, p_mat);
+  NumericVector v = state["v"];
+  NumericMatrix ps = omit_rows(p_mat, IntegerVector::create(n));
+
+  IntegerVector occluded = seq_along(v) - 1;
+  occluded.erase(n);
+  LogicalVector is_seen = seesMany_rcpp(p1, ps, objects);
+  occluded = occluded[!is_seen];
+  occluded.push_front(n);
+
+  p_pred = omit_rows(p_pred, occluded);
+  if (p_pred.nrow() == 0) {
+    return(R_NilValue);
+  }
+
+  CharacterVector group_names = group.names();
+  NumericVector group_visible;
+  CharacterVector inGroup_names;
+  for(int i = 0; i < group.length(); i++) {
+    if (is_false(any(occluded == i))) {
+      group_visible.push_back(group[i]);
+      inGroup_names.push_back(group_names[i]);
+    }
+  }
   
+  LogicalVector inGroup = group_visible == group[n];
+  inGroup.names() = inGroup_names;
+  IntegerVector not_in_group_idx = seq_along(inGroup);
+  not_in_group_idx = not_in_group_idx[!inGroup];
+  p_pred = omit_rows(p_pred, not_in_group_idx);
+  int nped = p_pred.nrow();
+  if (nped == 0) {
+    return(R_NilValue);
+  }
+
+  NumericVector a_p_pred = a[inGroup_names];
+  NumericMatrix headingDifference_t = headingAngle_rcpp(a_p_pred, a[n]);
+  NumericMatrix headingDifference = transpose(headingDifference_t);
   
+  IntegerVector parallelCone(headingDifference.ncol());
+  for(int i = 0; i < parallelCone.length(); i++) {
+    parallelCone[i] = which_min(headingDifference(_, i));
+  }
+  CharacterVector parallelCone_names = colnames(headingDifference);
+  parallelCone.names() = parallelCone_names;
+  
+  CharacterVector p_pred_row_names = rownames(p_pred);
+  p_pred_row_names.names() = p_pred_row_names;
+  
+  NumericMatrix d_rings(3, nped);
+  IntegerVector ring(d_rings.ncol());
+  for(int i = 0; i < nped; i++) {
+    int parallelCone_i = parallelCone[i];
+    String name_i = parallelCone_names[i];
+    int name_idx = p_pred_row_names.offset(name_i);
+    NumericVector p_pred_parallel = p_pred(name_idx, _);
+    IntegerVector centres_idx = IntegerVector::create(
+      parallelCone_i, parallelCone_i + 11, parallelCone_i + 22
+    );
+    NumericMatrix centres_i(centres_idx.length(), centres.ncol());
+    for(int j = 0; j < centres_idx.length(); j++) {
+      centres_i(j, _) = centres(centres_idx[j], _);
+    }
+    d_rings(_, i) = dist1_rcpp(p_pred_parallel, centres_i);
+    ring[i] = which_min(d_rings(_, i));
+  }
+  
+  IntegerVector parallelCone_11 = parallelCone + 11;
+  IntegerVector parallelCone_22 = parallelCone + 22;
+  IntegerMatrix cells = cbind(parallelCone, parallelCone_11, parallelCone_22);
+  NumericVector cell(nped);
+  for(int i = 0; i < nped; i++) {
+    cell[i] = cells(i, ring[i]);
+  }
+  cell.names() = parallelCone_names;
+  
+  NumericVector angleDisagree(headingDifference.ncol());
+  for(int i = 0; i < headingDifference.ncol(); i++) {
+    angleDisagree[i] = headingDifference(parallelCone[i], i) / 90.0;
+  }
+  
+  NumericMatrix d_buddy(nped, centres.nrow());
+  for(int i = 0; i < nped; i++) {
+    NumericVector centres_cell_i = centres(cell[i], _);
+    d_buddy(i, _) = dist1_rcpp(centres_cell_i, centres);
+  }
+  
+  IntegerVector best;
+  if (pickBest) {
+    best = which_min(angleDisagree);
+  } else {
+    best = seq_len(nped) - 1;
+  }
+  
+  NumericMatrix buddies(2, best.length());
+  NumericVector cell_best = cell[best];
+  buddies(0, _) = cell_best + 1;
+  NumericVector angleDisagree_best = angleDisagree[best];
+  buddies(1, _) = angleDisagree_best;
+  rownames(buddies) = CharacterVector::create("cell", "angleDisagree");
+  colnames(buddies) = parallelCone_names;
+  
+  NumericMatrix dists(best.length(), d_buddy.ncol());
+  for(int i = 0; i < best.length(); i++) {
+    dists(i, _) = d_buddy(best[i], _);
+  }
+  
+  List out_list = List::create(
+    Named("buddies") = buddies, Named("dists") = dists
+  );
+  
+  return(out_list);
+}

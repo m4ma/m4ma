@@ -537,3 +537,11 @@ blockedAngle_rcpp <- function(n, state, p_pred, objects) {
     .Call(`_m4ma_blockedAngle_rcpp`, n, state, p_pred, objects)
 }
 
+getLeaders_rcpp <- function(n, state, centres, objects, onlyGroup = FALSE, preferGroup = TRUE, pickBest = FALSE) {
+    .Call(`_m4ma_getLeaders_rcpp`, n, state, centres, objects, onlyGroup, preferGroup, pickBest)
+}
+
+getBuddy_rcpp <- function(n, group, a, p_pred, centres, objects, pickBest, state) {
+    .Call(`_m4ma_getBuddy_rcpp`, n, group, a, p_pred, centres, objects, pickBest, state)
+}
+
