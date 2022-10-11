@@ -93,9 +93,9 @@ testthat::test_that(
 
 testthat::test_that(
   "Predicted distance works (when one or less pedestrians are occluded)", {
-    ref = m4ma::predClose_r(n, p1[n, , drop = FALSE], a_front,
+    ref = m4ma::predClose_r(n, p1, a_front,
                             p2, r, centres, p_pred, objects_occlude)
-    res = m4ma::predClose_rcpp(n-1, p1[n, , drop = FALSE], a_front,
+    res = m4ma::predClose_rcpp(n-1, p1, a_front,
                                p2, r, centres, p_pred, objects_occlude)
     testthat::expect_equal(res, ref)
     testthat::expect_equal(res, NULL)
@@ -104,9 +104,9 @@ testthat::test_that(
 
 testthat::test_that(
   "Predicted distance works (when pedestrians are seen but not in front)", {
-    ref = m4ma::predClose_r(n, p1[n, , drop = FALSE], a_not_front,
+    ref = m4ma::predClose_r(n, p1, a_not_front,
                             p2, r, centres, p_pred, objects)
-    res = m4ma::predClose_rcpp(n-1, p1[n, , drop = FALSE], a_not_front,
+    res = m4ma::predClose_rcpp(n-1, p1, a_not_front,
                                p2, r, centres, p_pred, objects_occlude)
     testthat::expect_equal(res, ref)
     testthat::expect_equal(res, NULL)
