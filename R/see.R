@@ -1,21 +1,5 @@
-line.line.intersection <- function(P1, P2, P3, P4, interior.only=FALSE) 
-  ##' intersections inside L1 (from P1 to P2) and L2 (from P3 to P4).
-  ##' @return Vector containing x,y coordinates of intersection of L1
-  ##' and L2.  If L1 and L2 are parallel, this is infinite-valued.  If
-  ##' \code{interior.only} is \code{TRUE}, then when the intersection
-  ##' does not occur between P1 and P2 and P3 and P4, a vector
-  ##' containing \code{NA}s is returned.
-  ##' @source Weisstein, Eric W. "Line-Line Intersection."
-  ##' From MathWorld--A Wolfram Web Resource.
-  ##' \url{http://mathworld.wolfram.com/Line-LineIntersection.html}
-  ##' @author David Sterratt
-  ##' @export
-##' @examples
-##' ## Intersection of two lines
-##' line.line.intersection(c(0, 0), c(1, 1), c(0, 1), c(1, 0))
-##'
-##' ## Two lines that don't intersect
-##' line.line.intersection(c(0, 0), c(0, 1), c(1, 0), c(1, 1))
+#' @rdname line_line_intersection_rcpp
+line_line_intersection_r <- function(P1, P2, P3, P4, interior.only=FALSE) 
 {
   P1 <- as.vector(P1)
   P2 <- as.vector(P2)
@@ -55,7 +39,8 @@ line.line.intersection <- function(P1, P2, P3, P4, interior.only=FALSE)
 
 # Can p see goal P (in any direction), or more generally any point P_n, 
 # or is it occluded by objects?
-seesGoal <- function(p_n, P_n, objects) {
+#' @rdname seesGoal_rcpp
+seesGoal_r <- function(p_n, P_n, objects) {
   for (i in 1:length(objects)) {
     intersects <- c(
       line.line.intersection(p_n, P_n, c(objects[[i]]$x[1], objects[[i]]$y[1]), 
@@ -79,19 +64,22 @@ seesGoal <- function(p_n, P_n, objects) {
 }
 
 # seesGoal for current goal
-seesCurrentGoal <- function(n, state, objects, offset = 0) {
+#' @rdname seesCurrentGoal_rcpp
+seesCurrentGoal_r <- function(n, state, objects, offset = 0) {
   print(state$P[[n]][attr(state$P[[n]], "i") + offset, 1:2])
   seesGoal(state$p[n, ], state$P[[n]][attr(state$P[[n]], "i") + offset, 1:2],
            objects)
 }
 
-# Can position p see points in ps matrix (x,y columns) 
-seesMany <- function(p1, ps, objects) {
+# Can position p see points in ps matrix (x,y columns)
+#' @rdname seesMany_rcpp
+seesMany_r <- function(p1, ps, objects) {
   apply(ps, 1, seesGoal, P_n = p1, objects = objects)  
 }
 
-# Boolean indicating if goal is visible from ok cells  
-seesGoalOK <- function(n, objects, state, centres, ok) {
+# Boolean indicating if goal is visible from ok cells
+#' @rdname seesGoalOK_rcpp
+seesGoalOK_r <- function(n, objects, state, centres, ok) {
   if (any(ok)) {
     for (i in c(1:33)[ok]) {
       ok[i] <- seesGoal(centres[i, ], 
