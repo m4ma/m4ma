@@ -1,4 +1,5 @@
 
+#' @rdname destinationAngle_rcpp
 destinationAngle_r <- function(a, p1, P1,
                              angles = c(72.5, 50, 32.5, 20, 10, 0, 350, 340, 
                                         327.5, 310, 287.5)) {
@@ -6,6 +7,7 @@ destinationAngle_r <- function(a, p1, P1,
 }
 
 
+#' @rdname predClose_rcpp
 predClose_r <- function(n, p1, a1, p2, r, centres, p_pred, objects) {
   if (dim(p_pred)[1] == 1) {
     return(NULL)
@@ -38,6 +40,7 @@ predClose_r <- function(n, p1, a1, p2, r, centres, p_pred, objects) {
 }
 
 
+#' @rdname eObjects_rcpp
 eObjects_r <- function(p1, p2, r) {
   d <- dist1(p1, p2)
   a12 <- angle2(p1, p2)
@@ -52,6 +55,7 @@ eObjects_r <- function(p1, p2, r) {
 }
 
 
+#' @rdname iCones_rcpp
 iCones_r <- function(p1, a, p2, r, objects) {
   
   # One end in, one out, fill in extreme cone for out
@@ -160,6 +164,7 @@ iCones_r <- function(p1, a, p2, r, objects) {
 }
 
 
+#' @rdname iCones2Cells_rcpp
 iCones2Cells_r <- function(iC, v, vels = c(1.5, 1, .5)) {
   out <- rep(iC, times = 3) - rep(scaleVel(v) * vels, each = length(iC))
   names(out) <- rep(as.numeric(names(iC)), times = 3) + 
@@ -168,6 +173,7 @@ iCones2Cells_r <- function(iC, v, vels = c(1.5, 1, .5)) {
 }
 
 
+#' @rdname blockedAngle_rcpp
 blockedAngle_r <- function(n, state, p_pred, objects) {
   iC <- iCones_r(p1 = state$p[n, , drop = FALSE], a = state$a[n], 
                p2 = p_pred[-n, , drop = FALSE], r = state$r, objects)
@@ -175,6 +181,7 @@ blockedAngle_r <- function(n, state, p_pred, objects) {
 }
 
 
+#' @rdname getLeaders_rcpp
 getLeaders_r <- function(n, state, centres, objects, onlyGroup = FALSE, 
                        preferGroup = TRUE, pickBest = FALSE) {
   p1 <- state$p[n, , drop = FALSE]
@@ -265,6 +272,7 @@ getLeaders_r <- function(n, state, centres, objects, onlyGroup = FALSE,
 }
 
 
+#' @rdname getBuddy_rcpp
 getBuddy_r <- function(n, group, a, p_pred, centres, objects, pickBest = FALSE, 
                      state) {
   # Remove peds cant see and self

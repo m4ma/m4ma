@@ -5,6 +5,17 @@
 #include "utils.h"
 using namespace Rcpp;
 
+//' Angle to Destination
+//'
+//' Compute the angles between point `p1` and destinations `P1`.
+//' 
+//' The matrices `p1` and `p2` must have the same shape.
+//' 
+//' @param p1 Numeric matrix with shape 1x2 (x and y).
+//' @param P1 Numeric matrix with shape Nx2 (x and y).
+//' 
+//' @return Named numeric vector of length equal to the number of 
+//' rows N in `P1`.
 // [[Rcpp::export]]
 NumericVector destinationAngle_rcpp(
     double a,
@@ -19,7 +30,7 @@ NumericVector destinationAngle_rcpp(
   return(dest_angle);
 }
 
-
+// Helper function to omit rows in a matrix (in R: mat[-omit, , drop = FALSE])
 NumericMatrix omit_rows(NumericMatrix mat, IntegerVector omit) {
   int n_rows = mat.nrow();
   int n_cols = mat.ncol();
@@ -40,12 +51,34 @@ NumericMatrix omit_rows(NumericMatrix mat, IntegerVector omit) {
   }
   
   rownames(new_mat) = new_row_names;
-  // colnames(new_mat) = colnames(mat);
   
   return new_mat;
 }
 
-
+//' Predicted Distance to Close Front
+//'
+//' Compute the distance from edge of body of pedestrian `n` to other pedestrians
+//' in front that can be seen.
+//' 
+//' Returns `NULL` if no other pedestrians are present, if they cannot be seen,
+//' or if they are not in front of pedestrian `n`.
+//' 
+//' @param n Integer scalar index of current pedestrian in pedestrian matrix.
+//' @param p1 Numeric matrix with shape 1x2 (x and y) indicating the position
+//' of pedestrian `n`.
+//' @param a1 Numeric scalar heading angle of pedestrian `n`.
+//' @param p2 Numeric matrix with shape Nx2 (x and y) indicating the positions
+//' of all pedestrians.
+//' @param r Numeric vector with radii of pedestrian bodies.
+//' @param centres Numeric matrix with x and y for each cell centre (33x2).
+//' @param p_pred Numeric matrix with shape Nx2 (x and y) as predicted positions
+//' of all pedestrians.
+//' @param objects List containing a list for each object. An object has
+//' two length-two numeric vectors of x- and y-coordinates.
+//' 
+//' @return Numeric matrix with rows for each other pedestrian and columns for
+//' each cell (Nx33) or NULL.
+//' 
 // [[Rcpp::export]]
 Nullable<NumericMatrix> predClose_rcpp(
     int n,
@@ -113,6 +146,24 @@ Nullable<NumericMatrix> predClose_rcpp(
 }
 
 
+//' Egocentric Objects
+//'
+//' Compute the end points of line segments that are orthogonal to a line
+//' between point `p1` and points `p2`. The width of the segments are equal to
+//' the width `r` of `p2` from the perspective of `p1`.
+//' 
+//' @param p1 Numeric matrix with shape 1x2 (x and y).
+//' @param p2 Numeric matrix with shape Nx2 (x and y).
+//' @param r Numeric vector of length N.
+//' 
+//' @return List:
+//'   \describe{
+//'     \item{ac}{Numeric matrix with rows as \emph{anticlockwise} end points to each row in `p2`
+//'       and columns as x- and y-coordinates.}
+//'     \item{cw}{Numeric matrix with rows as \emph{clockwise} end points to each row in `p2`
+//'       and columns as x- and y-coordinates.}
+//'   }
+//'   
 // [[Rcpp::export]]
 List eObjects_rcpp(NumericMatrix p1, NumericMatrix p2, NumericVector r) {
   NumericVector d = dist1_rcpp(p1, p2);
@@ -162,6 +213,7 @@ List eObjects_rcpp(NumericMatrix p1, NumericMatrix p2, NumericVector r) {
 }
 
 
+// Helper function to transform end cones into cells
 NumericVector fix(NumericVector x) {
   if (is_true(all(is_na(x)))) {
     NumericVector na_res = NumericVector::create(NA_REAL);
@@ -181,6 +233,7 @@ NumericVector fix(NumericVector x) {
 }
 
 
+// Helper function to remove NAs from list
 List check_list_na(List x) {
   LogicalVector valid(x.length());
   for(int i = 0; i < x.length(); i++) {
@@ -194,6 +247,7 @@ List check_list_na(List x) {
 }
 
 
+// Helper function to remove NULLs from list
 List check_list_null(List x) {
   LogicalVector valid(x.length());
   for(int i = 0; i < x.length(); i++) {
@@ -206,6 +260,7 @@ List check_list_null(List x) {
 }
 
 
+// Helper function to remove zero length elements from list
 List check_list_length(List x) {
   LogicalVector valid(x.length());
   for(int i = 0; i < x.length(); i++) {
@@ -219,6 +274,26 @@ List check_list_length(List x) {
 }
 
 
+//' Intersecting Cones
+//'
+//' Compute intersecting cones between pedestrian `p1` closest pedestrians `p2`
+//' from the perspective of `p1`.
+//' 
+//' Returns `NULL` if no other pedestrians are present, if they cannot be seen,
+//' if they are not in front of pedestrian `n`, or if their cones are not
+//' intersecting.
+//' 
+//' @param p1 Numeric matrix with shape 1x2 (x and y).
+//' @param a1 Numeric scalar heading angle of pedestrian `p1`.
+//' @param p2 Numeric matrix with shape Nx2 (x and y) indicating the positions
+//' of all \emph{other} pedestrians.
+//' @param r Numeric vector with radii of pedestrian bodies.
+//' @param objects List containing a list for each object. An object has
+//' two length-two numeric vectors of x- and y-coordinates.
+//' 
+//' @return Named numeric vector with intersecting cones or NULL. Names
+//' indicate the cone number and the elements the distances to the intersection.
+//' 
 // [[Rcpp::export]]
 Nullable<NumericVector> iCones_rcpp(
     NumericMatrix p1,
@@ -357,6 +432,17 @@ Nullable<NumericVector> iCones_rcpp(
 }
 
 
+//' Transform Intersecting Cones to Cells
+//'
+//' Transform intersecting cones into vector with cell names containing
+//' distances to each cell ring for a pedestrian moving with speed `v`.
+//' 
+//' @param iC Numeric vector with intersecting cones returned by
+//' \link[=iCones]{iCones}.
+//' @param v Numeric scalar velocity of current pedestrian.
+//' @param tStep Numeric scalar velocity scaling factor.
+//' 
+//' @return Numeric vector with distances.
 // [[Rcpp::export]]
 NumericVector iCones2Cells_rcpp(NumericVector iC, double v, double tStep = 0.5) {
   NumericVector vels = NumericVector::create(1.5, 1.0, 0.5);
@@ -371,6 +457,7 @@ NumericVector iCones2Cells_rcpp(NumericVector iC, double v, double tStep = 0.5) 
 }
 
 
+// Helper function to get row n from matrix p_mat returned as 1x2 matrix
 NumericMatrix get_p1(int n, NumericMatrix p_mat) {
   NumericVector p1_vec = p_mat(n, _);
   p1_vec.attr("dim") = Dimension(1, 2);
@@ -382,6 +469,21 @@ NumericMatrix get_p1(int n, NumericMatrix p_mat) {
 }
 
 
+//' Blocked Angle
+//'
+//' Compute the distance from each cell to closest pedestrians.
+//' 
+//' 
+//' @param n Integer scalar index of current pedestrian in pedestrian matrix.
+//' @param state List with state data.
+//' @param p_pred Numeric matrix with shape Nx2 (x and y) as predicted positions
+//' of all pedestrians.
+//' @param objects List containing a list for each object. An object has
+//' two length-two numeric vectors of x- and y-coordinates.
+//' 
+//' @return Numeric matrix with rows for each other pedestrian and columns for
+//' each cell (Nx33) or NULL.
+//' 
 // [[Rcpp::export]]
 NumericVector blockedAngle_rcpp(int n, List state, NumericMatrix p_pred, List objects) {
   NumericMatrix p_mat = state["p"];
@@ -403,6 +505,37 @@ NumericVector blockedAngle_rcpp(int n, List state, NumericMatrix p_pred, List ob
 }
 
 
+//' Leaders
+//'
+//' Get leaders for pedestrian `n`.
+//' 
+//' Returns `NULL` if no other pedestrians are present, if they cannot be seen,
+//' if they are not in front, or if no other pedestrian has the same group as
+//' pedestrian `n` and `onlyGroup` is `TRUE`.
+//' 
+//' @param n Integer scalar index of current pedestrian in pedestrian matrix.
+//' @param state List with state data.
+//' @param r Numeric vector with radii of pedestrian bodies.
+//' @param centres Numeric matrix with x and y for each cell centre (33x2).
+//' @param objects List containing a list for each object. An object has
+//' two length-two numeric vectors of x- and y-coordinates.
+//' @param onlyGroup Logical scalar indicating if leaders must be from the same
+//' group.
+//' @param preferGroup Logical scalar indicating if leaders are preferred from
+//' the same group.
+//' @param pickBest Logical salar indicating if all or the best leader should be
+//' returned.
+//' 
+//' @return List:
+//'   \describe{
+//'     \item{dists}{Numeric matrix with distances for each cell (columns) to
+//'       each leader (rows).}
+//'     \item{leaders}{Numeric matrix with three rows for every leader
+//'       (columns). The first row is the cell of the leader, the second the
+//'       difference in heading angle between pedestrian `n` and leader, the
+//'       third the index of the shared group.}
+//'   }
+//' 
 // [[Rcpp::export]]
 Nullable<List> getLeaders_rcpp(
   int n,
@@ -587,6 +720,35 @@ Nullable<List> getLeaders_rcpp(
 }
 
 
+//' Buddies
+//'
+//' Compute the distance from each cell to buddies.
+//' 
+//' Returns `NULL` if no other pedestrians are present, if they cannot be seen,
+//' if they are not in front, or if no other pedestrian has the same group as
+//' pedestrian `n`.
+//' 
+//' @param n Integer scalar index of current pedestrian in pedestrian matrix.
+//' @param group Integer vector of group memberships.
+//' @param a Numeric vector of heading angles for each pedestrian.
+//' @param p_pred Numeric matrix with shape Nx2 (x and y) as predicted positions
+//' of all pedestrians.
+//' @param centres Numeric matrix with x and y for each cell centre (33x2).
+//' @param objects List containing a list for each object. An object has
+//' two length-two numeric vectors of x- and y-coordinates.
+//' @param pickBest Logical salar indicating if all or the best buddy should be
+//' returned.
+//' @param state List with state data.
+//' 
+//' @return List:
+//'   \describe{
+//'     \item{leaders}{Numeric matrix with two rows for every buddy
+//'       (columns). The first row is the cell of the leader, the second the
+//'       difference in heading angle between pedestrian `n` and buddy.}
+//'     \item{dists}{Numeric matrix with distances for each cell (columns) to
+//'       each buddy (rows).}
+//'   }
+//' 
 // [[Rcpp::export]]
 Nullable<List> getBuddy_rcpp(
   int n,
@@ -626,15 +788,18 @@ Nullable<List> getBuddy_rcpp(
   
   LogicalVector inGroup = group_visible == group[n];
   inGroup.names() = inGroup_names;
-  IntegerVector not_in_group_idx = seq_along(inGroup);
+  IntegerVector not_in_group_idx = seq_along(inGroup) - 1;
   not_in_group_idx = not_in_group_idx[!inGroup];
   p_pred = omit_rows(p_pred, not_in_group_idx);
   int nped = p_pred.nrow();
   if (nped == 0) {
     return(R_NilValue);
   }
-
-  NumericVector a_p_pred = a[inGroup_names];
+  
+  CharacterVector p_pred_row_names = rownames(p_pred);
+  
+  p_pred_row_names.names() = p_pred_row_names;
+  NumericVector a_p_pred = a[p_pred_row_names];
   NumericMatrix headingDifference_t = headingAngle_rcpp(a_p_pred, a[n]);
   NumericMatrix headingDifference = transpose(headingDifference_t);
   
@@ -644,9 +809,6 @@ Nullable<List> getBuddy_rcpp(
   }
   CharacterVector parallelCone_names = colnames(headingDifference);
   parallelCone.names() = parallelCone_names;
-  
-  CharacterVector p_pred_row_names = rownames(p_pred);
-  p_pred_row_names.names() = p_pred_row_names;
   
   NumericMatrix d_rings(3, nped);
   IntegerVector ring(d_rings.ncol());
@@ -673,6 +835,7 @@ Nullable<List> getBuddy_rcpp(
   for(int i = 0; i < nped; i++) {
     cell[i] = cells(i, ring[i]);
   }
+  
   cell.names() = parallelCone_names;
   
   NumericVector angleDisagree(headingDifference.ncol());
@@ -699,9 +862,10 @@ Nullable<List> getBuddy_rcpp(
   NumericVector angleDisagree_best = angleDisagree[best];
   buddies(1, _) = angleDisagree_best;
   rownames(buddies) = CharacterVector::create("cell", "angleDisagree");
-  colnames(buddies) = parallelCone_names;
+  colnames(buddies) = parallelCone_names[best];
   
   NumericMatrix dists(best.length(), d_buddy.ncol());
+  colnames(dists) = int2char(seq_len(d_buddy.ncol()));
   for(int i = 0; i < best.length(); i++) {
     dists(i, _) = d_buddy(best[i], _);
   }

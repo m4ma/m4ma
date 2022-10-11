@@ -273,7 +273,7 @@ line_line_intersection_rcpp <- function(P1, P2, P3, P4, interior_only = FALSE) {
 #' occluded by \code{objects}.
 #'
 #' @param p_n,P_n Numeric vector with x- and y-coordinates.
-#' @param objects List containing a list for each object. An object
+#' @param objects List containing a list for each object. An object has
 #' two length-two numeric vectors of x- and y-coordinates.
 #' 
 #' @returns \code{TRUE} if the goal is in sight, \code{FALSE} otherwise.
@@ -297,7 +297,7 @@ seesGoal_rcpp <- function(p_n, P_n, objects) {
 #'
 #' @param n Integer scalar subject index.
 #' @param state List of list with state data.
-#' @param objects List containing a list for each object. An object
+#' @param objects List containing a list for each object. An object has
 #' two length-two numeric vectors of x- and y-coordinates.
 #' 
 #' @returns \code{TRUE} if the goal is in sight, \code{FALSE} otherwise.
@@ -329,7 +329,7 @@ seesCurrentGoal_rcpp <- function(n, state, objects, offset = 0L) {
 #' @param p1 Numeric vector with x- and y-coordinates.
 #' @param ps Numeric Matrix with a row for every goal and x- and y-coordinates
 #' as columns.
-#' @param objects List containing a list for each object. An object
+#' @param objects List containing a list for each object. An object has
 #' two length-two numeric vectors of x- and y-coordinates.
 #' 
 #' @returns Logical vector with \code{TRUE} if a goal is in sight, \code{FALSE}
@@ -359,7 +359,7 @@ seesMany_rcpp <- function(p1, ps, objects) {
 #'  or if it is occluded by \code{objects}.
 #'
 #' @param n Integer scalar subject index.
-#' @param objects List containing a list for each object. An object
+#' @param objects List containing a list for each object. An object has
 #' two length-two numeric vectors of x- and y-coordinates.
 #' @param state List of list with state data.
 #' @param centres Numeric matrix with 33 cell centres as rows and 
@@ -513,34 +513,193 @@ utility <- function(p, n, v, d, ba_, ga, id_, fl_, wb_, ok, group) {
     .Call(`_m4ma_utility`, p, n, v, d, ba_, ga, id_, fl_, wb_, ok, group)
 }
 
+#' Angle to Destination
+#'
+#' Compute the angles between point `p1` and destinations `P1`.
+#' 
+#' The matrices `p1` and `p2` must have the same shape.
+#' 
+#' @param p1 Numeric matrix with shape 1x2 (x and y).
+#' @param P1 Numeric matrix with shape Nx2 (x and y).
+#' 
+#' @return Named numeric vector of length equal to the number of 
+#' rows N in `P1`.
 destinationAngle_rcpp <- function(a, p1, P1) {
     .Call(`_m4ma_destinationAngle_rcpp`, a, p1, P1)
 }
 
+#' Predicted Distance to Close Front
+#'
+#' Compute the distance from edge of body of pedestrian `n` to other pedestrians
+#' in front that can be seen.
+#' 
+#' Returns `NULL` if no other pedestrians are present, if they cannot be seen,
+#' or if they are not in front of pedestrian `n`.
+#' 
+#' @param n Integer scalar index of current pedestrian in pedestrian matrix.
+#' @param p1 Numeric matrix with shape 1x2 (x and y) indicating the position
+#' of pedestrian `n`.
+#' @param a1 Numeric scalar heading angle of pedestrian `n`.
+#' @param p2 Numeric matrix with shape Nx2 (x and y) indicating the positions
+#' of all pedestrians.
+#' @param r Numeric vector with radii of pedestrian bodies.
+#' @param centres Numeric matrix with x and y for each cell centre (33x2).
+#' @param p_pred Numeric matrix with shape Nx2 (x and y) as predicted positions
+#' of all pedestrians.
+#' @param objects List containing a list for each object. An object has
+#' two length-two numeric vectors of x- and y-coordinates.
+#' 
+#' @return Numeric matrix with rows for each other pedestrian and columns for
+#' each cell (Nx33) or NULL.
+#' 
 predClose_rcpp <- function(n, p1, a1, p2, r, centres, p_pred, objects) {
     .Call(`_m4ma_predClose_rcpp`, n, p1, a1, p2, r, centres, p_pred, objects)
 }
 
+#' Egocentric Objects
+#'
+#' Compute the end points of line segments that are orthogonal to a line
+#' between point `p1` and points `p2`. The width of the segments are equal to
+#' the width `r` of `p2` from the perspective of `p1`.
+#' 
+#' @param p1 Numeric matrix with shape 1x2 (x and y).
+#' @param p2 Numeric matrix with shape Nx2 (x and y).
+#' @param r Numeric vector of length N.
+#' 
+#' @return List:
+#'   \describe{
+#'     \item{ac}{Numeric matrix with rows as \emph{anticlockwise} end points to each row in `p2`
+#'       and columns as x- and y-coordinates.}
+#'     \item{cw}{Numeric matrix with rows as \emph{clockwise} end points to each row in `p2`
+#'       and columns as x- and y-coordinates.}
+#'   }
+#'   
 eObjects_rcpp <- function(p1, p2, r) {
     .Call(`_m4ma_eObjects_rcpp`, p1, p2, r)
 }
 
+#' Intersecting Cones
+#'
+#' Compute intersecting cones between pedestrian `p1` closest pedestrians `p2`
+#' from the perspective of `p1`.
+#' 
+#' Returns `NULL` if no other pedestrians are present, if they cannot be seen,
+#' if they are not in front of pedestrian `n`, or if their cones are not
+#' intersecting.
+#' 
+#' @param p1 Numeric matrix with shape 1x2 (x and y).
+#' @param a1 Numeric scalar heading angle of pedestrian `p1`.
+#' @param p2 Numeric matrix with shape Nx2 (x and y) indicating the positions
+#' of all \emph{other} pedestrians.
+#' @param r Numeric vector with radii of pedestrian bodies.
+#' @param objects List containing a list for each object. An object has
+#' two length-two numeric vectors of x- and y-coordinates.
+#' 
+#' @return Named numeric vector with intersecting cones or NULL. Names
+#' indicate the cone number and the elements the distances to the intersection.
+#' 
 iCones_rcpp <- function(p1, a, p2, r, objects) {
     .Call(`_m4ma_iCones_rcpp`, p1, a, p2, r, objects)
 }
 
+#' Transform Intersecting Cones to Cells
+#'
+#' Transform intersecting cones into vector with cell names containing
+#' distances to each cell ring for a pedestrian moving with speed `v`.
+#' 
+#' @param iC Numeric vector with intersecting cones returned by
+#' \link[=iCones]{iCones}.
+#' @param v Numeric scalar velocity of current pedestrian.
+#' @param tStep Numeric scalar velocity scaling factor.
+#' 
+#' @return Numeric vector with distances.
 iCones2Cells_rcpp <- function(iC, v, tStep = 0.5) {
     .Call(`_m4ma_iCones2Cells_rcpp`, iC, v, tStep)
 }
 
+#' Blocked Angle
+#'
+#' Compute the distance from each cell to closest pedestrians.
+#' 
+#' 
+#' @param n Integer scalar index of current pedestrian in pedestrian matrix.
+#' @param state List with state data.
+#' @param p_pred Numeric matrix with shape Nx2 (x and y) as predicted positions
+#' of all pedestrians.
+#' @param objects List containing a list for each object. An object has
+#' two length-two numeric vectors of x- and y-coordinates.
+#' 
+#' @return Numeric matrix with rows for each other pedestrian and columns for
+#' each cell (Nx33) or NULL.
+#' 
 blockedAngle_rcpp <- function(n, state, p_pred, objects) {
     .Call(`_m4ma_blockedAngle_rcpp`, n, state, p_pred, objects)
 }
 
+#' Leaders
+#'
+#' Get leaders for pedestrian `n`.
+#' 
+#' Returns `NULL` if no other pedestrians are present, if they cannot be seen,
+#' if they are not in front, or if no other pedestrian has the same group as
+#' pedestrian `n` and `onlyGroup` is `TRUE`.
+#' 
+#' @param n Integer scalar index of current pedestrian in pedestrian matrix.
+#' @param state List with state data.
+#' @param r Numeric vector with radii of pedestrian bodies.
+#' @param centres Numeric matrix with x and y for each cell centre (33x2).
+#' @param objects List containing a list for each object. An object has
+#' two length-two numeric vectors of x- and y-coordinates.
+#' @param onlyGroup Logical scalar indicating if leaders must be from the same
+#' group.
+#' @param preferGroup Logical scalar indicating if leaders are preferred from
+#' the same group.
+#' @param pickBest Logical salar indicating if all or the best leader should be
+#' returned.
+#' 
+#' @return List:
+#'   \describe{
+#'     \item{dists}{Numeric matrix with distances for each cell (columns) to
+#'       each leader (rows).}
+#'     \item{leaders}{Numeric matrix with three rows for every leader
+#'       (columns). The first row is the cell of the leader, the second the
+#'       difference in heading angle between pedestrian `n` and leader, the
+#'       third the index of the shared group.}
+#'   }
+#' 
 getLeaders_rcpp <- function(n, state, centres, objects, onlyGroup = FALSE, preferGroup = TRUE, pickBest = FALSE) {
     .Call(`_m4ma_getLeaders_rcpp`, n, state, centres, objects, onlyGroup, preferGroup, pickBest)
 }
 
+#' Buddies
+#'
+#' Compute the distance from each cell to buddies.
+#' 
+#' Returns `NULL` if no other pedestrians are present, if they cannot be seen,
+#' if they are not in front, or if no other pedestrian has the same group as
+#' pedestrian `n`.
+#' 
+#' @param n Integer scalar index of current pedestrian in pedestrian matrix.
+#' @param group Integer vector of group memberships.
+#' @param a Numeric vector of heading angles for each pedestrian.
+#' @param p_pred Numeric matrix with shape Nx2 (x and y) as predicted positions
+#' of all pedestrians.
+#' @param centres Numeric matrix with x and y for each cell centre (33x2).
+#' @param objects List containing a list for each object. An object has
+#' two length-two numeric vectors of x- and y-coordinates.
+#' @param pickBest Logical salar indicating if all or the best buddy should be
+#' returned.
+#' @param state List with state data.
+#' 
+#' @return List:
+#'   \describe{
+#'     \item{leaders}{Numeric matrix with two rows for every buddy
+#'       (columns). The first row is the cell of the leader, the second the
+#'       difference in heading angle between pedestrian `n` and buddy.}
+#'     \item{dists}{Numeric matrix with distances for each cell (columns) to
+#'       each buddy (rows).}
+#'   }
+#' 
 getBuddy_rcpp <- function(n, group, a, p_pred, centres, objects, pickBest, state) {
     .Call(`_m4ma_getBuddy_rcpp`, n, group, a, p_pred, centres, objects, pickBest, state)
 }
