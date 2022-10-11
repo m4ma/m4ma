@@ -349,7 +349,7 @@ testthat::test_that(
     state_buddy = state
     ref = m4ma::getBuddy_r(n, group, a, p_pred, centres,
                            objects, FALSE, state_buddy)
-    res = m4ma::getBuddy_r(n, group, a, p_pred, centres,
+    res = m4ma::getBuddy_rcpp(n-1, group, a, p_pred, centres,
                            objects, FALSE, state_buddy)
     testthat::expect_equal(res, ref)
   }
@@ -360,7 +360,7 @@ testthat::test_that(
     state_buddy = state
     ref = m4ma::getBuddy_r(n, group, a, p_pred, centres,
                            objects_occlude, FALSE, state_buddy)
-    res = m4ma::getBuddy_r(n, group, a, p_pred, centres,
+    res = m4ma::getBuddy_rcpp(n-1, group, a, p_pred, centres,
                            objects_occlude, FALSE, state_buddy)
     testthat::expect_equal(res, ref)
     testthat::expect_equal(res, NULL)
@@ -375,7 +375,7 @@ testthat::test_that(
     state_buddy$group = group
     ref = m4ma::getBuddy_r(n, group, a, p_pred, centres,
                            objects, FALSE, state_buddy)
-    res = m4ma::getBuddy_r(n, group, a, p_pred, centres,
+    res = m4ma::getBuddy_rcpp(n-1, group, a, p_pred, centres,
                            objects, FALSE, state_buddy)
     testthat::expect_equal(res, ref)
     testthat::expect_equal(res, NULL)
@@ -393,7 +393,7 @@ testthat::test_that(
     state_buddy$p = p2_same
     ref = m4ma::getBuddy_r(n, group, a, p_pred, centres,
                            objects, TRUE, state_buddy)
-    res = m4ma::getBuddy_r(n, group, a, p_pred, centres,
+    res = m4ma::getBuddy_rcpp(n-1, group, a, p_pred, centres,
                            objects, TRUE, state_buddy)
     testthat::expect_equal(res, ref)
   }
