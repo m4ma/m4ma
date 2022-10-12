@@ -13,17 +13,15 @@ Weisstein, Eric W. "Line-Line Intersection.
 \usage{
 line_line_intersection_rcpp(P1, P2, P3, P4, interior_only = FALSE)
 
-line_line_intersection_r(P1, P2, P3, P4, interior_only = FALSE)
+line_line_intersection_r(P1, P2, P3, P4, interior.only = FALSE)
 
-line.line.intersection(..., use = "cpp")
+line.line.intersection(P1, P2, P3, P4, interior.only, use = "cpp")
 }
 \arguments{
 \item{P1, P2, P3, P4}{Numeric vector with x- and y-coordinates.}
 
-\item{interior_only}{Logical scalar indicating whether the intersection must
+\item{interior.only, interior_only}{Logical scalar indicating whether the intersection must
 be within the spans of the two lines.}
-
-\item{...}{Arguments passed to the function implementation.}
 
 \item{use}{Whether the R or C++ implementation is called.}
 }

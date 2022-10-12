@@ -254,7 +254,7 @@ pcnl_rcpp <- function(cell, utility, mum, nests, alpha, mu) {
 #' is not within the plane spanning between the two lines.
 #' 
 #' @param P1,P2,P3,P4 Numeric vector with x- and y-coordinates.
-#' @param interior.only Logical scalar indicating whether the intersection must
+#' @param interior.only,interior_only Logical scalar indicating whether the intersection must
 #' be within the spans of the two lines.
 #' 
 #' @returns A numeric vector with x- and y-coordinates defining the
