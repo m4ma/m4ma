@@ -14,8 +14,7 @@ using namespace Rcpp;
 //' @param p1 Numeric matrix with shape 1x2 (x and y).
 //' @param P1 Numeric matrix with shape Nx2 (x and y).
 //' 
-//' @return Named numeric vector of length equal to the number of 
-//' rows N in `P1`.
+//' @return Named numeric vector of length 11.
 // [[Rcpp::export]]
 NumericVector destinationAngle_rcpp(
     double a,
@@ -23,8 +22,10 @@ NumericVector destinationAngle_rcpp(
     NumericMatrix P1
   ) {
   
+  // angle between p1 and goal P1
   NumericVector a2 = angle2_rcpp(p1, P1);
   
+  // angular difference for 11 angles
   NumericVector dest_angle = headingAngle_rcpp(a2, a);
   
   return(dest_angle);
@@ -43,10 +44,10 @@ NumericMatrix omit_rows(NumericMatrix mat, IntegerVector omit) {
   int j = 0;
   
   for(int i = 0; i < n_rows; i++) {
-    if (is_false(any(omit == i))) {
+    if (is_false(any(omit == i))) { // if row is not omitted fill new matrix
       new_mat(j, _) = mat(i, _);
       new_row_names[j] = old_row_names[i];
-      j += 1;
+      j += 1; // increase counter if no row was omitted
     }
   }
   
@@ -96,35 +97,43 @@ Nullable<NumericMatrix> predClose_rcpp(
     return(R_NilValue);
   }
   
+  // remove row n from p2
   NumericMatrix ps = omit_rows(p2, IntegerVector::create(n));
   
   int p2_n_rows = p2.nrow();
   
+  // init index vector of occluded pedestrians
   IntegerVector occluded = seq_len(p2_n_rows) - 1;
   
-  occluded.erase(n);
+  occluded.erase(n); // remove self from occluded
   
+  // remove seen peds from occluded
   LogicalVector is_seen = seesMany_rcpp(p1, ps, objects);
   
   occluded = occluded[!is_seen];
-
+  
+  // add self to start of occluded
   occluded.push_front(n);
   
+  // remove occluded rows from predicted pos
   p_pred = omit_rows(p_pred, occluded);
   
-  if (p_pred.nrow() <= 1) {
+  if (p_pred.nrow() <= 1) { // if all other are occluded (1 is self)
     return(R_NilValue);
   }
   
+  // remove occluded rows from actual pos
   p2 = omit_rows(p2, occluded);
   
+  // check which peds are in front
   LogicalVector in_front = (minAngle_rcpp(a1, angle2_rcpp(p1, p2)) < 85.0) &
     (minAngle_rcpp(a1, angle2_rcpp(p1, p_pred)) < 85.0);
   
-  if (is_false(any(in_front))) {
+  if (is_false(any(in_front))) { // if none are in front
     return(R_NilValue);
   }
   
+  // remove not in front from predicted pos
   IntegerVector idx_in_front = seq_len(in_front.length()) - 1;
   NumericMatrix p_pred_in_front = omit_rows(p_pred, idx_in_front[!in_front]);
   
@@ -134,10 +143,12 @@ Nullable<NumericMatrix> predClose_rcpp(
   NumericMatrix dist(r_in_front.length(), centres.nrow());
   rownames(dist) = names_in_front;
   
+  // calc dist from each cell centre to predicted pos
   for(int i = 0; i < centres.nrow(); i++) {
      dist(_, i) = dist1_rcpp(centres(i, _), p_pred_in_front);
   }
   
+  // add radii (object size) to dist
   for(int i = 0; i < r_in_front.length(); i++) {
     dist(i, _) = dist(i, _) - (r[n] + r_in_front[i]);
   } 
@@ -166,15 +177,20 @@ Nullable<NumericMatrix> predClose_rcpp(
 //'   
 // [[Rcpp::export]]
 List eObjects_rcpp(NumericMatrix p1, NumericMatrix p2, NumericVector r) {
+  // calc dist between p1 and p2
   NumericVector d = dist1_rcpp(p1, p2);
   
+  // calc angle between p1 and p2
   NumericVector a12 = angle2_rcpp(p1, p2);
   
   int p2_n_rows = p2.nrow();
   
+  // repeat r if single value
   NumericVector r_rep = rep_len(r, p2_n_rows);
   
+  // get angles between line segments and lines between p1 and p2
   NumericVector theta = atan(r_rep / d) * 180.0 / M_PI;
+  
   
   NumericVector angles_ac(p2_n_rows);
   NumericVector angles_cw(p2_n_rows);
@@ -184,9 +200,11 @@ List eObjects_rcpp(NumericMatrix p1, NumericMatrix p2, NumericVector r) {
     angles_cw[i] = fmod(360.0 + a12[i] - theta[i], 360.0);
   }
   
+  // convert angles to sine and cosine
   NumericMatrix ac = aTOd_rcpp(angles_ac);
   NumericMatrix cw = aTOd_rcpp(angles_cw);
   
+  // multiply sine and cosine with with distance to get endpoints
   for(int i = 0; i < p2_n_rows; i++) {
     ac(i, _) = ac(i, _) * d[i];
     cw(i, _) = cw(i, _) * d[i];
@@ -195,11 +213,13 @@ List eObjects_rcpp(NumericMatrix p1, NumericMatrix p2, NumericVector r) {
   NumericMatrix ac_t = transpose(ac);
   NumericMatrix cw_t = transpose(cw);
   
+  // adjust for pos of p1
   for(int j = 0; j < p2.ncol(); j++) {
     ac_t(j, _) = ac_t(j, _) + p1[j];
     cw_t(j, _) = cw_t(j, _) + p1[j];
   }
   
+  // prepare output list
   NumericMatrix ac_t_t = transpose(ac_t);
   rownames(ac_t_t) = rownames(p2);
   colnames(ac_t_t) = CharacterVector::create("x", "y");
@@ -302,13 +322,14 @@ Nullable<NumericVector> iCones_rcpp(
     NumericVector r,
     List objects
 ) {
-  if (p2.nrow() == 0) {
+  if (p2.nrow() == 0) { // if single pedestrian
     return(R_NilValue);
   }
   
   CharacterVector p2_row_names = rownames(p2);
   p2_row_names.names() = p2_row_names;
   
+  // calc endpoints of intersecting cones
   List ends = eObjects_rcpp(p1, p2, r);
   NumericMatrix ends_ac = ends[0];
   NumericMatrix ends_cw = ends[1];
@@ -316,13 +337,15 @@ Nullable<NumericVector> iCones_rcpp(
   NumericMatrix endCones(p2.nrow(), ends.length());
   rownames(endCones) = p2_row_names;
   
+  // calc cones of endpoints
   for(int i = 0; i < ends.length(); i++) {
-    endCones(_, i) = Iangle_rcpp(p1, a, ends[i]) - 1;
+    endCones(_, i) = Iangle_rcpp(p1, a, ends[i]) - 1; // align with cpp indexing
   }
   
   List cList(p2.nrow());
   cList.names() = p2_row_names;
   
+  // adjust extreme cones (most left and right)
   for(int i = 0; i < cList.length(); i++) {
     cList[i] = fix(endCones(i, _));
   }
@@ -339,19 +362,23 @@ Nullable<NumericVector> iCones_rcpp(
     return(R_NilValue);
   }
   
+  // calc cell centers for p1
   NumericMatrix coneLineEnds = c_vd_rcpp(
     seq_len(11), p1, rep(1.0, 11), a, get_vels(), get_angles(), 0.5
   );
   
   CharacterVector cList_names = cList.names();
+  
+  // init distance to cone list
   List cDist(cList.length());
   
-  for(int i = 0; i < cList.length(); i++) {
+  for(int i = 0; i < cList.length(); i++) { // for each other pedestrian
     NumericVector cList_i = cList[i];
     String name_i = cList_names[i];
-    int idx = p2_row_names.offset(name_i);
+    int idx = p2_row_names.offset(name_i); // get name pedestrian
     
     if (cList_i.length() == 1) {
+      // check if p1 can see pedestrian
       bool sees_goal = seesGoal_rcpp(p1, p2(idx, _), objects);
       
       if (!sees_goal) {
@@ -360,32 +387,36 @@ Nullable<NumericVector> iCones_rcpp(
         cDist[i] = dist1_rcpp(p1, p2(Range(idx, idx), _));
       }
     } else {
+      // for each intersecting cone
       for(int j = 0; j < cList_i.length(); j++) {
+        // calc intersection point
         NumericVector P_n_vec = line_line_intersection_rcpp(
           p1, coneLineEnds(cList_i[j], _), ends_ac(idx, _), ends_cw(idx, _)
         );
+        // check if p1 can see intersection
         bool sees_goal = seesGoal_rcpp(p1, P_n_vec, objects);
         if (!sees_goal) {
           cList_i[j] = NA_REAL;
         } else {
           P_n_vec.attr("dim") = Dimension(1, 2);
           NumericMatrix P_n = as<NumericMatrix>(P_n_vec);
-          if (j == 0) {
+          // calc dist to intersection
+          if (j == 0) { // init dist vector
             cDist[i] = dist1_rcpp(p1, P_n);
-          } else {
+          } else { // if dist vector is still emtpy
             Nullable<NumericVector> _cDist_i = cDist[i];
             if (_cDist_i == R_NilValue) {
               cDist[i] = dist1_rcpp(p1, P_n);
             } else {
               NumericVector cDist_i = as<NumericVector>(_cDist_i);
               NumericVector d = dist1_rcpp(p1, P_n);
-              cDist_i.push_back(d[0]);
+              cDist_i.push_back(d[0]); // add dist to vector
               cDist[i] = cDist_i;
             }
           }
         }
       }
-      cList[i] = cList_i[!is_na(cList_i)];
+      cList[i] = cList_i[!is_na(cList_i)]; // remove NA dist entries
     }
   }
   
@@ -397,6 +428,7 @@ Nullable<NumericVector> iCones_rcpp(
   
   cDist = check_list_null(cDist);
   
+  // assign cone indices to dist list names
   for(int i = 0; i < cList.length(); i++) {
     NumericVector cDist_i = cDist[i];
     cDist_i.names() = int2char(cList[i]);
@@ -406,6 +438,7 @@ Nullable<NumericVector> iCones_rcpp(
   IntegerVector outCones;
   NumericVector out;
   
+  // get minimum dist to intersection for each cone
   for(int i = 0; i < 11; i++) {
     NumericVector d;
     
@@ -426,7 +459,7 @@ Nullable<NumericVector> iCones_rcpp(
     }
   }
   
-  out.names() = int2char(outCones + 1);
+  out.names() = int2char(outCones + 1); // align with R indexing
   
   return(out);
 }
@@ -493,7 +526,7 @@ NumericVector blockedAngle_rcpp(int n, List state, NumericMatrix p_pred, List ob
   NumericVector r = state["r"];
   
   Nullable<NumericVector> _iC = iCones_rcpp(p1, a[n], p2, r, objects);
-  if (_iC == R_NilValue) {
+  if (_iC == R_NilValue) { // if iCones is NULL return empty vector
     NumericVector out_empty;
     return(out_empty);
   }
@@ -552,14 +585,17 @@ Nullable<List> getLeaders_rcpp(
   NumericVector v = state["v"];
   double a1 = a[n];
   double v1 = v[n];
+  // omit self from pedestrian matrix
   NumericMatrix ps = omit_rows(p_mat, IntegerVector::create(n));
   
-  IntegerVector occluded = seq_along(v) - 1;
-  occluded.erase(n);
+  // init occluded vector
+  IntegerVector occluded = seq_along(v) - 1; // align with cpp indexing
+  occluded.erase(n); // remove self
   LogicalVector is_seen = seesMany_rcpp(p1, ps, objects);
-  occluded = occluded[!is_seen];
-  occluded.push_front(n);
+  occluded = occluded[!is_seen]; // remove seen pedestrians
+  occluded.push_front(n); // add self to front
   
+  // get angles from peds that are not occluded
   CharacterVector a_names = a.names();
   NumericVector a2;
   CharacterVector a2_names;
@@ -571,11 +607,13 @@ Nullable<List> getLeaders_rcpp(
   }
   a2.names() = a2_names;
   
+  // omit occluded peds from matrix
   NumericMatrix p2 = omit_rows(p_mat, occluded);
   if (p2.nrow() == 0) {
     return(R_NilValue);
   }
   
+  // get goal matrix
   NumericMatrix P1;
   
   if (is<List>(state["P"])) {
@@ -588,15 +626,17 @@ Nullable<List> getLeaders_rcpp(
     P1 = P1_mat(Range(n, n), Range(0, 1));
   }
   
+  // bin angle to other peds
   NumericVector I_n = Iangle_rcpp(p1, a1, p2);
   I_n = I_n[!is_na(I_n)];
-  if (I_n.length() == 0) {
+  if (I_n.length() == 0) { // if none are in front
     return(R_NilValue);
   }
   
   CharacterVector I_n_names = I_n.names();
   CharacterVector p2_rownames = rownames(p2);
   
+  // get pos of peds in front
   NumericMatrix p2_ring(I_n_names.length(), p2.ncol());
   
   for(int i = 0; i < I_n_names.length(); i++) {
@@ -607,17 +647,20 @@ Nullable<List> getLeaders_rcpp(
     }
   }
   
+  // calc distance to peds in front
   NumericVector d_ring = dist1_rcpp(p1, p2_ring);
   
+  // bin distance into rings
   NumericVector bins_ring = NumericVector::create(0, 0.5, 1, 5) * v1 * 0.5;
   
   NumericVector ring = 4 - bin_vector(d_ring, bins_ring);
   ring.names() = I_n_names;
   ring = ring[!is_na(ring)];
-  if (ring.length() == 0) {
+  if (ring.length() == 0) { // if none are in rings
     return(R_NilValue);
   }
   
+  // init candidates for leaders
   CharacterVector ring_names = ring.names();
   NumericVector candidates = I_n[ring_names];
   candidates = candidates + 11 * (ring - 1);
@@ -628,26 +671,32 @@ Nullable<List> getLeaders_rcpp(
   LogicalVector inGroup = group_candidates == group[n];
   inGroup.names() = group_candidates.names();
   
-  if (onlyGroup) {
+  if (onlyGroup) { // if leaders must be in same group
     if (is_false(any(inGroup))) {
       return(R_NilValue);
     } else {
       candidates = candidates[inGroup];
     } 
+  // if leaders are preferred from in-group
   } else if (preferGroup && is_true(any(inGroup))) {
     candidates = candidates[inGroup];
   }
   
+  // get candidate angles
   NumericVector a2_candidates = a2[candidates_names];
+  
+  // get angles between p1 and goal
   NumericVector d_n = Dn_rcpp(p1, P1);
   NumericVector angles(a2_candidates.length());
   
+  // get minimum angular difference between candidates and p1 to goal
   for(int i = 0; i < a2_candidates.length(); i++) {
     NumericVector a2_canidates_min_angle = minAngle_rcpp(a2_candidates[i], d_n);
     angles[i] = a2_canidates_min_angle[0];
   }
   angles.names() = candidates_names;
   
+  // check if difference is below 90 deg
   LogicalVector ok = angles < 90.0;
   if (is_false(any(ok))) {
     return(R_NilValue);
@@ -674,6 +723,7 @@ Nullable<List> getLeaders_rcpp(
     angles = angles[leaders_names];
   }
   
+  // get distance from cell centres to leaders
   NumericMatrix d(leaders.length(), 33);
   rownames(d) = leaders_names;
   
@@ -683,6 +733,7 @@ Nullable<List> getLeaders_rcpp(
     d(i, _) = dist1_rcpp(centres_i, centres);
   }
   
+  // pick closest leader?
   IntegerVector best;
   if (pickBest) {
     best = which_min(angles);
@@ -690,6 +741,7 @@ Nullable<List> getLeaders_rcpp(
     best = seq_along(angles) - 1;
   }
   
+  // prepare output
   NumericVector leaders_best = leaders[best];
   CharacterVector leaders_names_best = leaders_names[best];
   
@@ -763,19 +815,23 @@ Nullable<List> getBuddy_rcpp(
   NumericMatrix p_mat = state["p"];
   NumericMatrix p1 = get_p1(n, p_mat);
   NumericVector v = state["v"];
+  // omit self from pedestrian matrix
   NumericMatrix ps = omit_rows(p_mat, IntegerVector::create(n));
-
-  IntegerVector occluded = seq_along(v) - 1;
-  occluded.erase(n);
+  
+  // init occluded vector
+  IntegerVector occluded = seq_along(v) - 1; // align with cpp indexing
+  occluded.erase(n); // remove self
   LogicalVector is_seen = seesMany_rcpp(p1, ps, objects);
-  occluded = occluded[!is_seen];
-  occluded.push_front(n);
-
+  occluded = occluded[!is_seen]; // remove seen peds
+  occluded.push_front(n); // add self to front
+  
+  // omit occluded from predicted pos matrix
   p_pred = omit_rows(p_pred, occluded);
   if (p_pred.nrow() == 0) {
     return(R_NilValue);
   }
-
+  
+  // get visible group members
   CharacterVector group_names = group.names();
   NumericVector group_visible;
   CharacterVector inGroup_names;
@@ -792,7 +848,7 @@ Nullable<List> getBuddy_rcpp(
   not_in_group_idx = not_in_group_idx[!inGroup];
   p_pred = omit_rows(p_pred, not_in_group_idx);
   int nped = p_pred.nrow();
-  if (nped == 0) {
+  if (nped == 0) { // if none visible
     return(R_NilValue);
   }
   
@@ -800,9 +856,11 @@ Nullable<List> getBuddy_rcpp(
   
   p_pred_row_names.names() = p_pred_row_names;
   NumericVector a_p_pred = a[p_pred_row_names];
+  // angular difference between p1 and predicted pos for each cone
   NumericMatrix headingDifference_t = headingAngle_rcpp(a_p_pred, a[n]);
   NumericMatrix headingDifference = transpose(headingDifference_t);
   
+  // get minimum angular difference for each cone
   IntegerVector parallelCone(headingDifference.ncol());
   for(int i = 0; i < parallelCone.length(); i++) {
     parallelCone[i] = which_min(headingDifference(_, i));
@@ -810,27 +868,34 @@ Nullable<List> getBuddy_rcpp(
   CharacterVector parallelCone_names = colnames(headingDifference);
   parallelCone.names() = parallelCone_names;
   
+  // get ring of group members with minimal distance
   NumericMatrix d_rings(3, nped);
   IntegerVector ring(d_rings.ncol());
-  for(int i = 0; i < nped; i++) {
+  for(int i = 0; i < nped; i++) { // for each group member
     int parallelCone_i = parallelCone[i];
-    String name_i = parallelCone_names[i];
+    String name_i = parallelCone_names[i]; // get name of group member
     int name_idx = p_pred_row_names.offset(name_i);
+    // get predicted pos
     NumericVector p_pred_parallel = p_pred(name_idx, _);
     IntegerVector centres_idx = IntegerVector::create(
       parallelCone_i, parallelCone_i + 11, parallelCone_i + 22
     );
+    // get cell centres
     NumericMatrix centres_i(centres_idx.length(), centres.ncol());
     for(int j = 0; j < centres_idx.length(); j++) {
       centres_i(j, _) = centres(centres_idx[j], _);
     }
+    // calc distance from each cell centres to predicted pos
     d_rings(_, i) = dist1_rcpp(p_pred_parallel, centres_i);
+    
+    // get ring with minimal distance
     ring[i] = which_min(d_rings(_, i));
   }
   
   IntegerVector parallelCone_11 = parallelCone + 11;
   IntegerVector parallelCone_22 = parallelCone + 22;
   IntegerMatrix cells = cbind(parallelCone, parallelCone_11, parallelCone_22);
+  // get cells of ring with minimal distance
   NumericVector cell(nped);
   for(int i = 0; i < nped; i++) {
     cell[i] = cells(i, ring[i]);
@@ -838,17 +903,20 @@ Nullable<List> getBuddy_rcpp(
   
   cell.names() = parallelCone_names;
   
+  // get angular difference to group members
   NumericVector angleDisagree(headingDifference.ncol());
   for(int i = 0; i < headingDifference.ncol(); i++) {
     angleDisagree[i] = headingDifference(parallelCone[i], i) / 90.0;
   }
   
+  // get distance from each cell to group members
   NumericMatrix d_buddy(nped, centres.nrow());
   for(int i = 0; i < nped; i++) {
     NumericVector centres_cell_i = centres(cell[i], _);
     d_buddy(i, _) = dist1_rcpp(centres_cell_i, centres);
   }
   
+  // pick closest buddy?
   IntegerVector best;
   if (pickBest) {
     best = which_min(angleDisagree);
@@ -856,6 +924,7 @@ Nullable<List> getBuddy_rcpp(
     best = seq_len(nped) - 1;
   }
   
+  // prepare output
   NumericMatrix buddies(2, best.length());
   NumericVector cell_best = cell[best];
   buddies(0, _) = cell_best + 1;
