@@ -215,8 +215,8 @@ like_state <- function(state, p, nests, alpha, cell_nest, min_like = 1e-10) {
 #' 
 #' Calculate the log-likelihood of a trace of states as the sum over states and subject log-likelihoods.
 #'
-#' @param trace List of lists of lists with subject data.
 #' @param p Numeric matrix with subject parameters for each subject.
+#' @param trace List of lists of lists with subject data.
 #' @param nests List of vectors with utility indices.
 #' @param alpha List of vectors with alpha values.
 #' @param cell_nest Numeric matrix with nest indices for each cell.
@@ -225,8 +225,8 @@ like_state <- function(state, p, nests, alpha, cell_nest, min_like = 1e-10) {
 #' 
 #' @returns Numeric scalar trace log-likelihood.
 #' @export
-msumlogLike <- function(trace, p, nests, alpha, cell_nest, min_like = 1e-10, mult = -1.0) {
-    .Call(`_m4ma_msumlogLike`, trace, p, nests, alpha, cell_nest, min_like, mult)
+msumlogLike <- function(p, trace, nests, alpha, cell_nest, min_like = 1e-10, mult = -1.0) {
+    .Call(`_m4ma_msumlogLike`, p, trace, nests, alpha, cell_nest, min_like, mult)
 }
 
 #' Probability of the Conditional Nested Logit Model
