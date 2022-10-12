@@ -8,10 +8,12 @@ using namespace Rcpp;
 //' 
 //' The first line is defined by \code{P1} and \code{P1}, the second by 
 //' \code{P3} \code{P4}. Returns \code{Inf} when the lines are parallel. If
-//' \code{interior.only} is \code{TRUE}, returns \code{NA} if the intersection
+//' \code{interior_only} is \code{TRUE}, returns \code{NA} if the intersection
 //' is not within the plane spanning between the two lines.
 //' 
 //' @param P1,P2,P3,P4 Numeric vector with x- and y-coordinates.
+//' @param interior_only Logical scalar indicating whether the intersection must
+//' be within the spans of the two lines.
 //' 
 //' @returns A numeric vector with x- and y-coordinates defining the
 //' intersecting point between the two lines.
@@ -144,6 +146,8 @@ NumericVector get_state_P_n(int n, List state, int offset=0) {
 //' @param state List of list with state data.
 //' @param objects List containing a list for each object. An object has
 //' two length-two numeric vectors of x- and y-coordinates.
+//' @param offset Integer scalar offset to be added to the current goal index
+//' (default 0).
 //' 
 //' @returns \code{TRUE} if the goal is in sight, \code{FALSE} otherwise.
 //' @examples
@@ -157,6 +161,8 @@ NumericVector get_state_P_n(int n, List state, int offset=0) {
 //'     matrix(c(1, 1), 1, 2)
 //'   )
 //' )
+//' 
+//' attr(state$P[[1]], "i") = 1
 //' 
 //' seesCurrentGoal_rcpp(1, state, objects)
 //' # FALSE
@@ -243,9 +249,11 @@ LogicalVector seesMany_rcpp(NumericVector p1, NumericMatrix ps, List objects) {
 //'   )
 //' )
 //' 
+//' attr(state$P[[1]], "i") = 1
+//' 
 //' # Random centres and ok
 //' set.seed(123)
-//' centres = matrix(rnorm(66), 2, 2)
+//' centres = matrix(rnorm(66), 33, 2)
 //' 
 //' ok = as.logical(sample(c(0, 1), 33, replace = TRUE, prob = c(0.3, 0.7)))
 //' 

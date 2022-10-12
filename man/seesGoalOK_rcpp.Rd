@@ -51,9 +51,11 @@ state = list(
   )
 )
 
+attr(state$P[[1]], "i") = 1
+
 # Random centres and ok
 set.seed(123)
-centres = matrix(rnorm(66), 2, 2)
+centres = matrix(rnorm(66), 33, 2)
 
 ok = as.logical(sample(c(0, 1), 33, replace = TRUE, prob = c(0.3, 0.7)))
 

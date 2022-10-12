@@ -20,6 +20,9 @@ seesCurrentGoal(..., use = "cpp")
 \item{objects}{List containing a list for each object. An object has
 two length-two numeric vectors of x- and y-coordinates.}
 
+\item{offset}{Integer scalar offset to be added to the current goal index
+(default 0).}
+
 \item{...}{Arguments passed to the function implementation.}
 
 \item{use}{Whether the R or C++ implementation is called.}
@@ -42,6 +45,8 @@ state = list(
     matrix(c(1, 1), 1, 2)
   )
 )
+
+attr(state$P[[1]], "i") = 1
 
 seesCurrentGoal_rcpp(1, state, objects)
 # FALSE

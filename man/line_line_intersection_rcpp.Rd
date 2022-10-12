@@ -20,6 +20,9 @@ line.line.intersection(..., use = "cpp")
 \arguments{
 \item{P1, P2, P3, P4}{Numeric vector with x- and y-coordinates.}
 
+\item{interior_only}{Logical scalar indicating whether the intersection must
+be within the spans of the two lines.}
+
 \item{...}{Arguments passed to the function implementation.}
 
 \item{use}{Whether the R or C++ implementation is called.}
@@ -34,7 +37,7 @@ Calculate the intersection between two lines.
 \details{
 The first line is defined by \code{P1} and \code{P1}, the second by
 \code{P3} \code{P4}. Returns \code{Inf} when the lines are parallel. If
-\code{interior.only} is \code{TRUE}, returns \code{NA} if the intersection
+\code{interior_only} is \code{TRUE}, returns \code{NA} if the intersection
 is not within the plane spanning between the two lines.
 }
 \author{
