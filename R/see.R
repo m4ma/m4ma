@@ -1,5 +1,5 @@
 #' @rdname line_line_intersection_rcpp
-line_line_intersection_r <- function(P1, P2, P3, P4, interior.only=FALSE) 
+line_line_intersection_r <- function(P1, P2, P3, P4, interior_only=FALSE) 
 {
   P1 <- as.vector(P1)
   P2 <- as.vector(P2)

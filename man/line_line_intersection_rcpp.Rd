@@ -13,7 +13,7 @@ Weisstein, Eric W. "Line-Line Intersection.
 \usage{
 line_line_intersection_rcpp(P1, P2, P3, P4, interior_only = FALSE)
 
-line_line_intersection_r(P1, P2, P3, P4, interior.only = FALSE)
+line_line_intersection_r(P1, P2, P3, P4, interior_only = FALSE)
 
 line.line.intersection(..., use = "cpp")
 }
