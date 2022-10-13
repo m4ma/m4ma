@@ -21,7 +21,7 @@ using namespace Rcpp;
 //' @source Weisstein, Eric W. "Line-Line Intersection.
 //' "From MathWorld--A Wolfram Web Resource.
 //' \url{http://mathworld.wolfram.com/Line-LineIntersection.html}
-//' @author David Sterratt
+//' 
 //' @export
 // [[Rcpp::export]]
 NumericVector line_line_intersection_rcpp(
