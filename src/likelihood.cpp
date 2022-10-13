@@ -77,7 +77,7 @@ NumericVector like_state(List state, NumericMatrix p, List nests, List alpha, Nu
 //' Calculate the log-likelihood of a trace of states as the sum over states and subject log-likelihoods.
 //'
 //' @param p Numeric matrix with subject parameters for each subject.
-//' @param trace List of lists of lists with subject data.
+//' @param trace_rcpp List of lists of lists with subject data.
 //' @param nests List of vectors with utility indices.
 //' @param alpha List of vectors with alpha values.
 //' @param cell_nest Numeric matrix with nest indices for each cell.
@@ -87,12 +87,12 @@ NumericVector like_state(List state, NumericMatrix p, List nests, List alpha, Nu
 //' @returns Numeric scalar trace log-likelihood.
 //' @export
 // [[Rcpp::export]]
-double msumlogLike(NumericMatrix p, List trace, List nests, List alpha, NumericMatrix cell_nest, double min_like = 1e-10, double mult = -1.0) {
-  int l = trace.length();
+double msumlogLike(NumericMatrix p, List trace_rcpp, List nests, List alpha, NumericMatrix cell_nest, double min_like = 1e-10, double mult = -1.0) {
+  int l = trace_rcpp.length();
   double llike_trace = 0.0;
   
   for(int i = 0;  i < l; ++i) {
-    List state_i = trace[i];
+    List state_i = trace_rcpp[i];
     llike_trace += sum(like_state(state_i, p, nests, alpha, cell_nest, min_like));
   }
   

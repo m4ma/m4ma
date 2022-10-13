@@ -55,9 +55,8 @@ cell_nest = m4ma::get_cell_nest()
 # Transform trace into format for C++ processing
 trace_rcpp = m4ma::create_rcpp_trace(get(trace_name))
 
-
 # Compute log likelihood of trace given subject parameters
-m4ma::msumlogLike(trace_rcpp, p, nests, alpha, cell_nest)
+m4ma::msumlogLike(p, trace_rcpp, nests, alpha, cell_nest)
 
 # 176.7388
 
