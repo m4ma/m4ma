@@ -4,12 +4,20 @@
 \alias{msumlogLike}
 \title{Trace Log-likelihood}
 \usage{
-msumlogLike(p, trace, nests, alpha, cell_nest, min_like = 1e-10, mult = -1)
+msumlogLike(
+  p,
+  trace_rcpp,
+  nests,
+  alpha,
+  cell_nest,
+  min_like = 1e-10,
+  mult = -1
+)
 }
 \arguments{
 \item{p}{Numeric matrix with subject parameters for each subject.}
 
-\item{trace}{List of lists of lists with subject data.}
+\item{trace_rcpp}{List of lists of lists with subject data.}
 
 \item{nests}{List of vectors with utility indices.}
 

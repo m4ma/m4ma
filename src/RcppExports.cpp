@@ -203,19 +203,19 @@ BEGIN_RCPP
 END_RCPP
 }
 // msumlogLike
-double msumlogLike(NumericMatrix p, List trace, List nests, List alpha, NumericMatrix cell_nest, double min_like, double mult);
-RcppExport SEXP _m4ma_msumlogLike(SEXP pSEXP, SEXP traceSEXP, SEXP nestsSEXP, SEXP alphaSEXP, SEXP cell_nestSEXP, SEXP min_likeSEXP, SEXP multSEXP) {
+double msumlogLike(NumericMatrix p, List trace_rcpp, List nests, List alpha, NumericMatrix cell_nest, double min_like, double mult);
+RcppExport SEXP _m4ma_msumlogLike(SEXP pSEXP, SEXP trace_rcppSEXP, SEXP nestsSEXP, SEXP alphaSEXP, SEXP cell_nestSEXP, SEXP min_likeSEXP, SEXP multSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericMatrix >::type p(pSEXP);
-    Rcpp::traits::input_parameter< List >::type trace(traceSEXP);
+    Rcpp::traits::input_parameter< List >::type trace_rcpp(trace_rcppSEXP);
     Rcpp::traits::input_parameter< List >::type nests(nestsSEXP);
     Rcpp::traits::input_parameter< List >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type cell_nest(cell_nestSEXP);
     Rcpp::traits::input_parameter< double >::type min_like(min_likeSEXP);
     Rcpp::traits::input_parameter< double >::type mult(multSEXP);
-    rcpp_result_gen = Rcpp::wrap(msumlogLike(p, trace, nests, alpha, cell_nest, min_like, mult));
+    rcpp_result_gen = Rcpp::wrap(msumlogLike(p, trace_rcpp, nests, alpha, cell_nest, min_like, mult));
     return rcpp_result_gen;
 END_RCPP
 }
