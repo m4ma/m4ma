@@ -263,7 +263,7 @@ pcnl_rcpp <- function(cell, utility, mum, nests, alpha, mu) {
 #' @source Weisstein, Eric W. "Line-Line Intersection.
 #' "From MathWorld--A Wolfram Web Resource.
 #' \url{http://mathworld.wolfram.com/Line-LineIntersection.html}
-#' @author David Sterratt
+#' 
 #' @export
 line_line_intersection_rcpp <- function(P1, P2, P3, P4, interior_only = FALSE) {
     .Call(`_m4ma_line_line_intersection_rcpp`, P1, P2, P3, P4, interior_only)
