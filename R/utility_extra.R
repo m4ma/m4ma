@@ -5,7 +5,7 @@
 destinationAngle_r <- function(a, p1, P1,
                              angles = c(72.5, 50, 32.5, 20, 10, 0, 350, 340, 
                                         327.5, 310, 287.5)) {
-  sapply((angles + a) %% 360, minAngle, a2 = angle2(p1, P1))
+  sapply((angles + a) %% 360, minAngle_r, a2 = angle2_r(p1, P1))
 }
 
 
@@ -16,7 +16,7 @@ predClose_r <- function(n, p1, a1, p2, r, centres, p_pred, objects) {
   }
   
   # remove self and pedestrians you cant see 
-  occluded <- c(1:dim(p2)[1])[-n][!seesMany(p1, ps = p2[-n, , drop = FALSE], 
+  occluded <- c(1:dim(p2)[1])[-n][!seesMany_r(p1, ps = p2[-n, , drop = FALSE], 
                                             objects)]
   p_pred <- p_pred[-c(n,occluded), , drop = FALSE]
   
@@ -26,15 +26,15 @@ predClose_r <- function(n, p1, a1, p2, r, centres, p_pred, objects) {
   p2 <- p2[-c(n, occluded), , drop = FALSE]
   
   # Peds in field of vision now and when moved
-  inFront <- (minAngle(a1, angle2(p1, p2)) < 85) & 
-    (minAngle(a1, angle2(p1, p_pred)) < 85)
+  inFront <- (minAngle_r(a1, angle2_r(p1, p2)) < 85) & 
+    (minAngle_r(a1, angle2_r(p1, p_pred)) < 85)
   
   if (!any(inFront)) {
     return(NULL)
   }
   
   # Distance to predicted positions
-  d <- matrix(apply(centres, 1, dist1, p2 = p_pred[inFront, , drop = FALSE]),
+  d <- matrix(apply(centres, 1, dist1_r, p2 = p_pred[inFront, , drop = FALSE]),
               nrow = sum(inFront), 
               dimnames = list(names(inFront[inFront]), NULL))
   d <- d - (r[n] + r[names(inFront)[inFront]]) # subtract bodies
@@ -44,8 +44,8 @@ predClose_r <- function(n, p1, a1, p2, r, centres, p_pred, objects) {
 
 #' @rdname eObjects_rcpp
 eObjects_r <- function(p1, p2, r) {
-  d <- dist1(p1, p2)
-  a12 <- angle2(p1, p2)
+  d <- dist1_r(p1, p2)
+  a12 <- angle2_r(p1, p2)
   r <- rep(r, length.out = dim(p2)[1])  # in case a single value
   theta <- atan(r / d) * 180 / pi
   ac <- t(as.vector(p1) + t(aTOd((a12 + theta) %% 360) * d))  # anti-clockwise
@@ -110,30 +110,30 @@ iCones_r <- function(p1, a, p2, r, objects) {
   }
   
   # End of unit line from p1 in direction of each cone
-  coneLineEnds <- c_vd(1:11, as.vector(p1), rep(1, 11), a)
+  coneLineEnds <- c_vd_r(1:11, as.vector(p1), rep(1, 11), a)
 
   # Distances to objects in cones
   cDist <- vector(mode = "list", length = length(cList)) 
   for (i in names(cList)) {  # remove when cant see
     if (length(cList[[i]]) == 1) {
-      if (!seesGoal(p1, p2[i, , drop = FALSE], objects)) {
+      if (!seesGoal_r(p1, p2[i, , drop = FALSE], objects)) {
         cList[[i]] <- numeric(0)
       } else {
-        cDist[[i]] <- dist1(p1, p2[i, , drop = FALSE])
+        cDist[[i]] <- dist1_r(p1, p2[i, , drop = FALSE])
       }
     } else {  # more than one cone to check
       for (j in 1:length(cList[[i]])) {  # remove cant see
         # Intersection of cone line and end
-        P_n <- matrix(line.line.intersection(p1, coneLineEnds[cList[[i]][j], ], 
+        P_n <- matrix(line_line_intersection_r(p1, coneLineEnds[cList[[i]][j], ], 
                                              ends[i, , 1], ends[i, , 2]), 
                       nrow = 1)
-        if (!seesGoal(p1, P_n, objects)) {
+        if (!seesGoal_r(p1, P_n, objects)) {
           cList[[i]][j] <- NA
         } else {
           if (j == 1) {
-            cDist[[i]] <- dist1(p1,P_n) 
+            cDist[[i]] <- dist1_r(p1,P_n) 
           } else {
-            cDist[[i]] <- c(cDist[[i]], dist1(p1, P_n))
+            cDist[[i]] <- c(cDist[[i]], dist1_r(p1, P_n))
           }
         }
       }
@@ -168,7 +168,7 @@ iCones_r <- function(p1, a, p2, r, objects) {
 #' @rdname iCones2Cells_rcpp
 #' @param vels Numeric vector with velocities for each ring. Must be length 3.
 iCones2Cells_r <- function(iC, v, vels = c(1.5, 1, .5)) {
-  out <- rep(iC, times = 3) - rep(scaleVel(v) * vels, each = length(iC))
+  out <- rep(iC, times = 3) - rep(scaleVel_r(v) * vels, each = length(iC))
   names(out) <- rep(as.numeric(names(iC)), times = 3) + 
     rep(c(0, 11, 22), each = length(iC))
   return(out)
@@ -192,7 +192,7 @@ getLeaders_r <- function(n, state, centres, objects, onlyGroup = FALSE,
   
   # Remove peds cant see
   occluded <- c(n, c(1:length(state$v))[-n][
-    !seesMany(p1, ps = state$p[-n, , drop = FALSE], objects)])
+    !seesMany_r(p1, ps = state$p[-n, , drop = FALSE], objects)])
   a2 <- state$a[-occluded]
   p2 <- state$p[-occluded, , drop = FALSE]
   
@@ -214,7 +214,7 @@ getLeaders_r <- function(n, state, centres, objects, onlyGroup = FALSE,
   # Subset in rings 1-3
   ring <- as.numeric(
     as.character(cut(dist1_r(p1, p2[names(I_n), , drop = FALSE]), 
-                     c(0, scaleVel(v1) * c(.5, 1, 5)), 
+                     c(0, scaleVel_r(v1) * c(.5, 1, 5)), 
                      c("3", "2", "1"))))
   names(ring) <- names(I_n)
   ring <- ring[!is.na(ring)]
@@ -257,7 +257,7 @@ getLeaders_r <- function(n, state, centres, objects, onlyGroup = FALSE,
   d <- array(dim = c(length(leaders), 33), 
              dimnames = list(names(leaders), 1:33))
   for (i in 1:length(leaders)) {
-    d[i, ] <- dist1(centres[leaders[i], ], centres)
+    d[i, ] <- dist1_r(centres[leaders[i], ], centres)
   }
   if (pickBest) {
     best <- which.min(angles) 
@@ -277,7 +277,7 @@ getBuddy_r <- function(n, group, a, p_pred, centres, objects, pickBest = FALSE,
                      state) {
   # Remove peds cant see and self
   occluded <- c(n, c(1:length(state$v))[-n][
-    !seesMany(state$p[n, , drop = FALSE], ps = state$p[-n, , drop = FALSE], 
+    !seesMany_r(state$p[n, , drop = FALSE], ps = state$p[-n, , drop = FALSE], 
               objects)])
   p_pred <- p_pred[-occluded, , drop = FALSE]
   if (dim(p_pred)[1] == 0) {
@@ -296,7 +296,7 @@ getBuddy_r <- function(n, group, a, p_pred, centres, objects, pickBest = FALSE,
   
   # Potential buddy matrix of difference between cone angles (rows) 
   # and heading angle for potential buddy (columns)
-  headingDifference <- sapply(a[row.names(p_pred)], headingAngle, a1 = a[n])
+  headingDifference <- sapply(a[row.names(p_pred)], headingAngle_r, a1 = a[n])
   
   # Most parallel cones for each potential companion
   parallelCone <- apply(headingDifference, 2, which.min)
@@ -304,7 +304,7 @@ getBuddy_r <- function(n, group, a, p_pred, centres, objects, pickBest = FALSE,
   # Distances from predicted buddy position to acc, const and dec rings in each 
   # cone
   d <- sapply(1:nped, function(x) {
-    dist1(p_pred[names(parallelCone)[x], ],
+    dist1_r(p_pred[names(parallelCone)[x], ],
           centres[c(parallelCone[x], parallelCone[x] + 11, 
                     parallelCone[x] + 22), ])
   })
@@ -324,7 +324,7 @@ getBuddy_r <- function(n, group, a, p_pred, centres, objects, pickBest = FALSE,
   # Distances to buddies cells
   d <- array(dim = c(nped, 33), dimnames = list(names(angleDisagree), 1:33))
   for (i in 1:nped) {
-    d[i,] <- dist1(centres[cell[i], ], centres)
+    d[i,] <- dist1_r(centres[cell[i], ], centres)
   }
   if (pickBest) {
     best <- which.min(angleDisagree) 
