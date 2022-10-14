@@ -244,6 +244,164 @@ pcnl_rcpp <- function(cell, utility, mum, nests, alpha, mu) {
     .Call(`_m4ma_pcnl_rcpp`, cell, utility, mum, nests, alpha, mu)
 }
 
+#' Two-line Intersection
+#' 
+#' Calculate the intersection between two lines.
+#' 
+#' The first line is defined by \code{P1} and \code{P1}, the second by 
+#' \code{P3} \code{P4}. Returns \code{Inf} when the lines are parallel. If
+#' \code{interior_only} is \code{TRUE}, returns \code{NA} if the intersection
+#' is not within the plane spanning between the two lines.
+#' 
+#' @param P1,P2,P3,P4 Numeric vector with x- and y-coordinates.
+#' @param interior.only,interior_only Logical scalar indicating whether the intersection must
+#' be within the spans of the two lines.
+#' 
+#' @returns A numeric vector with x- and y-coordinates defining the
+#' intersecting point between the two lines.
+#' 
+#' @source Weisstein, Eric W. "Line-Line Intersection.
+#' "From MathWorld--A Wolfram Web Resource.
+#' \url{http://mathworld.wolfram.com/Line-LineIntersection.html}
+#' 
+#' @export
+line_line_intersection_rcpp <- function(P1, P2, P3, P4, interior_only = FALSE) {
+    .Call(`_m4ma_line_line_intersection_rcpp`, P1, P2, P3, P4, interior_only)
+}
+
+#' Goal in Sight
+#' 
+#' Checks whether a goal \code{P} can be seen from point \code{p}, or if it is
+#' occluded by \code{objects}.
+#'
+#' @param p_n,P_n Numeric vector with x- and y-coordinates.
+#' @param objects List containing a list for each object. An object has
+#' two length-two numeric vectors of x- and y-coordinates.
+#' 
+#' @returns \code{TRUE} if the goal is in sight, \code{FALSE} otherwise.
+#' @examples
+#' objects = list(
+#'   list(x = c(0.5, 0.5), y = c(0.5, 0.5))
+#' )
+#' 
+#' seesGoal_rcpp(c(0, 0), c(1, 1), objects)
+#' # FALSE
+#' 
+#' @export
+seesGoal_rcpp <- function(p_n, P_n, objects) {
+    .Call(`_m4ma_seesGoal_rcpp`, p_n, P_n, objects)
+}
+
+#' Current Goal in Sight
+#' 
+#' Checks whether the current goal in a \code{state} can be seen by 
+#' subject \code{n}, or if it is occluded by \code{objects}.
+#'
+#' @param n Integer scalar subject index.
+#' @param state List of list with state data.
+#' @param objects List containing a list for each object. An object has
+#' two length-two numeric vectors of x- and y-coordinates.
+#' @param offset Integer scalar offset to be added to the current goal index
+#' (default 0).
+#' 
+#' @returns \code{TRUE} if the goal is in sight, \code{FALSE} otherwise.
+#' @examples
+#' objects = list(
+#'   list(x = c(0.5, 0.5), y = c(0.5, 0.5))
+#' )
+#' 
+#' state = list(
+#'   p = matrix(c(0, 0), 1, 2),
+#'   P = list(
+#'     matrix(c(1, 1), 1, 2)
+#'   )
+#' )
+#' 
+#' attr(state$P[[1]], "i") = 1
+#' 
+#' seesCurrentGoal_rcpp(1, state, objects)
+#' # FALSE
+#' 
+#' @export
+seesCurrentGoal_rcpp <- function(n, state, objects, offset = 0L) {
+    .Call(`_m4ma_seesCurrentGoal_rcpp`, n, state, objects, offset)
+}
+
+#' Multiple Goals in Sight
+#' 
+#' Checks which of the goals \code{ps} can be seen from point \code{p1},
+#' or if they occluded by \code{objects}.
+#'
+#' @param p1 Numeric vector with x- and y-coordinates.
+#' @param ps Numeric Matrix with a row for every goal and x- and y-coordinates
+#' as columns.
+#' @param objects List containing a list for each object. An object has
+#' two length-two numeric vectors of x- and y-coordinates.
+#' 
+#' @returns Logical vector with \code{TRUE} if a goal is in sight, \code{FALSE}
+#' otherwise.
+#' @examples
+#' objects = list(
+#'   list(x = c(0.5, 0.5), y = c(0.5, 0.5))
+#' )
+#' 
+#' goals = rbind(
+#'   c(1, 0),
+#'   c(1, 1)
+#' )
+#' 
+#' seesGoal_rcpp(c(0, 0), goals, objects)
+#' # TRUE FALSE
+#' 
+#' @export
+seesMany_rcpp <- function(p1, ps, objects) {
+    .Call(`_m4ma_seesMany_rcpp`, p1, ps, objects)
+}
+
+#' Goal in Sight from Cell Centres
+#' 
+#' Checks whether the current goal in a \code{state} can be seen by 
+#' subject \code{n} from cell \code{centres} that are marked as \code{ok},
+#'  or if it is occluded by \code{objects}.
+#'
+#' @param n Integer scalar subject index.
+#' @param objects List containing a list for each object. An object has
+#' two length-two numeric vectors of x- and y-coordinates.
+#' @param state List of list with state data.
+#' @param centres Numeric matrix with 33 cell centres as rows and 
+#' x- and y-coordinates as columns.
+#' @param ok Logical vector of length 33 indicating which cells are 
+#' marked as 'ok'.
+#' 
+#' @returns Logical vector of length 33 indicating from which 'ok' cells the 
+#' current goal can be seen.
+#' @examples
+#' objects = list(
+#'   list(x = c(0.5, 0.5), y = c(0.5, 0.5))
+#' )
+#' 
+#' state = list(
+#'   p = matrix(c(0, 0), 1, 2),
+#'   P = list(
+#'     matrix(c(1, 1), 1, 2)
+#'   )
+#' )
+#' 
+#' attr(state$P[[1]], "i") = 1
+#' 
+#' # Random centres and ok
+#' set.seed(123)
+#' centres = matrix(rnorm(66), 33, 2)
+#' 
+#' ok = as.logical(sample(c(0, 1), 33, replace = TRUE, prob = c(0.3, 0.7)))
+#' 
+#' seesGoalOK_rcpp(1, objects, state, centres, ok)
+#' 
+#' @export
+seesGoalOK_rcpp <- function(n, objects, state, centres, ok) {
+    .Call(`_m4ma_seesGoalOK_rcpp`, n, objects, state, centres, ok)
+}
+
 #' Blocked-angle Utility
 #'
 #' @param aBA Numeric scalar power parameter.
