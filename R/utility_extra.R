@@ -111,7 +111,7 @@ iCones_r <- function(p1, a, p2, r, objects) {
   
   # End of unit line from p1 in direction of each cone
   coneLineEnds <- c_vd(1:11, as.vector(p1), rep(1, 11), a)
-  print(cList)
+
   # Distances to objects in cones
   cDist <- vector(mode = "list", length = length(cList)) 
   for (i in names(cList)) {  # remove when cant see
@@ -129,7 +129,6 @@ iCones_r <- function(p1, a, p2, r, objects) {
                       nrow = 1)
         if (!seesGoal(p1, P_n, objects)) {
           cList[[i]][j] <- NA
-          print(TRUE)
         } else {
           if (j == 1) {
             cDist[[i]] <- dist1(p1,P_n) 
@@ -244,10 +243,8 @@ getLeaders_r <- function(n, state, centres, objects, onlyGroup = FALSE,
   candidates <- candidates[ok]
   angles <- angles[ok]
   if (!any(duplicated(candidates))) {
-    print(1)
     leaders <- candidates 
   } else {
-    print(2)
     leaders <- unique(candidates)
     for (i in 1:length(leaders)) { 
       names(leaders)[i] <- names(candidates)[candidates == leaders[i]][
