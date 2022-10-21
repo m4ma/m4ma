@@ -223,12 +223,14 @@ List eObjects_rcpp(NumericMatrix p1, NumericMatrix p2, NumericVector r) {
   }
   
   // prepare output list
+  List dim_names = List::create(
+    Named("") = rownames(p2),
+    Named("") = CharacterVector::create("x", "y")
+  );
   NumericMatrix ac_t_t = transpose(ac_t);
-  rownames(ac_t_t) = rownames(p2);
-  colnames(ac_t_t) = CharacterVector::create("x", "y");
+  ac_t_t.attr("dimnames") = dim_names;
   NumericMatrix cw_t_t = transpose(cw_t);
-  rownames(cw_t_t) = rownames(p2);
-  colnames(cw_t_t) = CharacterVector::create("x", "y");
+  cw_t_t.attr("dimnames") = dim_names;
   
   List ac_cw = List::create(Named("ac") = ac_t_t, Named("cw") = cw_t_t);
   

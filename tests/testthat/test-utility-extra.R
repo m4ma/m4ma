@@ -129,10 +129,8 @@ testthat::test_that(
 
 testthat::test_that("Egocentric objects computation works", {
   ref = m4ma::eObjects_r(p1, p2, r)
-  ref_list = list(ac = ref[, , 1], cw = ref[, , 2])
+  ref_list = list(ac = ref[, , 1], cw = ref[, , 2]) # C++ requires list instead of array
   res = m4ma::eObjects_rcpp(p1, p2, r)
-  names(dimnames(res$ac)) = c('', '') # C++ doesn't name dims
-  names(dimnames(res$cw)) = c('', '')
   testthat::expect_equal(res, ref_list)
 })
 
