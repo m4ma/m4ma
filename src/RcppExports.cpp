@@ -219,6 +219,31 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// prepUtility_rcpp
+List prepUtility_rcpp(List state, int N, List objects);
+RcppExport SEXP _m4ma_prepUtility_rcpp(SEXP stateSEXP, SEXP NSEXP, SEXP objectsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type state(stateSEXP);
+    Rcpp::traits::input_parameter< int >::type N(NSEXP);
+    Rcpp::traits::input_parameter< List >::type objects(objectsSEXP);
+    rcpp_result_gen = Rcpp::wrap(prepUtility_rcpp(state, N, objects));
+    return rcpp_result_gen;
+END_RCPP
+}
+// prepSimTrace_rcpp
+List prepSimTrace_rcpp(List sim_trace, Nullable<NumericVector> constant);
+RcppExport SEXP _m4ma_prepSimTrace_rcpp(SEXP sim_traceSEXP, SEXP constantSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type sim_trace(sim_traceSEXP);
+    Rcpp::traits::input_parameter< Nullable<NumericVector> >::type constant(constantSEXP);
+    rcpp_result_gen = Rcpp::wrap(prepSimTrace_rcpp(sim_trace, constant));
+    return rcpp_result_gen;
+END_RCPP
+}
 // pcnl_rcpp
 double pcnl_rcpp(NumericVector cell, NumericVector utility, NumericVector mum, List nests, List alpha, double mu);
 RcppExport SEXP _m4ma_pcnl_rcpp(SEXP cellSEXP, SEXP utilitySEXP, SEXP mumSEXP, SEXP nestsSEXP, SEXP alphaSEXP, SEXP muSEXP) {
@@ -567,6 +592,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_m4ma_like_subject", (DL_FUNC) &_m4ma_like_subject, 7},
     {"_m4ma_like_state", (DL_FUNC) &_m4ma_like_state, 6},
     {"_m4ma_msumlogLike", (DL_FUNC) &_m4ma_msumlogLike, 7},
+    {"_m4ma_prepUtility_rcpp", (DL_FUNC) &_m4ma_prepUtility_rcpp, 3},
+    {"_m4ma_prepSimTrace_rcpp", (DL_FUNC) &_m4ma_prepSimTrace_rcpp, 2},
     {"_m4ma_pcnl_rcpp", (DL_FUNC) &_m4ma_pcnl_rcpp, 6},
     {"_m4ma_line_line_intersection_rcpp", (DL_FUNC) &_m4ma_line_line_intersection_rcpp, 5},
     {"_m4ma_seesGoal_rcpp", (DL_FUNC) &_m4ma_seesGoal_rcpp, 3},

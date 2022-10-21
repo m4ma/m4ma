@@ -85,7 +85,7 @@ testthat::test_that(
   "Predicted distance works (when all pedestrians are seen in front)", {
     ref = m4ma::predClose_r(n, p1, a_front,
                             p2, r, centres, p_pred, objects)
-    res = m4ma::predClose_rcpp(n-1, p1, a_front,
+    res = m4ma::predClose_rcpp(n, p1, a_front,
                                p2, r, centres, p_pred, objects)
     testthat::expect_equal(res, ref)
   }
@@ -95,7 +95,7 @@ testthat::test_that(
   "Predicted distance works (when one or less pedestrians are occluded)", {
     ref = m4ma::predClose_r(n, p1, a_front,
                             p2, r, centres, p_pred, objects_occlude)
-    res = m4ma::predClose_rcpp(n-1, p1, a_front,
+    res = m4ma::predClose_rcpp(n, p1, a_front,
                                p2, r, centres, p_pred, objects_occlude)
     testthat::expect_equal(res, ref)
     testthat::expect_equal(res, NULL)
@@ -106,7 +106,7 @@ testthat::test_that(
   "Predicted distance works (when pedestrians are seen but not in front)", {
     ref = m4ma::predClose_r(n, p1, a_not_front,
                             p2, r, centres, p_pred, objects)
-    res = m4ma::predClose_rcpp(n-1, p1, a_not_front,
+    res = m4ma::predClose_rcpp(n, p1, a_not_front,
                                p2, r, centres, p_pred, objects_occlude)
     testthat::expect_equal(res, ref)
     testthat::expect_equal(res, NULL)
@@ -196,7 +196,7 @@ testthat::test_that("Intersecting cones to cells transformation works", {
 testthat::test_that(
   "Blocked angle works (when intersecting cones and seen)", {
     ref = m4ma::blockedAngle_r(n, state, p_pred, objects)
-    res = m4ma::blockedAngle_rcpp(n-1, state, p_pred, objects)
+    res = m4ma::blockedAngle_rcpp(n, state, p_pred, objects)
     testthat::expect_equal(res, if (length(ref) == 0) unname(ref) else ref)
   }
 )
@@ -208,7 +208,7 @@ testthat::test_that(
     state_occluded = state
     state_occluded$a = a_back
     ref = m4ma::blockedAngle_r(n, state_occluded, p2, objects_occlude)
-    res = m4ma::blockedAngle_rcpp(n-1, state_occluded, p_pred, objects_occlude)
+    res = m4ma::blockedAngle_rcpp(n, state_occluded, p_pred, objects_occlude)
     testthat::expect_equal(res, if (length(ref) == 0) unname(ref) else ref)
     testthat::expect_equal(res, numeric(0))
   }
@@ -218,7 +218,7 @@ testthat::test_that(
   "Get leaders works (when seen and in front)", {
     state_leaders = state
     ref = m4ma::getLeaders_r(n, state_leaders, centres, objects)
-    res = m4ma::getLeaders_rcpp(n-1, state_leaders, centres, objects)
+    res = m4ma::getLeaders_rcpp(n, state_leaders, centres, objects)
     testthat::expect_equal(res, ref)
   }
 )
@@ -227,7 +227,7 @@ testthat::test_that(
   "Get leaders works (when not seen and in front)", {
     state_leaders = state
     ref = m4ma::getLeaders_r(n, state_leaders, centres, objects_occlude)
-    res = m4ma::getLeaders_rcpp(n-1, state_leaders, centres, objects_occlude)
+    res = m4ma::getLeaders_rcpp(n, state_leaders, centres, objects_occlude)
     testthat::expect_equal(res, ref)
   }
 )
@@ -237,7 +237,7 @@ testthat::test_that(
     state_leaders = state
     state_leaders$a = a
     ref = m4ma::getLeaders_r(n, state_leaders, centres, objects)
-    res = m4ma::getLeaders_rcpp(n-1, state_leaders, centres, objects)
+    res = m4ma::getLeaders_rcpp(n, state_leaders, centres, objects)
     testthat::expect_equal(res, ref)
     testthat::expect_equal(res, NULL)
   }
@@ -250,7 +250,7 @@ testthat::test_that(
     rownames(p2_back) = nms
     state_leaders$p = p2_back
     ref = m4ma::getLeaders_r(n, state_leaders, centres, objects)
-    res = m4ma::getLeaders_rcpp(n-1, state_leaders, centres, objects)
+    res = m4ma::getLeaders_rcpp(n, state_leaders, centres, objects)
     testthat::expect_equal(res, ref)
     testthat::expect_equal(res, NULL)
   }
@@ -264,7 +264,7 @@ testthat::test_that(
     state_leaders$group = group
     ref = m4ma::getLeaders_r(n, state_leaders, centres,
                              objects, onlyGroup = TRUE)
-    res = m4ma::getLeaders_rcpp(n-1, state_leaders, centres,
+    res = m4ma::getLeaders_rcpp(n, state_leaders, centres,
                                 objects, onlyGroup = TRUE)
     testthat::expect_equal(res, ref)
     testthat::expect_equal(res, NULL)
@@ -279,7 +279,7 @@ testthat::test_that(
     state_leaders$group = group
     ref = m4ma::getLeaders_r(n, state_leaders, centres,
                              objects)
-    res = m4ma::getLeaders_rcpp(n-1, state_leaders, centres,
+    res = m4ma::getLeaders_rcpp(n, state_leaders, centres,
                                 objects)
     testthat::expect_equal(res, ref)
   }
@@ -293,7 +293,7 @@ testthat::test_that(
     state_leaders$group = group
     ref = m4ma::getLeaders_r(n, state_leaders, centres,
                              objects, preferGroup = FALSE)
-    res = m4ma::getLeaders_rcpp(n-1, state_leaders, centres,
+    res = m4ma::getLeaders_rcpp(n, state_leaders, centres,
                                 objects, preferGroup = FALSE)
     testthat::expect_equal(res, ref)
   }
@@ -306,7 +306,7 @@ testthat::test_that(
     names(a) = nms
     state_leaders$a = a
     ref = m4ma::getLeaders_r(n, state_leaders, centres, objects)
-    res = m4ma::getLeaders_rcpp(n-1, state_leaders, centres, objects)
+    res = m4ma::getLeaders_rcpp(n, state_leaders, centres, objects)
     testthat::expect_equal(res, ref)
     testthat::expect_equal(res, NULL)
   }
@@ -322,7 +322,7 @@ testthat::test_that(
     rownames(p2_same) = c(nms[1], nms[2], nms[2])
     state_leaders$p = p2_same
     ref = m4ma::getLeaders_r(n, state_leaders, centres, objects)
-    res = m4ma::getLeaders_rcpp(n-1, state_leaders, centres, objects)
+    res = m4ma::getLeaders_rcpp(n, state_leaders, centres, objects)
     testthat::expect_equal(res, ref)
   }
 )
@@ -338,7 +338,7 @@ testthat::test_that(
     state_leaders$p = p2_same
     ref = m4ma::getLeaders_r(n, state_leaders, centres,
                              objects, pickBest = TRUE)
-    res = m4ma::getLeaders_rcpp(n-1, state_leaders, centres,
+    res = m4ma::getLeaders_rcpp(n, state_leaders, centres,
                                 objects, pickBest = TRUE)
     testthat::expect_equal(res, ref)
   }
@@ -349,7 +349,7 @@ testthat::test_that(
     state_buddy = state
     ref = m4ma::getBuddy_r(n, group, a, p_pred, centres,
                            objects, FALSE, state_buddy)
-    res = m4ma::getBuddy_rcpp(n-1, group, a, p_pred, centres,
+    res = m4ma::getBuddy_rcpp(n, group, a, p_pred, centres,
                            objects, FALSE, state_buddy)
     testthat::expect_equal(res, ref)
   }
@@ -360,7 +360,7 @@ testthat::test_that(
     state_buddy = state
     ref = m4ma::getBuddy_r(n, group, a, p_pred, centres,
                            objects_occlude, FALSE, state_buddy)
-    res = m4ma::getBuddy_rcpp(n-1, group, a, p_pred, centres,
+    res = m4ma::getBuddy_rcpp(n, group, a, p_pred, centres,
                            objects_occlude, FALSE, state_buddy)
     testthat::expect_equal(res, ref)
     testthat::expect_equal(res, NULL)
@@ -375,7 +375,7 @@ testthat::test_that(
     state_buddy$group = group
     ref = m4ma::getBuddy_r(n, group, a, p_pred, centres,
                            objects, FALSE, state_buddy)
-    res = m4ma::getBuddy_rcpp(n-1, group, a, p_pred, centres,
+    res = m4ma::getBuddy_rcpp(n, group, a, p_pred, centres,
                            objects, FALSE, state_buddy)
     testthat::expect_equal(res, ref)
     testthat::expect_equal(res, NULL)
@@ -393,7 +393,7 @@ testthat::test_that(
     state_buddy$p = p2_same
     ref = m4ma::getBuddy_r(n, group, a, p_pred, centres,
                            objects, TRUE, state_buddy)
-    res = m4ma::getBuddy_rcpp(n-1, group, a, p_pred, centres,
+    res = m4ma::getBuddy_rcpp(n, group, a, p_pred, centres,
                            objects, TRUE, state_buddy)
     testthat::expect_equal(res, ref)
   }

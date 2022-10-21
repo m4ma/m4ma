@@ -229,6 +229,14 @@ msumlogLike <- function(p, trace_rcpp, nests, alpha, cell_nest, min_like = 1e-10
     .Call(`_m4ma_msumlogLike`, p, trace_rcpp, nests, alpha, cell_nest, min_like, mult)
 }
 
+prepUtility_rcpp <- function(state, N, objects) {
+    .Call(`_m4ma_prepUtility_rcpp`, state, N, objects)
+}
+
+prepSimTrace_rcpp <- function(sim_trace, constant = NULL) {
+    .Call(`_m4ma_prepSimTrace_rcpp`, sim_trace, constant)
+}
+
 #' Probability of the Conditional Nested Logit Model
 #'
 #' @param cell Alternative vector with nest indices.

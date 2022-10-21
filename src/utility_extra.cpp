@@ -92,6 +92,8 @@ Nullable<NumericMatrix> predClose_rcpp(
     NumericMatrix p_pred,
     List objects
   ) {
+  n = n - 1; // c++ indexing
+  
   int p_pred_n_rows = p_pred.nrow();
   
   if (p_pred_n_rows == 1) {
@@ -520,6 +522,7 @@ NumericMatrix get_p1(int n, NumericMatrix p_mat) {
 //' 
 // [[Rcpp::export]]
 NumericVector blockedAngle_rcpp(int n, List state, NumericMatrix p_pred, List objects) {
+  n = n - 1; // c++ indexing
   NumericMatrix p_mat = state["p"];
   NumericMatrix p1 = get_p1(n, p_mat);
   NumericVector a = state["a"];
@@ -579,6 +582,7 @@ Nullable<List> getLeaders_rcpp(
   bool preferGroup = true,
   bool pickBest = false
 ) {
+  n = n - 1; // c++ indexing
   NumericMatrix p_mat = state["p"];
   NumericMatrix p1 = get_p1(n, p_mat);
   NumericVector a = state["a"];
@@ -812,6 +816,7 @@ Nullable<List> getBuddy_rcpp(
   bool pickBest,
   List state
 ) {
+  n = n - 1; // c++ indexing
   NumericMatrix p_mat = state["p"];
   NumericMatrix p1 = get_p1(n, p_mat);
   NumericVector v = state["v"];
