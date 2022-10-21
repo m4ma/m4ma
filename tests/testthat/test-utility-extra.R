@@ -98,6 +98,13 @@ testthat::test_that(
     res = m4ma::predClose_rcpp(n, p1, a_front,
                                p2, r, centres, p_pred, objects_occlude)
     testthat::expect_equal(res, ref)
+  }
+)
+
+testthat::test_that(
+  "Predicted distance is NULL (when one or less pedestrians are occluded)", {
+    res = m4ma::predClose_rcpp(n, p1, a_front,
+                               p2, r, centres, p_pred, objects_occlude)
     testthat::expect_equal(res, NULL)
   }
 )
@@ -109,6 +116,13 @@ testthat::test_that(
     res = m4ma::predClose_rcpp(n, p1, a_not_front,
                                p2, r, centres, p_pred, objects_occlude)
     testthat::expect_equal(res, ref)
+  }
+)
+
+testthat::test_that(
+  "Predicted distance is NULL (when pedestrians are seen but not in front)", {
+    res = m4ma::predClose_rcpp(n, p1, a_not_front,
+                               p2, r, centres, p_pred, objects_occlude)
     testthat::expect_equal(res, NULL)
   }
 )
@@ -134,6 +148,12 @@ testthat::test_that(
     ref = m4ma::iCones_r(p1, a_front, matrix(, 0, 2), r, objects)
     res = m4ma::iCones_rcpp(p1, a_front, matrix(, 0, 2), r, objects)
     testthat::expect_equal(res, ref)
+  }
+)
+
+testthat::test_that(
+  "Intersecting cones is NULL (when single pedestrian)", {
+    res = m4ma::iCones_rcpp(p1, a_front, matrix(, 0, 2), r, objects)
     testthat::expect_equal(res, NULL)
   }
 )
@@ -151,6 +171,12 @@ testthat::test_that(
     ref = m4ma::iCones_r(p1, 175, p2[-n, , drop = FALSE], r, objects)
     res = m4ma::iCones_rcpp(p1, 175, p2[-n, , drop = FALSE], r, objects)
     testthat::expect_equal(res, ref)
+  }
+)
+
+testthat::test_that(
+  "Intersecting cones is NULL (when no intersection)", {
+    res = m4ma::iCones_rcpp(p1, 175, p2[-n, , drop = FALSE], r, objects)
     testthat::expect_equal(res, NULL)
   }
 )
@@ -170,6 +196,13 @@ testthat::test_that(
     res = m4ma::iCones_rcpp(p1, a_not_front,
                             p2[3, , drop = FALSE], r, objects_occlude)
     testthat::expect_equal(res, ref)
+  }
+)
+
+testthat::test_that(
+  "Intersecting cones is NULL (when one cone intersecting but not seen)", {
+    res = m4ma::iCones_rcpp(p1, a_not_front,
+                            p2[3, , drop = FALSE], r, objects_occlude)
     testthat::expect_equal(res, NULL)
   }
 )
@@ -210,6 +243,16 @@ testthat::test_that(
     ref = m4ma::blockedAngle_r(n, state_occluded, p2, objects_occlude)
     res = m4ma::blockedAngle_rcpp(n, state_occluded, p_pred, objects_occlude)
     testthat::expect_equal(res, if (length(ref) == 0) unname(ref) else ref)
+  }
+)
+
+testthat::test_that(
+  "Blocked angle returns numeric(0) (when no intersecting cones)", {
+    a_back = c(175, 175, 175)
+    names(a_back) = nms
+    state_occluded = state
+    state_occluded$a = a_back
+    res = m4ma::blockedAngle_rcpp(n, state_occluded, p_pred, objects_occlude)
     testthat::expect_equal(res, numeric(0))
   }
 )
@@ -239,6 +282,14 @@ testthat::test_that(
     ref = m4ma::getLeaders_r(n, state_leaders, centres, objects)
     res = m4ma::getLeaders_rcpp(n, state_leaders, centres, objects)
     testthat::expect_equal(res, ref)
+  }
+)
+
+testthat::test_that(
+  "Get leaders returns NULL (when seen and not in front)", {
+    state_leaders = state
+    state_leaders$a = a
+    res = m4ma::getLeaders_rcpp(n, state_leaders, centres, objects)
     testthat::expect_equal(res, NULL)
   }
 )
@@ -252,6 +303,16 @@ testthat::test_that(
     ref = m4ma::getLeaders_r(n, state_leaders, centres, objects)
     res = m4ma::getLeaders_rcpp(n, state_leaders, centres, objects)
     testthat::expect_equal(res, ref)
+  }
+)
+
+testthat::test_that(
+  "Get leaders returns NULL (when seen and not in cones)", {
+    state_leaders = state
+    p2_back = rbind(c(0, 0), c(-0.5, -0.5), c(-1, -1))
+    rownames(p2_back) = nms
+    state_leaders$p = p2_back
+    res = m4ma::getLeaders_rcpp(n, state_leaders, centres, objects)
     testthat::expect_equal(res, NULL)
   }
 )
@@ -267,6 +328,17 @@ testthat::test_that(
     res = m4ma::getLeaders_rcpp(n, state_leaders, centres,
                                 objects, onlyGroup = TRUE)
     testthat::expect_equal(res, ref)
+  }
+)
+
+testthat::test_that(
+  "Get leaders returns NULL (when no in-group and only group)", {
+    state_leaders = state
+    group = c(1, 2, 3)
+    names(group) = nms
+    state_leaders$group = group
+    res = m4ma::getLeaders_rcpp(n, state_leaders, centres,
+                                objects, onlyGroup = TRUE)
     testthat::expect_equal(res, NULL)
   }
 )
@@ -308,6 +380,16 @@ testthat::test_that(
     ref = m4ma::getLeaders_r(n, state_leaders, centres, objects)
     res = m4ma::getLeaders_rcpp(n, state_leaders, centres, objects)
     testthat::expect_equal(res, ref)
+  }
+)
+
+testthat::test_that(
+  "Get leaders returns NULL (when different directions)", {
+    state_leaders = state
+    a = c(0, 175, 175)
+    names(a) = nms
+    state_leaders$a = a
+    res = m4ma::getLeaders_rcpp(n, state_leaders, centres, objects)
     testthat::expect_equal(res, NULL)
   }
 )
@@ -363,6 +445,14 @@ testthat::test_that(
     res = m4ma::getBuddy_rcpp(n, group, a, p_pred, centres,
                            objects_occlude, FALSE, state_buddy)
     testthat::expect_equal(res, ref)
+  }
+)
+
+testthat::test_that(
+  "Get buddy returns NULL (when not seen and in front)", {
+    state_buddy = state
+    res = m4ma::getBuddy_rcpp(n, group, a, p_pred, centres,
+                              objects_occlude, FALSE, state_buddy)
     testthat::expect_equal(res, NULL)
   }
 )
@@ -378,6 +468,17 @@ testthat::test_that(
     res = m4ma::getBuddy_rcpp(n, group, a, p_pred, centres,
                            objects, FALSE, state_buddy)
     testthat::expect_equal(res, ref)
+  }
+)
+
+testthat::test_that(
+  "Get buddy returns NULL (when no in-group)", {
+    state_buddy = state
+    group = c(1, 2, 3)
+    names(group) = nms
+    state_buddy$group = group
+    res = m4ma::getBuddy_rcpp(n, group, a, p_pred, centres,
+                              objects, FALSE, state_buddy)
     testthat::expect_equal(res, NULL)
   }
 )
