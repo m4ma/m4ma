@@ -83,6 +83,22 @@ testthat::test_that("Sees goal (C++)", {
   testthat::expect_true(res)
 })
 
+testthat::test_that("Sees goal with point objects (R)", {
+  objects = list(
+    list(x = c(0.5, 0.5), y = c(0.5, 0.5))
+  )
+  res = m4ma::seesGoal_r(P1, P4, objects)
+  testthat::expect_true(res)
+})
+
+testthat::test_that("Sees goal with point objects (C++)", {
+  objects = list(
+    list(x = c(0.5, 0.5), y = c(0.5, 0.5))
+  )
+  res = m4ma::seesGoal_rcpp(P1, P4, objects)
+  testthat::expect_true(res)
+})
+
 state = list(
   p = matrix(P1, 1, 2),
   P = list(
