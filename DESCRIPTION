@@ -14,7 +14,8 @@ Description: The Minds for Mobile Agents (M4MA) project
     data science.
 License: Apache License (>= 2)
 Imports: Rcpp (>= 1.0.8)
-LinkingTo: Rcpp
+LinkingTo: Rcpp, BH
+SystemRequirements: C++14
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.0
