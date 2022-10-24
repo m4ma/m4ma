@@ -1,5 +1,32 @@
+// [[Rcpp::depends(BH)]]
+
+// Enable C++14 via this plugin to compile boost
+// [[Rcpp::plugins("cpp14")]]
+
 #include <Rcpp.h>
 #include <math.h>
+#include <boost/geometry.hpp>
+#include <boost/geometry/geometries/linestring.hpp>
+#include <boost/geometry/geometries/point_xy.hpp>
+#include <boost/geometry/geometries/box.hpp>
+
+namespace bg = boost::geometry;
+
+namespace Rcpp {
+
+typedef bg::model::d2::point_xy<double> point_t;
+
+template <> point_t as(SEXP ptsexp) {
+  Rcpp::NumericVector pt(ptsexp);
+  return point_t(pt[0], pt[1]);
+};
+
+template <> SEXP wrap(const point_t &p) {
+  return Rcpp::wrap(Rcpp::NumericVector::create(p.x(), p.y()));
+}
+
+}
+
 using namespace Rcpp;
 
 //' Two-line Intersection
@@ -58,7 +85,8 @@ NumericVector line_line_intersection_rcpp(
     double lambda1 = -((X - P1[0]) * dx1 + (Y - P1[1]) * dy1)/(pow(dx1, 2) + pow(dy1, 2));
     double lambda2 = -((X - P3[0]) * dx2 + (Y - P3[1]) * dy2)/(pow(dx2, 2) + pow(dy2, 2));
     
-    if (!((lambda1 > 0.0) & (lambda1 < 1.0) & (lambda2 > 0.0) & (lambda2 < 1.0))) {
+    if (!(isgreater(lambda1, 0.0) & isless(lambda1, 1.0) & 
+        isgreater(lambda2, 0.0) & isless(lambda2, 1.0))) {
       NumericVector na_res = {NA_REAL, NA_REAL};
       return(na_res);
     }
@@ -90,33 +118,33 @@ NumericVector line_line_intersection_rcpp(
 //' 
 //' @export
 // [[Rcpp::export]]
-bool seesGoal_rcpp(NumericVector p_n, NumericVector P_n, List objects) {
-  int l = objects.length();
+bool seesGoal_rcpp(
+    NumericVector p_n,
+    NumericVector P_n,
+    List objects
+) {
+  // define new point type
+  typedef bg::model::d2::point_xy<double> point_t;
   
-  // Indices for creating P3 and P4
-  NumericVector idx_P3_x = NumericVector::create(0, 0, 0, 1);
-  NumericVector idx_P3_y = NumericVector::create(0, 0, 1, 0);
-  NumericVector idx_P4_x = NumericVector::create(1, 0, 1, 1);
-  NumericVector idx_P4_y = NumericVector::create(0, 1, 1, 1); 
+  // create linestring object from p_n to P_n
+  bg::model::linestring<point_t> l_goal;
   
-  for (int i = 0; i < l; ++i) {
-    
-    List object_i = objects[i];
-    NumericVector x = object_i["x"];
-    NumericVector y = object_i["y"];
-    
-    for (int j = 0; j < 4; ++j) {
-      // Create object line
-      NumericVector P3 = NumericVector::create(x[idx_P3_x[j]], y[idx_P3_y[j]]);
-      NumericVector P4 = NumericVector::create(x[idx_P4_x[j]], y[idx_P4_y[j]]);
-      
-      NumericVector intersects = line_line_intersection_rcpp(
-        p_n, P_n, P3, P4, true
-      );
-      
-      if (is_true(any(is_finite(intersects)))) {
-        return(false);
-      }
+  bg::append(l_goal, as<point_t>(p_n));
+  bg::append(l_goal, as<point_t>(P_n));
+  
+  // check for each object if intersects with line
+  for (int i = 0; i < objects.length(); i++) {
+    List objects_i = objects[i];
+    NumericVector x = objects_i["x"];
+    NumericVector y = objects_i["y"];
+    // create object box from min_corner, max_corner
+    bg::model::box<point_t> new_box(
+        point_t(x[0], y[0]),
+        point_t(x[1], y[1])
+    );
+    // special case: when object has area == 0 (is point), don't return false
+    if (bg::intersects(l_goal, new_box) && bg::area(new_box) > 0.0) {
+      return(false);
     }
   }
   
