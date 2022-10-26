@@ -43,18 +43,18 @@ line_line_intersection_r <- function(P1, P2, P3, P4, interior.only=FALSE)
 seesGoal_r <- function(p_n, P_n, objects) {
   for (i in 1:length(objects)) {
     intersects <- c(
-      line.line.intersection(p_n, P_n, c(objects[[i]]$x[1], objects[[i]]$y[1]), 
-                             c(objects[[i]]$x[2], objects[[i]]$y[1]), 
-                             interior.only = TRUE),
-      line.line.intersection(p_n, P_n, c(objects[[i]]$x[1], objects[[i]]$y[1]), 
-                             c(objects[[i]]$x[1], objects[[i]]$y[2]), 
-                             interior.only = TRUE),
-      line.line.intersection(p_n, P_n, c(objects[[i]]$x[1], objects[[i]]$y[2]), 
-                             c(objects[[i]]$x[2], objects[[i]]$y[2]), 
-                             interior.only = TRUE),
-      line.line.intersection(p_n, P_n, c(objects[[i]]$x[2], objects[[i]]$y[1]), 
-                             c(objects[[i]]$x[2], objects[[i]]$y[2]), 
-                             interior.only = TRUE))
+      line_line_intersection_r(p_n, P_n, c(objects[[i]]$x[1], objects[[i]]$y[1]), 
+                               c(objects[[i]]$x[2], objects[[i]]$y[1]), 
+                               interior.only = TRUE),
+      line_line_intersection_r(p_n, P_n, c(objects[[i]]$x[1], objects[[i]]$y[1]), 
+                               c(objects[[i]]$x[1], objects[[i]]$y[2]), 
+                               interior.only = TRUE),
+      line_line_intersection_r(p_n, P_n, c(objects[[i]]$x[1], objects[[i]]$y[2]), 
+                               c(objects[[i]]$x[2], objects[[i]]$y[2]), 
+                               interior.only = TRUE),
+      line_line_intersection_r(p_n, P_n, c(objects[[i]]$x[2], objects[[i]]$y[1]), 
+                               c(objects[[i]]$x[2], objects[[i]]$y[2]), 
+                               interior.only = TRUE))
     
     if (any(is.finite(intersects))) {
       return(FALSE)
@@ -66,15 +66,14 @@ seesGoal_r <- function(p_n, P_n, objects) {
 # seesGoal for current goal
 #' @rdname seesCurrentGoal_rcpp
 seesCurrentGoal_r <- function(n, state, objects, offset = 0) {
-  print(state$P[[n]][attr(state$P[[n]], "i") + offset, 1:2])
-  seesGoal(state$p[n, ], state$P[[n]][attr(state$P[[n]], "i") + offset, 1:2],
+  seesGoal_r(state$p[n, ], state$P[[n]][attr(state$P[[n]], "i") + offset, 1:2],
            objects)
 }
 
 # Can position p see points in ps matrix (x,y columns)
 #' @rdname seesMany_rcpp
 seesMany_r <- function(p1, ps, objects) {
-  apply(ps, 1, seesGoal, P_n = p1, objects = objects)  
+  apply(ps, 1, seesGoal_r, P_n = p1, objects = objects)  
 }
 
 # Boolean indicating if goal is visible from ok cells
@@ -82,7 +81,7 @@ seesMany_r <- function(p1, ps, objects) {
 seesGoalOK_r <- function(n, objects, state, centres, ok) {
   if (any(ok)) {
     for (i in c(1:33)[ok]) {
-      ok[i] <- seesGoal(centres[i, ], 
+      ok[i] <- seesGoal_r(centres[i, ], 
                         state$P[[n]][attr(state$P[[n]], "i"), 1:2], 
                         objects) 
     }

@@ -87,7 +87,7 @@ c_vd_r <- function(cells, p1, v1, a1,
                  angles = matrix(rep(c(72.5, 50, 32.5, 20, 10, 0, 350, 340, 
                                        327.5, 310, 287.5), times = 3), 
                                  ncol = 3)) {
-  t(p1 + t(scaleVel(v1) * vels[cells] * aTOd_r((angles[cells] + a1) %% 360)))
+  t(p1 + t(scaleVel_r(v1) * vels[cells] * aTOd_r((angles[cells] + a1) %% 360)))
 }
 
 
