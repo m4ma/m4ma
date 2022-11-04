@@ -73,7 +73,7 @@ testthat::test_that("Iangle geometry function works", {
 testthat::test_that("Dn geometry function works", {
   ref = m4ma::Dn_r(p_n = p1, P_n = p2) 
   res = m4ma::Dn_rcpp(p_n = p1, P_n = p2)
-  testthat::expect_equal(unname(res), ref)
+  testthat::expect_equal(res, ref)
 })
 
 testthat::test_that("minAngle geometry function works", {
