@@ -273,9 +273,9 @@ NumericVector Dn_rcpp(NumericMatrix p_n, NumericMatrix P_n){
   }
   
   // assign row names of p2 if they exist 
-  if(rownames(p_n) != R_NilValue) {
-    out.names() = rownames(p_n);
-  }
+  // if(rownames(p_n) != R_NilValue) {
+  //   out.names() = rownames(p_n);
+  // }
   
   return(out);
   
