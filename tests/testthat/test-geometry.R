@@ -46,15 +46,27 @@ testthat::test_that("dist1 geometry function works", {
   testthat::expect_equal(res, ref)
 })
 
-testthat::test_that("angle2 geometry function works", {
+testthat::test_that("angle2 geometry function works (single point)", {
   ref = m4ma::angle2_r(single_point, p2)
   res = m4ma::angle2_rcpp(single_point, p2)
   testthat::expect_equal(res, ref)
 })
 
-testthat::test_that("angle2s geometry function works", {
+testthat::test_that("angle2 geometry function works (matrix)", {
+  ref = m4ma::angle2_r(p1, p2)
+  res = m4ma::angle2_rcpp(p1, p2)
+  testthat::expect_equal(res, ref)
+})
+
+testthat::test_that("angle2s geometry function works (single point)", {
   ref = m4ma::angle2s_r(single_point, p2)
   res = m4ma::angle2s_rcpp(single_point, p2)
+  testthat::expect_equal(res, ref)
+})
+
+testthat::test_that("angle2s geometry function works (matrix)", {
+  ref = m4ma::angle2s_r(p1, p2)
+  res = m4ma::angle2s_rcpp(p1, p2)
   testthat::expect_equal(res, ref)
 })
 
