@@ -9,4 +9,9 @@ Rcpp::CharacterVector int2char(Rcpp::IntegerVector int_vec);
 
 Rcpp::NumericVector bin_vector(Rcpp::NumericVector x, Rcpp::NumericVector bins);
 
+Rcpp::NumericMatrix omit_rows(
+    Rcpp::NumericMatrix mat,
+    Rcpp::IntegerVector omit
+);
+
 #endif // UTILS
