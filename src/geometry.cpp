@@ -116,10 +116,18 @@ NumericVector angle2s_rcpp(NumericMatrix p1, NumericMatrix p2) {
   NumericVector out(n_rows);
   
   // angle as arc tan from difference in x and y
-  for(int i = 0; i < n_rows; i++){
-    out[i] = (180 / M_PI) * std::atan2(
-      (p2(i, 1) - p1[1]), (p2(i, 0) - p1[0])
-    );
+  if (p1.nrow() == 1) {
+    for(int i = 0; i < n_rows; i++){
+      out[i] = (180 / M_PI) * std::atan2(
+        (p2(i, 1) - p1[1]), (p2(i, 0) - p1[0])
+      );
+    }
+  } else {
+    for(int i = 0; i < n_rows; i++){
+      out[i] = (180 / M_PI) * std::atan2(
+        (p2(i, 1) - p1(i, 1)), (p2(i, 0) - p1(i, 0))
+      );
+    }
   }
   
   // round to ten decimals
@@ -142,11 +150,20 @@ NumericVector angle2_rcpp(NumericMatrix p1, NumericMatrix p2) {
   NumericVector angle_centered(n_rows);
   
   // angle as arc tan from difference in x and y
-  for(int i = 0; i < n_rows; i++){
-    double angle = (180 / M_PI) * std::atan2(
-      (p2(i, 1) - p1[1]), (p2(i, 0) - p1[0])
-    );
-    angle_centered[i] = fmod(360 + angle, 360);
+  if (p1.nrow() == 1) {
+    for(int i = 0; i < n_rows; i++){
+      double angle = (180 / M_PI) * std::atan2(
+        (p2(i, 1) - p1[1]), (p2(i, 0) - p1[0])
+      );
+      angle_centered[i] = fmod(360 + angle, 360);
+    }
+  } else {
+    for(int i = 0; i < n_rows; i++){
+      double angle = (180 / M_PI) * std::atan2(
+        (p2(i, 1) - p1(i, 1)), (p2(i, 0) - p1(i, 0))
+      );
+      angle_centered[i] = fmod(360 + angle, 360);
+    }
   }
   
   // assign row names of p2 if they exist 

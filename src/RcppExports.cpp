@@ -10,6 +10,44 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// object2lines_rcpp
+List object2lines_rcpp(List o);
+RcppExport SEXP _m4ma_object2lines_rcpp(SEXP oSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type o(oSEXP);
+    rcpp_result_gen = Rcpp::wrap(object2lines_rcpp(o));
+    return rcpp_result_gen;
+END_RCPP
+}
+// bodyObjectOverlap_rcpp
+LogicalVector bodyObjectOverlap_rcpp(List oL, double r, NumericMatrix okCentres);
+RcppExport SEXP _m4ma_bodyObjectOverlap_rcpp(SEXP oLSEXP, SEXP rSEXP, SEXP okCentresSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type oL(oLSEXP);
+    Rcpp::traits::input_parameter< double >::type r(rSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type okCentres(okCentresSEXP);
+    rcpp_result_gen = Rcpp::wrap(bodyObjectOverlap_rcpp(oL, r, okCentres));
+    return rcpp_result_gen;
+END_RCPP
+}
+// bodyObjectOK_rcpp
+Nullable<LogicalMatrix> bodyObjectOK_rcpp(double r, NumericMatrix centres, List objects, LogicalVector ok);
+RcppExport SEXP _m4ma_bodyObjectOK_rcpp(SEXP rSEXP, SEXP centresSEXP, SEXP objectsSEXP, SEXP okSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type r(rSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type centres(centresSEXP);
+    Rcpp::traits::input_parameter< List >::type objects(objectsSEXP);
+    Rcpp::traits::input_parameter< LogicalVector >::type ok(okSEXP);
+    rcpp_result_gen = Rcpp::wrap(bodyObjectOK_rcpp(r, centres, objects, ok));
+    return rcpp_result_gen;
+END_RCPP
+}
 // dist_rcpp
 NumericVector dist_rcpp(NumericMatrix p1, NumericMatrix p2);
 RcppExport SEXP _m4ma_dist_rcpp(SEXP p1SEXP, SEXP p2SEXP) {
@@ -551,6 +589,9 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_m4ma_object2lines_rcpp", (DL_FUNC) &_m4ma_object2lines_rcpp, 1},
+    {"_m4ma_bodyObjectOverlap_rcpp", (DL_FUNC) &_m4ma_bodyObjectOverlap_rcpp, 3},
+    {"_m4ma_bodyObjectOK_rcpp", (DL_FUNC) &_m4ma_bodyObjectOK_rcpp, 4},
     {"_m4ma_dist_rcpp", (DL_FUNC) &_m4ma_dist_rcpp, 2},
     {"_m4ma_dist1_rcpp", (DL_FUNC) &_m4ma_dist1_rcpp, 2},
     {"_m4ma_angle2s_rcpp", (DL_FUNC) &_m4ma_angle2s_rcpp, 2},
