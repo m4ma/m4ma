@@ -172,10 +172,13 @@ Nullable<LogicalMatrix> bodyObjectOK_rcpp(
   }
   
   LogicalVector out(33);
+  LogicalVector out_ok = out[ok];
   
   for (int i = 0; i < body_overlap_mat.nrow(); i++) {
-    out[ok] = is_false(any(body_overlap_mat(i, _)));
+    out_ok[i] = is_false(any(body_overlap_mat(i, _)));
   }
+  
+  out[ok] = out_ok;
   
   out.attr("dim") = Dimension(11, 3);
   
