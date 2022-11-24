@@ -51,7 +51,7 @@ By default, C++ implementations are used.
 
 **Note**: This only works for reimplemented functions that are included both in m4ma and predped.
 
-## Estimating the Likelihood of Simulation Results
+### Estimating the Likelihood of Simulation Results
 
 The result of the predped simulation is called *trace*. You can estimate the log likelihood of an example trace using the `m4ma::msumlogLike_rcpp()` function:
 
