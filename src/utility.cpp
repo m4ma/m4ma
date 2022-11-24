@@ -240,20 +240,10 @@ NumericVector psUtility_rcpp(double aPS, double bPS, double sPref, double sSlow,
   double sPref2 = std::min(sPref, d * sPref / sSlow);	
   
   // compute utility for different rings
-  NumericVector outer = rep(pow(abs(v * 1.5 - sPref2), aPS), 11);
-  NumericVector middle = rep(pow(abs(v - sPref2), aPS), 11);
-  NumericVector inner = rep(pow(abs(v/2 - sPref2), aPS), 11);
+  NumericVector rings = NumericVector::create(1.5, 1.0, 0.5);
+  NumericVector output = -bPS * rep_each(pow(abs(v * rings - sPref2), aPS), 11);
   
-  // allocate output
-  NumericVector output(33);
-  
-  output[seq(0, 10)] = outer;
-  output[seq(11, 21)] = middle;
-  output[seq(22, 32)] = inner;
-  
-  NumericVector output_scaled = -bPS * output;
-  
-  return output_scaled;
+  return output;
 }
 
 //' Walk-beside Utility
