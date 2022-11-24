@@ -235,21 +235,15 @@ NumericVector idUtility_rcpp(double bID, double dID, double aID, double n,
 // [[Rcpp::export]]
 NumericVector psUtility_rcpp(double aPS, double bPS, double sPref, double sSlow,
                              double v, double d) {
-  // allocate variables
-  NumericVector output(33);
   
   // take the parallel min of sPref
   double sPref2 = std::min(sPref, d * sPref / sSlow);	
   
-  // fill output vector 
-  for(int i = 0;  i < 11; ++i) {
-      output[i] = -bPS * abs(pow(v * 1.5 - sPref2, aPS));
-      output[(i+11)] = -bPS * abs(pow(v - sPref2, aPS));
-      output[(i+22)] = -bPS * abs(pow(v/2 - sPref2, aPS));  
-  }
+  // compute utility for different rings
+  NumericVector rings = NumericVector::create(1.5, 1.0, 0.5);
+  NumericVector output = -bPS * rep_each(pow(abs(v * rings - sPref2), aPS), 11);
   
   return output;
-  
 }
 
 //' Walk-beside Utility
