@@ -251,7 +251,9 @@ NumericVector psUtility_rcpp(double aPS, double bPS, double sPref, double sSlow,
   output[seq(11, 21)] = middle;
   output[seq(22, 32)] = inner;
   
-  return -bPS * output;
+  NumericVector output_scaled = -bPS * output;
+  
+  return output_scaled;
 }
 
 //' Walk-beside Utility
