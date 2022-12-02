@@ -658,10 +658,12 @@ Nullable<List> getLeaders_rcpp(
       return(R_NilValue);
     } else {
       candidates = candidates[inGroup];
+      candidates_names = candidates_names[inGroup];
     } 
   // if leaders are preferred from in-group
   } else if (preferGroup && is_true(any(inGroup))) {
     candidates = candidates[inGroup];
+    candidates_names = candidates_names[inGroup];
   }
   
   // get candidate angles
@@ -685,8 +687,8 @@ Nullable<List> getLeaders_rcpp(
   }
   
   candidates = candidates[ok];
+  candidates_names = candidates_names[ok];
   angles = angles[ok];
-  
   NumericVector leaders;
   CharacterVector leaders_names;
   if(is_false(any(duplicated(candidates)))) {
@@ -694,7 +696,7 @@ Nullable<List> getLeaders_rcpp(
     leaders_names = candidates_names;
   } else {
     leaders = unique(candidates);
-    leaders_names = unique(candidates_names);
+    leaders_names = rep("", leaders.length());
     for(int i = 0; i < leaders.length(); i++) {
       double leaders_i = leaders[i];
       NumericVector leaders_angles_i = angles[candidates == leaders_i];

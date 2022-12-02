@@ -43,6 +43,14 @@ getLeaders = wrapper('getLeaders')
 
 
 #' @rdname getBuddy_rcpp
-#' @param ... Arguments passed to the function implementation.
 #' @param use Whether the R or C++ implementation is called.
-getBuddy = wrapper('getBuddy')
+getBuddy = function(n, group, a, p_pred, centres, objects, pickBest = FALSE, 
+                    state, use = 'cpp') {
+  if (use == 'r' || (exists('predped_env') && predped_env$use == 'r')) {
+    return(m4ma::getBuddy_r(n, group, a, p_pred, centres, objects,
+                            pickBest, state))
+  } else {
+    return(m4ma::getBuddy_rcpp(n, group, a, p_pred, centres, objects,
+                               pickBest, state))
+  }
+}
