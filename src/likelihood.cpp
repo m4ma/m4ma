@@ -1,5 +1,7 @@
 #include <Rcpp.h>
-#include "m4ma.h"
+#include "utility.h"
+#include "pCNL.h"
+
 using namespace Rcpp;
 
 
