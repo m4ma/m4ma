@@ -1,6 +1,5 @@
 #include <Rcpp.h>
 #include <math.h>
-#include "m4ma.h"
 #include "utils.h"
 
 using namespace Rcpp;
