@@ -226,11 +226,11 @@ ringNum_rcpp <- function(k) {
     .Call(`_m4ma_ringNum_rcpp`, k)
 }
 
-#' Subject Log-likelihood
+#' Observation Log-likelihood
 #' 
-#' Calculate the log-likelihood of an observation for a single pedestrian.
+#' Calculate the log-likelihood of an observation for a single subject or iteration.
 #'
-#' @param subject List with subject data.
+#' @param obs List with observation data.
 #' @param p Numeric vector with subject parameters.
 #' @param n Integer scalar subject index.
 #' @param nests List of vectors with utility indices.
@@ -238,35 +238,38 @@ ringNum_rcpp <- function(k) {
 #' @param cell_nest Numeric matrix with nest indices for each cell.
 #' @param min_like Numeric scalar minimum likelihood return value.
 #' 
-#' @returns Numeric scalar subject log likelihood.
+#' @returns Numeric scalar observation log-likelihood.
 #' @export
-like_subject <- function(subject, p, n, nests, alpha, cell_nest, min_like = 1e-10) {
-    .Call(`_m4ma_like_subject`, subject, p, n, nests, alpha, cell_nest, min_like)
+like_observation <- function(obs, p, n, nests, alpha, cell_nest, min_like = 1e-10) {
+    .Call(`_m4ma_like_observation`, obs, p, n, nests, alpha, cell_nest, min_like)
 }
 
 #' State Log-likelihood
 #' 
-#' Calculate the log-likelihood of observations for a state as the sum of pedestrian log-likelihoods.
+#' Calculate the log-likelihood of observations for a state as the sum of observation log-likelihoods.
 #'
 #' @param state List of lists with subject data.
 #' @param p Numeric matrix with subject parameters for each subject.
 #' @param nests List of vectors with utility indices.
 #' @param alpha List of vectors with alpha values.
 #' @param cell_nest Numeric matrix with nest indices for each cell.
+#' @param elements Character string indicating whether to return a trace with 
+#' iterations or subjects as elements. Can be either \code{"iterations"} or 
+#' \code{"subjects"}.
 #' @param min_like Numeric scalar minimum likelihood return value.
 #' 
-#' @returns Numeric vector of state subject likelihoods.
+#' @returns Numeric vector of state observaton log-likelihoods.
 #' @export
-like_state <- function(state, p, nests, alpha, cell_nest, min_like = 1e-10) {
-    .Call(`_m4ma_like_state`, state, p, nests, alpha, cell_nest, min_like)
+like_state <- function(state, p, nests, alpha, cell_nest, elements = "iterations", min_like = 1e-10) {
+    .Call(`_m4ma_like_state`, state, p, nests, alpha, cell_nest, elements, min_like)
 }
 
 #' Trace Log-likelihood
 #' 
-#' Calculate the log-likelihood of a trace of states as the sum over states and subject log-likelihoods.
+#' Calculate the log-likelihood of a trace of states as the sum over states and observation log-likelihoods.
 #'
 #' @param p Numeric matrix with subject parameters for each subject.
-#' @param trace_rcpp List of lists of lists with subject data.
+#' @param trace_rcpp List of lists of state lists with observation data.
 #' @param nests List of vectors with utility indices.
 #' @param alpha List of vectors with alpha values.
 #' @param cell_nest Numeric matrix with nest indices for each cell.

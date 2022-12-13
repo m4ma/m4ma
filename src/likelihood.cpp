@@ -14,11 +14,11 @@ NumericVector get_mum(NumericVector p) {
 }
 
 
-//' Subject Log-likelihood
+//' Observation Log-likelihood
 //' 
-//' Calculate the log-likelihood of an observation for a single pedestrian.
+//' Calculate the log-likelihood of an observation for a single subject or iteration.
 //'
-//' @param subject List with subject data.
+//' @param obs List with observation data.
 //' @param p Numeric vector with subject parameters.
 //' @param n Integer scalar subject index.
 //' @param nests List of vectors with utility indices.
@@ -26,16 +26,23 @@ NumericVector get_mum(NumericVector p) {
 //' @param cell_nest Numeric matrix with nest indices for each cell.
 //' @param min_like Numeric scalar minimum likelihood return value.
 //' 
-//' @returns Numeric scalar subject log likelihood.
+//' @returns Numeric scalar observation log-likelihood.
 //' @export
 // [[Rcpp::export]]
-double like_subject(List subject, NumericVector p, int n, List nests, List alpha, NumericMatrix cell_nest, double min_like = 1e-10) {
+double like_observation(
+    List obs,
+    NumericVector p,
+    int n, List nests,
+    List alpha,
+    NumericMatrix cell_nest,
+    double min_like = 1e-10
+) {
 
-  NumericVector u = utility(p, n, subject["v"], subject["d"], subject["BA"],
-                            subject["GA"], subject["ID"], subject["FL"], subject["WB"],
-                            subject["ok"], subject["group"]);
+  NumericVector u = utility(p, n, obs["v"], obs["d"], obs["BA"],
+                            obs["GA"], obs["ID"], obs["FL"], obs["WB"],
+                            obs["ok"], obs["group"]);
   
-  int cell = subject["cell"];
+  int cell = obs["cell"];
 
   NumericVector mum = get_mum(p);
 
@@ -47,27 +54,45 @@ double like_subject(List subject, NumericVector p, int n, List nests, List alpha
 
 //' State Log-likelihood
 //' 
-//' Calculate the log-likelihood of observations for a state as the sum of pedestrian log-likelihoods.
+//' Calculate the log-likelihood of observations for a state as the sum of observation log-likelihoods.
 //'
 //' @param state List of lists with subject data.
 //' @param p Numeric matrix with subject parameters for each subject.
 //' @param nests List of vectors with utility indices.
 //' @param alpha List of vectors with alpha values.
 //' @param cell_nest Numeric matrix with nest indices for each cell.
+//' @param elements Character string indicating whether to return a trace with 
+//' iterations or subjects as elements. Can be either \code{"iterations"} or 
+//' \code{"subjects"}.
 //' @param min_like Numeric scalar minimum likelihood return value.
 //' 
-//' @returns Numeric vector of state subject likelihoods.
+//' @returns Numeric vector of state observaton log-likelihoods.
 //' @export
 // [[Rcpp::export]]
-NumericVector like_state(List state, NumericMatrix p, List nests, List alpha, NumericMatrix cell_nest, double min_like = 1e-10) {
+NumericVector like_state(
+    List state, NumericMatrix p,
+    List nests,
+    List alpha,
+    NumericMatrix cell_nest,
+    std::string elements = "iterations",
+    double min_like = 1e-10
+) {
   int k = state.length();
   NumericVector llike_state (k);
   
   for(int i = 0;  i < k; ++i) {
     List state_i = state[i];
-    NumericVector p_i = p(i, _);
-    p_i.names() = colnames(p);
-    llike_state[i] = like_subject(state_i, p_i, i, nests, alpha, cell_nest, min_like);
+    
+    int n;
+    
+    if (elements == "iterations") {
+      n = i;
+    } else {
+      n = state_i["n"];
+    }
+    NumericVector p_n = p(n, _);
+    p_n.names() = colnames(p);
+    llike_state[i] = like_observation(state_i, p_n, n, nests, alpha, cell_nest, min_like);
   }
   
   return llike_state;
@@ -76,10 +101,10 @@ NumericVector like_state(List state, NumericMatrix p, List nests, List alpha, Nu
 
 //' Trace Log-likelihood
 //' 
-//' Calculate the log-likelihood of a trace of states as the sum over states and subject log-likelihoods.
+//' Calculate the log-likelihood of a trace of states as the sum over states and observation log-likelihoods.
 //'
 //' @param p Numeric matrix with subject parameters for each subject.
-//' @param trace_rcpp List of lists of lists with subject data.
+//' @param trace_rcpp List of lists of state lists with observation data.
 //' @param nests List of vectors with utility indices.
 //' @param alpha List of vectors with alpha values.
 //' @param cell_nest Numeric matrix with nest indices for each cell.
@@ -89,13 +114,22 @@ NumericVector like_state(List state, NumericMatrix p, List nests, List alpha, Nu
 //' @returns Numeric scalar trace log-likelihood.
 //' @export
 // [[Rcpp::export]]
-double msumlogLike(NumericMatrix p, List trace_rcpp, List nests, List alpha, NumericMatrix cell_nest, double min_like = 1e-10, double mult = -1.0) {
+double msumlogLike(
+    NumericMatrix p,
+    List trace_rcpp,
+    List nests,
+    List alpha,
+    NumericMatrix cell_nest,
+    double min_like = 1e-10,
+    double mult = -1.0
+) {
+  std::string elements = trace_rcpp.attr("elements");
   int l = trace_rcpp.length();
   double llike_trace = 0.0;
   
   for(int i = 0;  i < l; ++i) {
     List state_i = trace_rcpp[i];
-    llike_trace += sum(like_state(state_i, p, nests, alpha, cell_nest, min_like));
+    llike_trace += sum(like_state(state_i, p, nests, alpha, cell_nest, elements, min_like));
   }
   
   return llike_trace * mult;
