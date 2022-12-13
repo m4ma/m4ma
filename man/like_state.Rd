@@ -10,7 +10,7 @@ like_state(
   nests,
   alpha,
   cell_nest,
-  elements = "iteration",
+  elements = "iterations",
   min_like = 1e-10
 )
 }
