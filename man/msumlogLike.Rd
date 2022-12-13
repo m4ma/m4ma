@@ -17,7 +17,7 @@ msumlogLike(
 \arguments{
 \item{p}{Numeric matrix with subject parameters for each subject.}
 
-\item{trace_rcpp}{List of lists of lists with subject data.}
+\item{trace_rcpp}{List of lists of state lists with observation data.}
 
 \item{nests}{List of vectors with utility indices.}
 
@@ -33,5 +33,5 @@ msumlogLike(
 Numeric scalar trace log-likelihood.
 }
 \description{
-Calculate the log-likelihood of a trace of states as the sum over states and subject log-likelihoods.
+Calculate the log-likelihood of a trace of states as the sum over states and observation log-likelihoods.
 }

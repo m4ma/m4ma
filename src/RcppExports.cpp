@@ -207,26 +207,26 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// like_subject
-double like_subject(List subject, NumericVector p, int n, List nests, List alpha, NumericMatrix cell_nest, double min_like);
-RcppExport SEXP _m4ma_like_subject(SEXP subjectSEXP, SEXP pSEXP, SEXP nSEXP, SEXP nestsSEXP, SEXP alphaSEXP, SEXP cell_nestSEXP, SEXP min_likeSEXP) {
+// like_observation
+double like_observation(List obs, NumericVector p, int n, List nests, List alpha, NumericMatrix cell_nest, double min_like);
+RcppExport SEXP _m4ma_like_observation(SEXP obsSEXP, SEXP pSEXP, SEXP nSEXP, SEXP nestsSEXP, SEXP alphaSEXP, SEXP cell_nestSEXP, SEXP min_likeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type subject(subjectSEXP);
+    Rcpp::traits::input_parameter< List >::type obs(obsSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type p(pSEXP);
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
     Rcpp::traits::input_parameter< List >::type nests(nestsSEXP);
     Rcpp::traits::input_parameter< List >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type cell_nest(cell_nestSEXP);
     Rcpp::traits::input_parameter< double >::type min_like(min_likeSEXP);
-    rcpp_result_gen = Rcpp::wrap(like_subject(subject, p, n, nests, alpha, cell_nest, min_like));
+    rcpp_result_gen = Rcpp::wrap(like_observation(obs, p, n, nests, alpha, cell_nest, min_like));
     return rcpp_result_gen;
 END_RCPP
 }
 // like_state
-NumericVector like_state(List state, NumericMatrix p, List nests, List alpha, NumericMatrix cell_nest, double min_like);
-RcppExport SEXP _m4ma_like_state(SEXP stateSEXP, SEXP pSEXP, SEXP nestsSEXP, SEXP alphaSEXP, SEXP cell_nestSEXP, SEXP min_likeSEXP) {
+NumericVector like_state(List state, NumericMatrix p, List nests, List alpha, NumericMatrix cell_nest, std::string elements, double min_like);
+RcppExport SEXP _m4ma_like_state(SEXP stateSEXP, SEXP pSEXP, SEXP nestsSEXP, SEXP alphaSEXP, SEXP cell_nestSEXP, SEXP elementsSEXP, SEXP min_likeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -235,8 +235,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< List >::type nests(nestsSEXP);
     Rcpp::traits::input_parameter< List >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type cell_nest(cell_nestSEXP);
+    Rcpp::traits::input_parameter< std::string >::type elements(elementsSEXP);
     Rcpp::traits::input_parameter< double >::type min_like(min_likeSEXP);
-    rcpp_result_gen = Rcpp::wrap(like_state(state, p, nests, alpha, cell_nest, min_like));
+    rcpp_result_gen = Rcpp::wrap(like_state(state, p, nests, alpha, cell_nest, elements, min_like));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -605,8 +606,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_m4ma_c_vd_rcpp", (DL_FUNC) &_m4ma_c_vd_rcpp, 7},
     {"_m4ma_coneNum_rcpp", (DL_FUNC) &_m4ma_coneNum_rcpp, 1},
     {"_m4ma_ringNum_rcpp", (DL_FUNC) &_m4ma_ringNum_rcpp, 1},
-    {"_m4ma_like_subject", (DL_FUNC) &_m4ma_like_subject, 7},
-    {"_m4ma_like_state", (DL_FUNC) &_m4ma_like_state, 6},
+    {"_m4ma_like_observation", (DL_FUNC) &_m4ma_like_observation, 7},
+    {"_m4ma_like_state", (DL_FUNC) &_m4ma_like_state, 7},
     {"_m4ma_msumlogLike", (DL_FUNC) &_m4ma_msumlogLike, 7},
     {"_m4ma_pcnl_rcpp", (DL_FUNC) &_m4ma_pcnl_rcpp, 6},
     {"_m4ma_line_line_intersection_rcpp", (DL_FUNC) &_m4ma_line_line_intersection_rcpp, 5},

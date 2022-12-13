@@ -4,7 +4,15 @@
 \alias{like_state}
 \title{State Log-likelihood}
 \usage{
-like_state(state, p, nests, alpha, cell_nest, min_like = 1e-10)
+like_state(
+  state,
+  p,
+  nests,
+  alpha,
+  cell_nest,
+  elements = "iteration",
+  min_like = 1e-10
+)
 }
 \arguments{
 \item{state}{List of lists with subject data.}
@@ -17,11 +25,15 @@ like_state(state, p, nests, alpha, cell_nest, min_like = 1e-10)
 
 \item{cell_nest}{Numeric matrix with nest indices for each cell.}
 
+\item{elements}{Character string indicating whether to return a trace with
+iterations or subjects as elements. Can be either \code{"iterations"} or
+\code{"subjects"}.}
+
 \item{min_like}{Numeric scalar minimum likelihood return value.}
 }
 \value{
-Numeric vector of state subject likelihoods.
+Numeric vector of state observaton log-likelihoods.
 }
 \description{
-Calculate the log-likelihood of observations for a state as the sum of pedestrian log-likelihoods.
+Calculate the log-likelihood of observations for a state as the sum of observation log-likelihoods.
 }

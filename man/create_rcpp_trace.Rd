@@ -4,13 +4,18 @@
 \alias{create_rcpp_trace}
 \title{Rcpp Trace}
 \usage{
-create_rcpp_trace(trace)
+create_rcpp_trace(trace, elements = "iterations")
 }
 \arguments{
 \item{trace}{List of states in the simulation.}
+
+\item{elements}{Character string indicating whether to return a trace with
+iterations or subjects as elements. Can be either \code{"iterations"} or
+\code{"subjects"}.}
 }
 \value{
-List of simulation iterations containing subject states.
+List of simulation iterations containing subject states or subjects
+containing iteration states.
 }
 \description{
 Helper function that transforms a trace list simulated by predped into the
