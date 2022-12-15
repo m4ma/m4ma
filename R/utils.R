@@ -56,7 +56,7 @@ create_rcpp_trace = function(trace, elements = "iterations") {
             BA = state$BA[[n]],
             FL = state$FL[[n]],
             WB = state$WB[[n]],
-            n = n - 1
+            n = n
           )
         } else {
           rcpp_state = NULL

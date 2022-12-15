@@ -89,10 +89,11 @@ NumericVector like_state(
       n = i;
     } else {
       n = state_i["n"];
+      n = n - 1; // c++ indexing
     }
     NumericVector p_n = p(n, _);
     p_n.names() = colnames(p);
-    llike_state[i] = like_observation(state_i, p_n, n, nests, alpha, cell_nest, min_like);
+    llike_state[i] = like_observation(state_i, p_n, n - 1, nests, alpha, cell_nest, min_like); 
   }
   
   return llike_state;
