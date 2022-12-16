@@ -1,9 +1,13 @@
 Package: m4ma
-Title: Implementation of the predictive pedestrian agent model
-Version: 0.0.0.9000
+Title: m4ma: An R package containing C++ implementations
+  to speed up the simulation and estimation of the
+  Predictive Pedestrian model
+Version: 0.1
 Authors@R: c(
     person("Malte", "Luken", email = "m.luken@esciencecenter.nl", role = "cre"),
     person("Eva", "Viviani", email = "e.viviani@esciencecenter.nl", role = "aut"),
+    person("Charlotte", "Tanis", email = "c.c.tanis@uva.nl", role = "aut"),
+    person("Andrew", "Heathcote", email = "a.j.heathcote@uva.nl", role = "cre"),
     person("eScience center", role = c("cph", "fnd")))
 Description: The Minds for Mobile Agents (M4MA) project
     aims to realistically model how pedestrians with diverse individual
