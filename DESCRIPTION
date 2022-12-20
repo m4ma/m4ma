@@ -9,6 +9,7 @@ Authors@R: c(
     person("Charlotte", "Tanis", email = "c.c.tanis@uva.nl", role = "aut"),
     person("Andrew", "Heathcote", email = "a.j.heathcote@uva.nl", role = "aut"),
     person("Dora", "Matzke", email = "d.matzke@uva.nl", role = "ctb")
+    )
 Description: The Minds for Mobile Agents (M4MA) project
     aims to realistically model how pedestrians with diverse individual
     characteristics move around spatial and social environments while
