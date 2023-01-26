@@ -10,30 +10,33 @@ object2lines_r <- function(o) {
 
 
 #' @rdname bodyObjectOverlap_rcpp
-bodyObjectOverlap_r <- function(oL, r, okCentres) {
-  # Right angles to each object line
-  a <- unique((angle2_r(p1 = t(oL[, , "P1"]), p2 = t(oL[, , "P2"])) + 90) %% 180)
-  # dx and dy to move along line
-  x <- r * sin(a * pi / 180)
-  y <- r * cos(a * pi / 180)
+bodyObjectOverlap_r <- function(oL,r, okCentres)
+  # No body-object overlap (i.e., no overlap with any line making up the object)
+  # boolean vector for each okCentres
+{
+  nL <- dim(oL)[2]
+  nC <- dim(okCentres)[1]
+  d21 <- apply(oL,1:2,diff)
   
-  # For each centre check for overlap
-  apply(okCentres, 1, function(p) { 
-    # Lines 
-    segments <- array(c(p - rbind(x, y), p + rbind(x, y)), 
-                      dim = c(2, length(x), 2),
-                      dimnames = list(c("x", "y"), NULL, c("P1", "P2")))
-    out <- FALSE 
-    for (j in 1:dim(segments)[2]) {
-      out <- out | any(sapply(1:(dim(oL)[2]), function(i){
-        all(is.finite(line_line_intersection_r(segments[,j,"P1"], 
-                                               segments[,j,"P2"], 
-                                               oL[,i,"P1"], oL[,i,"P2"], TRUE)
-        )) 
-      }))
+  d01 <- xy <- dxy <- array(dim=c(2,nL,nC),dimnames=list(c("x","y"),NULL,NULL))
+  param <- array(dim=c(nL,nC))
+  for (i in 1:nL)  {
+    d01[,i,] <- as.vector(t(okCentres)) - as.vector(oL[,i,1])
+    param[i,] <- d21[,i]%*%d01[,i,]
+  }
+  len_sq <- apply(d21^2,2,sum)
+  len0 <- len_sq == 0
+  param[!len0,] <- param[!len0,]/len_sq[!len0]
+  for (j in 1:nC) {
+    for (i in 1:nL) {
+      if (param[i,j] < 0) xy[,i,j] <- oL[,i,1] else
+        if (param[i,j] > 1) xy[,i,j] <- oL[,i,2] else
+          xy[,i,j] <- oL[,i,1] + param[i,j]*d21[,i]
+      dxy[,i,] <- t(okCentres) - xy[,i,]
     }
-    out
-  })
+  }
+  len <- sqrt(apply(dxy^2,2:3,sum))
+  apply(r>len,2,any)
 }
 
 

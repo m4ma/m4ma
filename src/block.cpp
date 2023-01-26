@@ -94,41 +94,51 @@ LogicalVector bodyObjectOverlap_rcpp(
 ) {
   NumericMatrix P1 = oL["P1"];
   NumericMatrix P2 = oL["P2"];
-  
-  // calc right angles to object lines
-  NumericVector a = angle2_rcpp(transpose(P1), transpose(P2)) + 90.0;
-  for (int i = 0; i < a.length(); i++) {
-    a[i] = fmod(a[i], 180.0); // a is always positive
-  }
-  
-  a = a[!duplicated(a)];
-  
-  // calc dx and dy to move along lines
-  NumericMatrix pos(2, a.length());
-  
-  NumericVector a_pi = a * M_PI / 180.0;
-  
-  pos(0, _) = r * sin(a_pi);
-  pos(1, _) = r * cos(a_pi);
-  
-  LogicalVector out(okCentres.nrow());
-  
-  for (int i = 0; i < okCentres.nrow(); i++) { // for each center
-    NumericVector p = okCentres(i, _);
-    
-    NumericMatrix segments_P1(pos.nrow(), pos.ncol());
-    NumericMatrix segments_P2(pos.nrow(), pos.ncol());
-    
-    // add/sub center coordinates
-    for (int j = 0; j < pos.nrow(); j++) {
-      segments_P1(j, _) = p[j] - pos(j, _);
-      segments_P2(j, _) = p[j] + pos(j, _);
+  int nL = P1.ncol();
+  int nC = okCentres.nrow();
+  LogicalVector shorter(nL);
+  LogicalVector out(nC); 
+  NumericVector len_sq(nL);
+  NumericMatrix len(nL,nC);
+  NumericMatrix d21(2,nL);
+  NumericMatrix d01x(nL,nC);
+  NumericMatrix d01y(nL,nC);
+  NumericMatrix x(nL,nC);
+  NumericMatrix y(nL,nC);
+  NumericMatrix dx(nL,nC);
+  NumericMatrix dy(nL,nC);
+  NumericMatrix leng(nL,nC);
+  NumericMatrix param(nL,nC);
+
+  for (int i = 0; i < nL; i++)  {
+    d21(_,i) = P2(_,i) - P1(_,i);
+    len_sq(i) = sum(d21(_,i)*d21(_,i));
+    for (int j = 0; j < nC; j++)  {
+      d01x(i,j) = okCentres(j,0) - P1(0,i);
+      d01y(i,j) = okCentres(j,1) - P1(1,i);
+      param(i,j) = d21(0,i)*d01x(i,j)+d21(1,i)*d01y(i,j);
     }
-    
-    // check overlap
-    out[i] = overlaps(P1, P2, segments_P1, segments_P2);
+    if (len_sq(i)>0) param(i, _) = param(i, _)/len_sq(i);
   }
-  
+  for (int j = 0; j < nC; j++) {
+    for (int i = 0; i < nL; i++) {
+      if (param(i,j) < 0) {
+        x(i,j) = P1(0,i);
+        y(i,j) = P1(1,i); 
+      } else if (param(i,j) > 1) {
+        x(i,j) = P2(0,i) ;
+        y(i,j) = P2(1,i); 
+      } else {
+        x(i,j) = P1(0,i) + param(i,j)*d21(0,i);
+        y(i,j) = P1(1,i) + param(i,j)*d21(1,i);
+      }
+      dx(i,j) = okCentres(j,0) - x(i,j);
+      dy(i,j) = okCentres(j,1) - y(i,j);
+      leng(i,j) = sqrt(dx(i,j)*dx(i,j)+dy(i,j)*dy(i,j));
+    }
+    shorter = (r-leng(_,j))>0;
+    out(j) = is_true(any(shorter));
+  }
   return(out);
 }
 
