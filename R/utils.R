@@ -14,14 +14,16 @@ create_rcpp_trace = function(trace, elements = "iterations") {
   if (elements == "iterations") {
     rcpp_trace = lapply(trace, function(states) {
       rcpp_states = lapply(1:length(states$v), function(i) {
+        if (is.null(states$WB[[i]][[1]])) WB <- NULL else  WB <- states$WB[[i]]
+        if (length(states$BA[[i]])==0) BA <- NULL else  BA <- states$BA[[i]]
         rcpp_state = list(
           v = states$v[i],
           d = states$d[i],
-          BA = states$BA[[i]],
+          BA = BA,
           GA = states$GA[[i]],
           ID = states$ID[[i]],
           FL = states$FL[[i]],
-          WB = states$WB[[i]],
+          WB = WB,
           ok = states$ok[[i]],
           group = states$group,
           cell = states$cell[i]
@@ -41,6 +43,8 @@ create_rcpp_trace = function(trace, elements = "iterations") {
         # Check if subject in iteration
         n = which(row.names(state$p) == s)
         if (length(n) > 0) {
+          if (is.null(state$WB[[n]][[1]])) WB <- NULL else  WB <- state$WB[[n]]
+          if (length(state$BA[[n]])==0) BA <- NULL else  BA <- state$BA[[n]]
           rcpp_state <- list(
             p = state$p,
             v = state$v[n],
@@ -53,9 +57,9 @@ create_rcpp_trace = function(trace, elements = "iterations") {
             ok = state$ok[[n]],
             GA = state$GA[[n]],
             ID = state$ID[[n]],
-            BA = state$BA[[n]],
+            BA = BA,
             FL = state$FL[[n]],
-            WB = state$WB[[n]],
+            WB = WB,
             n = n
           )
         } else {
