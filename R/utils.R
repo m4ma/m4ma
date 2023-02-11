@@ -46,21 +46,19 @@ create_rcpp_trace = function(trace, elements = "iterations") {
           if (is.null(state$WB[[n]][[1]])) WB <- NULL else  WB <- state$WB[[n]]
           if (length(state$BA[[n]])==0) BA <- NULL else  BA <- state$BA[[n]]
           rcpp_state <- list(
-            p = state$p,
+            # p = state$p,
             v = state$v[n],
             d = state$d[n],
             group = state$group,
-            pMat = state$pMat,
-            cell = state$cell[n],
-            ok = state$ok[[n]],
+            # pMat = state$pMat,
             cell = state$cell[n],
             ok = state$ok[[n]],
             GA = state$GA[[n]],
             ID = state$ID[[n]],
             BA = BA,
             FL = state$FL[[n]],
-            WB = WB,
-            n = n
+            n = n,
+            WB = WB
           )
         } else {
           rcpp_state = NULL
