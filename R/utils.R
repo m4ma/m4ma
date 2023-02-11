@@ -73,6 +73,7 @@ create_rcpp_trace = function(trace, elements = "iterations") {
     }
     attributes(rcpp_trace) = attributes(trace)
     attr(rcpp_trace, "elements") = "subjects"
+    names(rcpp_trace) <- subject_names
   }
   return(rcpp_trace)
 }
