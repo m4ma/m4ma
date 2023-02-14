@@ -10,70 +10,59 @@
 #' \code{"subjects"}.
 #' @return List of simulation iterations containing subject states or subjects
 #' containing iteration states.
-create_rcpp_trace = function(trace, elements = "iterations") {
-  if (elements == "iterations") {
-    rcpp_trace = lapply(trace, function(states) {
-      rcpp_states = lapply(1:length(states$v), function(i) {
-        if (is.null(states$WB[[i]][[1]])) WB <- NULL else  WB <- states$WB[[i]]
-        if (length(states$BA[[i]])==0) BA <- NULL else  BA <- states$BA[[i]]
-        rcpp_state = list(
-          v = states$v[i],
-          d = states$d[i],
-          BA = BA,
-          GA = states$GA[[i]],
-          ID = states$ID[[i]],
-          FL = states$FL[[i]],
-          WB = WB,
-          ok = states$ok[[i]],
-          group = states$group,
-          cell = states$cell[i]
-        )
-        
-        return(rcpp_state)
-      })
-    })
-    attributes(rcpp_trace) = attributes(trace)
-  } else {
-    subject_names = attr(trace, "subject_names")
-    rcpp_trace = vector(mode = "list", length = length(subject_names))
-    names(rcpp_trace) = subject_names
-    
-    for (s_name in subject_names) {
-      tmp = lapply(trace, function(state, s) {
-        # Check if subject in iteration
-        n = which(row.names(state$p) == s)
-        if (length(n) > 0) {
-          if (is.null(state$WB[[n]][[1]])) WB <- NULL else  WB <- state$WB[[n]]
-          if (length(state$BA[[n]])==0) BA <- NULL else  BA <- state$BA[[n]]
-          rcpp_state <- list(
-            # p = state$p,
-            v = state$v[n],
-            d = state$d[n],
-            group = state$group,
-            # pMat = state$pMat,
-            cell = state$cell[n],
-            ok = state$ok[[n]],
-            GA = state$GA[[n]],
-            ID = state$ID[[n]],
-            BA = BA,
-            FL = state$FL[[n]],
-            n = n,
-            WB = WB
-          )
-        } else {
-          rcpp_state = NULL
+create_rcpp_trace <- function (trace, elements = "iterations") 
+{
+  pMat <- attr(trace,"pMat")
+    if (elements == "iterations") {
+      rcpp_trace = lapply(trace, function(states) {
+            pn <- which(dimnames(pMat)[[1]] %in% names(states$v))  
+            rcpp_states = lapply(1:length(states$v), function(i) {
+                if (is.null(states$WB[[i]][[1]])) 
+                  WB <- NULL
+                else WB <- states$WB[[i]]
+                if (length(states$BA[[i]]) == 0) 
+                  BA <- NULL
+                else BA <- states$BA[[i]]
+                rcpp_state = list(v = states$v[i], d = states$d[i], 
+                  BA = BA, GA = states$GA[[i]], ID = states$ID[[i]], 
+                  FL = states$FL[[i]], WB = WB, ok = states$ok[[i]], 
+                  group = states$group, cell = states$cell[i],pn=pn)
+                return(rcpp_state)
+            })
+            return(rcpp_states);
+        })
+        attributes(rcpp_trace) = attributes(trace)
+    } else {
+        subject_names = attr(trace, "subject_names")
+        rcpp_trace = vector(mode = "list", length = length(subject_names))
+        names(rcpp_trace) = subject_names
+        for (s_name in subject_names) {
+            tmp = lapply(trace, function(state, s) {
+                n = which(row.names(state$p) == s)
+                if (length(n) > 0) {
+                  if (is.null(state$WB[[n]][[1]])) 
+                    WB <- NULL
+                  else WB <- state$WB[[n]]
+                  if (length(state$BA[[n]]) == 0) 
+                    BA <- NULL
+                  else BA <- state$BA[[n]]
+                  rcpp_state <- list(v = state$v[n], d = state$d[n], 
+                    group = state$group, cell = state$cell[n], 
+                    ok = state$ok[[n]], GA = state$GA[[n]], ID = state$ID[[n]], 
+                    BA = BA, FL = state$FL[[n]], n = n, WB = WB)
+                }
+                else {
+                  rcpp_state = NULL
+                }
+                return(rcpp_state)
+            }, s = s_name)
+            rcpp_trace[[s_name]] = tmp[!unlist(lapply(tmp, is.null))]
         }
-        return(rcpp_state)
-      }, s = s_name)
-      
-      # Only keep iterations where subject was present
-      rcpp_trace[[s_name]] = tmp[!unlist(lapply(tmp, is.null))]
+        attributes(rcpp_trace) = attributes(trace)
+        attr(rcpp_trace, "elements") = "subjects"
+        names(rcpp_trace) <- subject_names
     }
-    attributes(rcpp_trace) = attributes(trace)
-    attr(rcpp_trace, "elements") = "subjects"
-    names(rcpp_trace) <- subject_names
-  }
-  return(rcpp_trace)
+    return(rcpp_trace)
 }
 
 
