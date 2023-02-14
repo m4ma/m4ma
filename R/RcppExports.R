@@ -260,8 +260,8 @@ like_observation <- function(obs, p, n, nests, alpha, cell_nest, min_like = 1e-1
 #' 
 #' @returns Numeric vector of state observaton log-likelihoods.
 #' @export
-like_state <- function(state, p, nests, alpha, cell_nest, elements = "iterations", min_like = 1e-10) {
-    .Call(`_m4ma_like_state`, state, p, nests, alpha, cell_nest, elements, min_like)
+like_state <- function(state, ti, p, nests, alpha, cell_nest, elements = "iterations", min_like = 1e-10) {
+    .Call(`_m4ma_like_state`, state, ti, p, nests, alpha, cell_nest, elements, min_like)
 }
 
 #' Trace Log-likelihood

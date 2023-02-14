@@ -225,19 +225,20 @@ BEGIN_RCPP
 END_RCPP
 }
 // like_state
-NumericVector like_state(List state, NumericMatrix p, List nests, List alpha, NumericMatrix cell_nest, std::string elements, double min_like);
-RcppExport SEXP _m4ma_like_state(SEXP stateSEXP, SEXP pSEXP, SEXP nestsSEXP, SEXP alphaSEXP, SEXP cell_nestSEXP, SEXP elementsSEXP, SEXP min_likeSEXP) {
+NumericVector like_state(List state, int ti, NumericMatrix p, List nests, List alpha, NumericMatrix cell_nest, std::string elements, double min_like);
+RcppExport SEXP _m4ma_like_state(SEXP stateSEXP, SEXP tiSEXP, SEXP pSEXP, SEXP nestsSEXP, SEXP alphaSEXP, SEXP cell_nestSEXP, SEXP elementsSEXP, SEXP min_likeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< List >::type state(stateSEXP);
+    Rcpp::traits::input_parameter< int >::type ti(tiSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type p(pSEXP);
     Rcpp::traits::input_parameter< List >::type nests(nestsSEXP);
     Rcpp::traits::input_parameter< List >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type cell_nest(cell_nestSEXP);
     Rcpp::traits::input_parameter< std::string >::type elements(elementsSEXP);
     Rcpp::traits::input_parameter< double >::type min_like(min_likeSEXP);
-    rcpp_result_gen = Rcpp::wrap(like_state(state, p, nests, alpha, cell_nest, elements, min_like));
+    rcpp_result_gen = Rcpp::wrap(like_state(state, ti, p, nests, alpha, cell_nest, elements, min_like));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -607,7 +608,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_m4ma_coneNum_rcpp", (DL_FUNC) &_m4ma_coneNum_rcpp, 1},
     {"_m4ma_ringNum_rcpp", (DL_FUNC) &_m4ma_ringNum_rcpp, 1},
     {"_m4ma_like_observation", (DL_FUNC) &_m4ma_like_observation, 7},
-    {"_m4ma_like_state", (DL_FUNC) &_m4ma_like_state, 7},
+    {"_m4ma_like_state", (DL_FUNC) &_m4ma_like_state, 8},
     {"_m4ma_msumlogLike", (DL_FUNC) &_m4ma_msumlogLike, 7},
     {"_m4ma_pcnl_rcpp", (DL_FUNC) &_m4ma_pcnl_rcpp, 6},
     {"_m4ma_line_line_intersection_rcpp", (DL_FUNC) &_m4ma_line_line_intersection_rcpp, 5},

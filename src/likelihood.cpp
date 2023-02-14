@@ -70,7 +70,9 @@ double like_observation(
 //' @export
 // [[Rcpp::export]]
 NumericVector like_state(
-    List state, NumericMatrix p,
+    List state,
+    int ti,
+    NumericMatrix p,
     List nests,
     List alpha,
     NumericMatrix cell_nest,
@@ -84,14 +86,20 @@ NumericVector like_state(
     List state_i = state[i];
     
     int n;
+    NumericVector p_n;
+    int p_i;
     
     if (elements == "iterations") {
       n = i;
+      NumericVector pn = state_i["pn"];
+      p_i = pn(i) -  1; // c++ indexing
+      p_n = p(p_i, _);
     } else {
       n = state_i["n"];
       n = n - 1; // c++ indexing
+      p_n = p(ti, _);
     }
-    NumericVector p_n = p(n, _);
+
     p_n.names() = colnames(p);
     llike_state[i] = like_observation(state_i, p_n, n, nests, alpha, cell_nest, min_like); 
   }
@@ -130,7 +138,7 @@ double msumlogLike(
   
   for(int i = 0;  i < l; ++i) {
     List state_i = trace_rcpp[i];
-    llike_trace += sum(like_state(state_i, p, nests, alpha, cell_nest, elements, min_like));
+    llike_trace += sum(like_state(state_i, i, p, nests, alpha, cell_nest, elements, min_like));
   }
   
   return llike_trace * mult;
