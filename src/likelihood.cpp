@@ -43,11 +43,13 @@ double like_observation(
                             obs["ok"], obs["group"]);
   
   int cell = obs["cell"];
+  LogicalMatrix ok = obs["ok"];
 
-  NumericVector mum = get_mum(p);
+//  NumericVector mum = get_mum(p);
+//  double lprob = log(pcnl_rcpp(cell_nest(cell, _), u, mum, nests, alpha, 1.0));
 
-  double lprob = log(pcnl_rcpp(cell_nest(cell, _), u, mum, nests, alpha, 1.0));
-
+  double lprob = log(pmnl_rcpp(cell, u, ok));
+  
   return std::max(lprob, log(min_like));
 }
 

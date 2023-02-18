@@ -297,6 +297,10 @@ pcnl_rcpp <- function(cell, utility, mum, nests, alpha, mu) {
     .Call(`_m4ma_pcnl_rcpp`, cell, utility, mum, nests, alpha, mu)
 }
 
+pmnl_rcpp <- function(cell, utility, ok) {
+    .Call(`_m4ma_pmnl_rcpp`, cell, utility, ok)
+}
+
 #' Two-line Intersection
 #' 
 #' Calculate the intersection between two lines.
