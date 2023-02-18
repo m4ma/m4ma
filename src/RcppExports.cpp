@@ -275,6 +275,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// pmnl_rcpp
+double pmnl_rcpp(int cell, NumericVector utility, LogicalMatrix ok);
+RcppExport SEXP _m4ma_pmnl_rcpp(SEXP cellSEXP, SEXP utilitySEXP, SEXP okSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type cell(cellSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type utility(utilitySEXP);
+    Rcpp::traits::input_parameter< LogicalMatrix >::type ok(okSEXP);
+    rcpp_result_gen = Rcpp::wrap(pmnl_rcpp(cell, utility, ok));
+    return rcpp_result_gen;
+END_RCPP
+}
 // line_line_intersection_rcpp
 NumericVector line_line_intersection_rcpp(NumericVector P1, NumericVector P2, NumericVector P3, NumericVector P4, bool interior_only);
 RcppExport SEXP _m4ma_line_line_intersection_rcpp(SEXP P1SEXP, SEXP P2SEXP, SEXP P3SEXP, SEXP P4SEXP, SEXP interior_onlySEXP) {
@@ -611,6 +624,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_m4ma_like_state", (DL_FUNC) &_m4ma_like_state, 8},
     {"_m4ma_msumlogLike", (DL_FUNC) &_m4ma_msumlogLike, 7},
     {"_m4ma_pcnl_rcpp", (DL_FUNC) &_m4ma_pcnl_rcpp, 6},
+    {"_m4ma_pmnl_rcpp", (DL_FUNC) &_m4ma_pmnl_rcpp, 3},
     {"_m4ma_line_line_intersection_rcpp", (DL_FUNC) &_m4ma_line_line_intersection_rcpp, 5},
     {"_m4ma_seesGoal_rcpp", (DL_FUNC) &_m4ma_seesGoal_rcpp, 3},
     {"_m4ma_seesCurrentGoal_rcpp", (DL_FUNC) &_m4ma_seesCurrentGoal_rcpp, 4},
