@@ -102,13 +102,13 @@ double pcnl_rcpp(NumericVector cell, NumericVector utility,
 double pmnl_rcpp(int cell, NumericVector utility, LogicalMatrix ok) {
   
   // copy ok elements of utility into u
-  int nok = sum(ok)+1;
-  NumericVector u(nok);
+  int nok = ok.length()+1;
+  NumericVector u(sum(ok)+1);
   int ok_count = 1;
-  // First always in
   u(0) = utility(0);
   for(int i = 1; i < nok; ++i) {
-    if (ok[i]) {
+    int ii = i - 1;
+    if (ok[ii]) {
       u[ok_count] = utility[i];
       ok_count = ok_count + 1;
     } 
@@ -124,5 +124,6 @@ double pmnl_rcpp(int cell, NumericVector utility, LogicalMatrix ok) {
   double p = uc/sum(u0);
   
   return(p);
+
 } 
 
