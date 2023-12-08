@@ -48,3 +48,42 @@ NumericVector bin_vector(NumericVector x, NumericVector bins) {
   
   return(out);
 }
+
+
+// Helper function to omit rows in a matrix (in R: mat[-omit, , drop = FALSE])
+NumericMatrix omit_rows(NumericMatrix mat, IntegerVector omit) {
+  int n_rows = mat.nrow();
+  int n_cols = mat.ncol();
+  int l = omit.length();
+  
+  NumericMatrix new_mat(n_rows - l, n_cols);
+  if(rownames(mat) != R_NilValue) {
+    CharacterVector old_row_names = rownames(mat);
+    CharacterVector new_row_names(n_rows - l);
+    
+    int j = 0;
+    
+    for(int i = 0; i < n_rows; i++) {
+      if (is_false(any(omit == i))) { // if row is not omitted fill new matrix
+        new_mat(j, _) = mat(i, _);
+        new_row_names[j] = old_row_names[i];
+        j += 1; // increase counter if no row was omitted
+      }
+    }
+    
+    rownames(new_mat) = new_row_names;
+    
+  } else {
+    
+    int j = 0;
+    
+    for(int i = 0; i < n_rows; i++) {
+      if (is_false(any(omit == i))) { // if row is not omitted fill new matrix
+        new_mat(j, _) = mat(i, _);
+        j += 1; // increase counter if no row was omitted
+      }
+    }
+  }
+  
+  return new_mat;
+}

@@ -10,6 +10,44 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// object2lines_rcpp
+List object2lines_rcpp(List o);
+RcppExport SEXP _m4ma_object2lines_rcpp(SEXP oSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type o(oSEXP);
+    rcpp_result_gen = Rcpp::wrap(object2lines_rcpp(o));
+    return rcpp_result_gen;
+END_RCPP
+}
+// bodyObjectOverlap_rcpp
+LogicalVector bodyObjectOverlap_rcpp(List oL, double r, NumericMatrix okCentres);
+RcppExport SEXP _m4ma_bodyObjectOverlap_rcpp(SEXP oLSEXP, SEXP rSEXP, SEXP okCentresSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type oL(oLSEXP);
+    Rcpp::traits::input_parameter< double >::type r(rSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type okCentres(okCentresSEXP);
+    rcpp_result_gen = Rcpp::wrap(bodyObjectOverlap_rcpp(oL, r, okCentres));
+    return rcpp_result_gen;
+END_RCPP
+}
+// bodyObjectOK_rcpp
+Nullable<LogicalMatrix> bodyObjectOK_rcpp(double r, NumericMatrix centres, List objects, LogicalVector ok);
+RcppExport SEXP _m4ma_bodyObjectOK_rcpp(SEXP rSEXP, SEXP centresSEXP, SEXP objectsSEXP, SEXP okSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type r(rSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type centres(centresSEXP);
+    Rcpp::traits::input_parameter< List >::type objects(objectsSEXP);
+    Rcpp::traits::input_parameter< LogicalVector >::type ok(okSEXP);
+    rcpp_result_gen = Rcpp::wrap(bodyObjectOK_rcpp(r, centres, objects, ok));
+    return rcpp_result_gen;
+END_RCPP
+}
 // dist_rcpp
 NumericVector dist_rcpp(NumericMatrix p1, NumericMatrix p2);
 RcppExport SEXP _m4ma_dist_rcpp(SEXP p1SEXP, SEXP p2SEXP) {
@@ -169,36 +207,38 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// like_subject
-double like_subject(List subject, NumericVector p, int n, List nests, List alpha, NumericMatrix cell_nest, double min_like);
-RcppExport SEXP _m4ma_like_subject(SEXP subjectSEXP, SEXP pSEXP, SEXP nSEXP, SEXP nestsSEXP, SEXP alphaSEXP, SEXP cell_nestSEXP, SEXP min_likeSEXP) {
+// like_observation
+double like_observation(List obs, NumericVector p, int n, List nests, List alpha, NumericMatrix cell_nest, double min_like);
+RcppExport SEXP _m4ma_like_observation(SEXP obsSEXP, SEXP pSEXP, SEXP nSEXP, SEXP nestsSEXP, SEXP alphaSEXP, SEXP cell_nestSEXP, SEXP min_likeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type subject(subjectSEXP);
+    Rcpp::traits::input_parameter< List >::type obs(obsSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type p(pSEXP);
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
     Rcpp::traits::input_parameter< List >::type nests(nestsSEXP);
     Rcpp::traits::input_parameter< List >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type cell_nest(cell_nestSEXP);
     Rcpp::traits::input_parameter< double >::type min_like(min_likeSEXP);
-    rcpp_result_gen = Rcpp::wrap(like_subject(subject, p, n, nests, alpha, cell_nest, min_like));
+    rcpp_result_gen = Rcpp::wrap(like_observation(obs, p, n, nests, alpha, cell_nest, min_like));
     return rcpp_result_gen;
 END_RCPP
 }
 // like_state
-NumericVector like_state(List state, NumericMatrix p, List nests, List alpha, NumericMatrix cell_nest, double min_like);
-RcppExport SEXP _m4ma_like_state(SEXP stateSEXP, SEXP pSEXP, SEXP nestsSEXP, SEXP alphaSEXP, SEXP cell_nestSEXP, SEXP min_likeSEXP) {
+NumericVector like_state(List state, int ti, NumericMatrix p, List nests, List alpha, NumericMatrix cell_nest, std::string elements, double min_like);
+RcppExport SEXP _m4ma_like_state(SEXP stateSEXP, SEXP tiSEXP, SEXP pSEXP, SEXP nestsSEXP, SEXP alphaSEXP, SEXP cell_nestSEXP, SEXP elementsSEXP, SEXP min_likeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< List >::type state(stateSEXP);
+    Rcpp::traits::input_parameter< int >::type ti(tiSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type p(pSEXP);
     Rcpp::traits::input_parameter< List >::type nests(nestsSEXP);
     Rcpp::traits::input_parameter< List >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type cell_nest(cell_nestSEXP);
+    Rcpp::traits::input_parameter< std::string >::type elements(elementsSEXP);
     Rcpp::traits::input_parameter< double >::type min_like(min_likeSEXP);
-    rcpp_result_gen = Rcpp::wrap(like_state(state, p, nests, alpha, cell_nest, min_like));
+    rcpp_result_gen = Rcpp::wrap(like_state(state, ti, p, nests, alpha, cell_nest, elements, min_like));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -232,6 +272,19 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< List >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< double >::type mu(muSEXP);
     rcpp_result_gen = Rcpp::wrap(pcnl_rcpp(cell, utility, mum, nests, alpha, mu));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pmnl_rcpp
+double pmnl_rcpp(int cell, NumericVector utility, LogicalMatrix ok);
+RcppExport SEXP _m4ma_pmnl_rcpp(SEXP cellSEXP, SEXP utilitySEXP, SEXP okSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type cell(cellSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type utility(utilitySEXP);
+    Rcpp::traits::input_parameter< LogicalMatrix >::type ok(okSEXP);
+    rcpp_result_gen = Rcpp::wrap(pmnl_rcpp(cell, utility, ok));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -551,6 +604,9 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_m4ma_object2lines_rcpp", (DL_FUNC) &_m4ma_object2lines_rcpp, 1},
+    {"_m4ma_bodyObjectOverlap_rcpp", (DL_FUNC) &_m4ma_bodyObjectOverlap_rcpp, 3},
+    {"_m4ma_bodyObjectOK_rcpp", (DL_FUNC) &_m4ma_bodyObjectOK_rcpp, 4},
     {"_m4ma_dist_rcpp", (DL_FUNC) &_m4ma_dist_rcpp, 2},
     {"_m4ma_dist1_rcpp", (DL_FUNC) &_m4ma_dist1_rcpp, 2},
     {"_m4ma_angle2s_rcpp", (DL_FUNC) &_m4ma_angle2s_rcpp, 2},
@@ -564,10 +620,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_m4ma_c_vd_rcpp", (DL_FUNC) &_m4ma_c_vd_rcpp, 7},
     {"_m4ma_coneNum_rcpp", (DL_FUNC) &_m4ma_coneNum_rcpp, 1},
     {"_m4ma_ringNum_rcpp", (DL_FUNC) &_m4ma_ringNum_rcpp, 1},
-    {"_m4ma_like_subject", (DL_FUNC) &_m4ma_like_subject, 7},
-    {"_m4ma_like_state", (DL_FUNC) &_m4ma_like_state, 6},
+    {"_m4ma_like_observation", (DL_FUNC) &_m4ma_like_observation, 7},
+    {"_m4ma_like_state", (DL_FUNC) &_m4ma_like_state, 8},
     {"_m4ma_msumlogLike", (DL_FUNC) &_m4ma_msumlogLike, 7},
     {"_m4ma_pcnl_rcpp", (DL_FUNC) &_m4ma_pcnl_rcpp, 6},
+    {"_m4ma_pmnl_rcpp", (DL_FUNC) &_m4ma_pmnl_rcpp, 3},
     {"_m4ma_line_line_intersection_rcpp", (DL_FUNC) &_m4ma_line_line_intersection_rcpp, 5},
     {"_m4ma_seesGoal_rcpp", (DL_FUNC) &_m4ma_seesGoal_rcpp, 3},
     {"_m4ma_seesCurrentGoal_rcpp", (DL_FUNC) &_m4ma_seesCurrentGoal_rcpp, 4},

@@ -25,25 +25,39 @@ alpha = list(
 
 test_trace_rcpp = m4ma::create_rcpp_trace(get(test_obj_name))
 
+test_trace_rcpp_subjects = m4ma::create_rcpp_trace(get(test_obj_name), elements = 'subjects')
+
 ref = -176.738817
 
-testthat::test_that("Subject likelihood computation works", {
+testthat::test_that("Observation likelihood computation works", {
   ll_subject = sapply(1:length(test_trace_rcpp), function(i) {
     sum(sapply(1:length(test_trace_rcpp[[i]]), function(j) {
-      m4ma::like_subject(test_trace_rcpp[[i]][[j]], p[j, ], n = j - 1, nests, alpha, m4ma::get_cell_nest())
+      m4ma::like_observation(test_trace_rcpp[[i]][[j]], p[j, ], n = j - 1, nests, alpha, m4ma::get_cell_nest())
     }))
   })
   testthat::expect_equal(sum(ll_subject), ref)
 })
 
-testthat::test_that("State likelihood computation works", {
+testthat::test_that("State likelihood computation works (iterations)", {
   ll_state = sapply(test_trace_rcpp, function(state) {
     m4ma::like_state(state, p, nests, alpha, m4ma::get_cell_nest())
   })
   testthat::expect_equal(sum(ll_state), ref)
 })
 
+testthat::test_that("State likelihood computation works (subjects)", {
+  ll_state = sapply(test_trace_rcpp_subjects, function(state) {
+    m4ma::like_state(state, p, nests, alpha, m4ma::get_cell_nest(), elements = "subjects")
+  })
+  testthat::expect_equal(sum(ll_state), ref)
+})
+
 testthat::test_that("Trace likelihood sum works", {
   ll_sum = m4ma::msumlogLike(p, test_trace_rcpp, nests, alpha, m4ma::get_cell_nest())
+  testthat::expect_equal(-ll_sum, ref)
+})
+
+testthat::test_that("Trace likelihood sum works", {
+  ll_sum = m4ma::msumlogLike(p, test_trace_rcpp_subjects, nests, alpha, m4ma::get_cell_nest())
   testthat::expect_equal(-ll_sum, ref)
 })

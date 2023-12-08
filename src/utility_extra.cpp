@@ -32,30 +32,6 @@ NumericVector destinationAngle_rcpp(
   return(dest_angle);
 }
 
-// Helper function to omit rows in a matrix (in R: mat[-omit, , drop = FALSE])
-NumericMatrix omit_rows(NumericMatrix mat, IntegerVector omit) {
-  int n_rows = mat.nrow();
-  int n_cols = mat.ncol();
-  int l = omit.length();
-  
-  NumericMatrix new_mat(n_rows - l, n_cols);
-  CharacterVector old_row_names = rownames(mat);
-  CharacterVector new_row_names(n_rows - l);
-  
-  int j = 0;
-  
-  for(int i = 0; i < n_rows; i++) {
-    if (is_false(any(omit == i))) { // if row is not omitted fill new matrix
-      new_mat(j, _) = mat(i, _);
-      new_row_names[j] = old_row_names[i];
-      j += 1; // increase counter if no row was omitted
-    }
-  }
-  
-  rownames(new_mat) = new_row_names;
-  
-  return new_mat;
-}
 
 //' Predicted Distance to Close Front
 //'
@@ -682,10 +658,12 @@ Nullable<List> getLeaders_rcpp(
       return(R_NilValue);
     } else {
       candidates = candidates[inGroup];
+      candidates_names = candidates_names[inGroup];
     } 
   // if leaders are preferred from in-group
   } else if (preferGroup && is_true(any(inGroup))) {
     candidates = candidates[inGroup];
+    candidates_names = candidates_names[inGroup];
   }
   
   // get candidate angles
@@ -709,8 +687,8 @@ Nullable<List> getLeaders_rcpp(
   }
   
   candidates = candidates[ok];
+  candidates_names = candidates_names[ok];
   angles = angles[ok];
-  
   NumericVector leaders;
   CharacterVector leaders_names;
   if(is_false(any(duplicated(candidates)))) {
@@ -718,7 +696,7 @@ Nullable<List> getLeaders_rcpp(
     leaders_names = candidates_names;
   } else {
     leaders = unique(candidates);
-    leaders_names = unique(candidates_names);
+    leaders_names = rep("", leaders.length());
     for(int i = 0; i < leaders.length(); i++) {
       double leaders_i = leaders[i];
       NumericVector leaders_angles_i = angles[candidates == leaders_i];

@@ -97,3 +97,33 @@ double pcnl_rcpp(NumericVector cell, NumericVector utility,
   
   return p;
 }
+
+// [[Rcpp::export]]
+double pmnl_rcpp(int cell, NumericVector utility, LogicalMatrix ok) {
+  
+  // copy ok elements of utility into u
+  int nok = ok.length()+1;
+  NumericVector u(sum(ok)+1);
+  int ok_count = 1;
+  u(0) = utility(0);
+  for(int i = 1; i < nok; ++i) {
+    int ii = i - 1;
+    if (ok[ii]) {
+      u[ok_count] = utility[i];
+      ok_count = ok_count + 1;
+    } 
+  }
+  
+  // Exponential protected against overflows
+  double maxu = max(u);
+  NumericVector u0 = u - maxu;
+  u0 = exp(u0);
+  // Assumes cell is in ok
+  double uc = utility(cell)-maxu;
+  uc = exp(uc);
+  double p = uc/sum(u0);
+  
+  return(p);
+
+} 
+

@@ -11,7 +11,17 @@ getBuddy_rcpp(n, group, a, p_pred, centres, objects, pickBest, state)
 
 getBuddy_r(n, group, a, p_pred, centres, objects, pickBest = FALSE, state)
 
-getBuddy(..., use = "cpp")
+getBuddy(
+  n,
+  group,
+  a,
+  p_pred,
+  centres,
+  objects,
+  pickBest = FALSE,
+  state,
+  use = "cpp"
+)
 }
 \arguments{
 \item{n}{Integer scalar index of current pedestrian in pedestrian matrix.}
@@ -32,8 +42,6 @@ two length-two numeric vectors of x- and y-coordinates.}
 returned.}
 
 \item{state}{List with state data.}
-
-\item{...}{Arguments passed to the function implementation.}
 
 \item{use}{Whether the R or C++ implementation is called.}
 }
