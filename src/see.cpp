@@ -9,12 +9,18 @@
 #include <boost/geometry/geometries/linestring.hpp>
 #include <boost/geometry/geometries/point_xy.hpp>
 #include <boost/geometry/geometries/box.hpp>
+#include <boost/geometry/geometries/geometries.hpp>
+#include <boost/geometry/geometries/adapted/boost_polygon.hpp>
 
 namespace bg = boost::geometry;
+namespace trans = boost::geometry::strategy::transform;
 
 namespace Rcpp {
 
 typedef bg::model::d2::point_xy<double> point_t;
+typedef bg::model::polygon<point_t> polygon_t;
+typedef bg::model::multi_polygon<polygon_t> multi_polygon_t;
+typedef boost::polygon::rectangle_data<double> rect;
 
 template <> point_t as(SEXP ptsexp) {
   Rcpp::NumericVector pt(ptsexp);
@@ -24,6 +30,49 @@ template <> point_t as(SEXP ptsexp) {
 template <> SEXP wrap(const point_t &p) {
   return Rcpp::wrap(Rcpp::NumericVector::create(p.x(), p.y()));
 }
+
+// Template for rectangle objects
+template <> rect as(SEXP rsexp) {
+  Rcpp::S4 b(rsexp);
+  
+  NumericVector p1 = b.slot("lower");
+  NumericVector p2 = b.slot("upper");
+  
+  rect r = boost::polygon::construct<rect>(p1[0], p1[1], p2[0], p2[1]);
+  
+  rect r_t;
+  
+  double angle = b.slot("orientation");
+  
+  trans::rotate_transformer<boost::geometry::radian, double, 2, 2> rotate(-angle);
+  boost::geometry::transform(r, r_t, rotate);
+  
+  return r_t;
+};
+
+// Template for circle objects
+template <> multi_polygon_t as(SEXP csexp) {
+  Rcpp::S4 b(csexp);
+  
+  NumericVector center = b.slot("center");
+  double radius = b.slot("radius");
+  
+  point_t p = as<point_t>(center);
+  
+  multi_polygon_t circle;
+  
+  const int n_points = 36;
+
+  bg::strategy::buffer::point_circle point_strategy(n_points);
+  bg::strategy::buffer::distance_symmetric<double> distance_strategy(radius);
+  bg::strategy::buffer::join_round join_strategy(n_points);
+  bg::strategy::buffer::end_round end_strategy(n_points);
+  bg::strategy::buffer::side_straight side_strategy;
+
+  bg::buffer(p, circle, distance_strategy, side_strategy, join_strategy, end_strategy, point_strategy);
+  
+  return circle;
+};
 
 }
 
@@ -97,7 +146,6 @@ NumericVector line_line_intersection_rcpp(
   return(res);
 }
 
-
 //' Goal in Sight
 //' 
 //' Checks whether a goal \code{P} can be seen from point \code{p}, or if it is
@@ -134,17 +182,34 @@ bool seesGoal_rcpp(
   
   // check for each object if intersects with line
   for (int i = 0; i < objects.length(); i++) {
-    List objects_i = objects[i];
-    NumericVector x = objects_i["x"];
-    NumericVector y = objects_i["y"];
-    // create object box from min_corner, max_corner
-    bg::model::box<point_t> new_box(
-        point_t(x[0], y[0]),
-        point_t(x[1], y[1])
-    );
-    // special case: when object has area == 0 (is point), don't return false
-    if (bg::intersects(l_goal, new_box) && bg::area(new_box) > 0.0) {
-      return(false);
+    RObject objects_i = objects[i];
+    
+    if (objects_i.isS4() && objects_i.inherits("rectangle")) {
+      rect new_obj = as<rect>(objects_i);
+      
+      // special case: when object has area == 0 (is point), don't return false
+      if (bg::intersects(l_goal, new_obj) && bg::area(new_obj) > 0.0) {
+        return(false);
+      }
+    } else if (objects_i.isS4() && objects_i.inherits("circle")) {
+      // create circle as polygon with 36 points
+      multi_polygon_t new_circle = as<multi_polygon_t>(objects_i);
+      
+      if (bg::intersects(l_goal, new_circle) && bg::area(new_circle) > 0.0) {
+        return(false);
+      }
+    } else if (is<List>(objects_i)) {
+      List new_list = as<List>(objects_i);
+      NumericVector x = new_list["x"];
+      NumericVector y = new_list["y"];
+      // create object box from min_corner, max_corner
+      bg::model::box<point_t> new_box(
+          point_t(x[0], y[0]),
+          point_t(x[1], y[1])
+      );
+      if (bg::intersects(l_goal, new_box) && bg::area(new_box) > 0.0) {
+        return(false);
+      }
     }
   }
   
