@@ -10,16 +10,21 @@
 #include <boost/geometry/geometries/point_xy.hpp>
 #include <boost/geometry/geometries/box.hpp>
 #include <boost/geometry/geometries/geometries.hpp>
+#include <boost/geometry/index/rtree.hpp>
 // #include <boost/geometry/geometries/adapted/boost_polygon.hpp>
 
 namespace bg = boost::geometry;
+namespace bgi = boost::geometry::index;
 // namespace trans = boost::geometry::strategy::transform;
 
 namespace Rcpp {
 
 typedef bg::model::d2::point_xy<double> point_t;
+typedef bg::model::box<point_t> box_t;
 typedef bg::model::polygon<point_t> polygon_t;
 typedef bg::model::multi_polygon<polygon_t> multi_polygon_t;
+typedef std::pair<box_t, unsigned> rtree_elem_t;
+typedef bgi::rtree<rtree_elem_t, bgi::rstar<16>> rtree_t;
 // typedef boost::polygon::rectangle_data<double> rect;
 
 template <> point_t as(SEXP ptsexp) {
@@ -92,7 +97,7 @@ multi_polygon_t list_to_multi_polygon(List obj) {
   Rcpp::NumericVector x = obj["x"];
   Rcpp::NumericVector y = obj["y"];
   // create object box from min_corner, max_corner
-  bg::model::box<point_t> bx(
+  box_t bx(
       point_t(x[0], y[0]),
       point_t(x[1], y[1])
   );
@@ -123,4 +128,27 @@ template <> multi_polygon_t as(SEXP osexp) {
   return mpoly;
 };
 
+}
+
+using namespace Rcpp;
+
+rtree_t objects_to_rtree(List objects) {
+  std::vector<rtree_elem_t> boxes;
+  
+  for (unsigned i = 0; i < objects.length(); i++) {
+    RObject objects_i = objects[i];
+    
+    // instantiate object as a polygon
+    multi_polygon_t mpoly_i = as<multi_polygon_t>(objects_i);
+    
+    // rtree requires bounding box as input
+    box_t box_i = bg::return_envelope<box_t>(mpoly_i);
+    
+    boxes.push_back(std::make_pair(box_i, i));
+  }
+  
+  // construct rtree
+  rtree_t rtree(boxes);
+  
+  return rtree;
 }

@@ -105,20 +105,17 @@ bool seesGoal_rcpp(
   bg::append(l_goal, as<point_t>(p_n));
   bg::append(l_goal, as<point_t>(P_n));
   
-  // check for each object if intersects with line
-  for (int i = 0; i < objects.length(); i++) {
-    RObject objects_i = objects[i];
-    
-    // instantiate object as a polygon
-    multi_polygon_t mpoly_i = as<multi_polygon_t>(objects_i);
-    
-    // check also for special case when object is point (area == 0)
-    if (bg::intersects(l_goal, mpoly_i) && bg::area(mpoly_i) > 0.0) {
-      return(false);
-    }
-  }
+  // create rtree structure from objects
+  rtree_t rtree = objects_to_rtree(objects);
   
-  return(true);
+  // allocate results
+  std::vector<rtree_elem_t> values;
+  
+  // query intersections between line and objects in rtree
+  rtree.query(bgi::intersects(l_goal), std::back_inserter(values));
+  
+  // any intersections
+  return(values.size() == 0);
 }
 
 // Helper function to get x and y from goal n
