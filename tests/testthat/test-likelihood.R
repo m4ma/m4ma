@@ -27,7 +27,7 @@ test_trace_rcpp = m4ma::create_rcpp_trace(get(test_obj_name))
 
 test_trace_rcpp_subjects = m4ma::create_rcpp_trace(get(test_obj_name), elements = 'subjects')
 
-ref = -176.738817
+ref = -184.206807
 
 testthat::test_that("Observation likelihood computation works", {
   ll_subject = sapply(1:length(test_trace_rcpp), function(i) {
@@ -40,14 +40,14 @@ testthat::test_that("Observation likelihood computation works", {
 
 testthat::test_that("State likelihood computation works (iterations)", {
   ll_state = sapply(test_trace_rcpp, function(state) {
-    m4ma::like_state(state, p, nests, alpha, m4ma::get_cell_nest())
+    m4ma::like_state(state, 1, p, nests, alpha, m4ma::get_cell_nest())
   })
   testthat::expect_equal(sum(ll_state), ref)
 })
 
 testthat::test_that("State likelihood computation works (subjects)", {
   ll_state = sapply(test_trace_rcpp_subjects, function(state) {
-    m4ma::like_state(state, p, nests, alpha, m4ma::get_cell_nest(), elements = "subjects")
+    m4ma::like_state(state, 1, p, nests, alpha, m4ma::get_cell_nest(), elements = "subjects")
   })
   testthat::expect_equal(sum(ll_state), ref)
 })

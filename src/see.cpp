@@ -1,5 +1,6 @@
 #include <Rcpp.h>
-#include <math.h>
+#include "objects.h"
+
 using namespace Rcpp;
 
 //' Two-line Intersection
@@ -58,7 +59,8 @@ NumericVector line_line_intersection_rcpp(
     double lambda1 = -((X - P1[0]) * dx1 + (Y - P1[1]) * dy1)/(pow(dx1, 2) + pow(dy1, 2));
     double lambda2 = -((X - P3[0]) * dx2 + (Y - P3[1]) * dy2)/(pow(dx2, 2) + pow(dy2, 2));
     
-    if (!((lambda1 > 0.0) & (lambda1 < 1.0) & (lambda2 > 0.0) & (lambda2 < 1.0))) {
+    if (!(isgreater(lambda1, 0.0) & isless(lambda1, 1.0) & 
+        isgreater(lambda2, 0.0) & isless(lambda2, 1.0))) {
       NumericVector na_res = {NA_REAL, NA_REAL};
       return(na_res);
     }
@@ -68,7 +70,6 @@ NumericVector line_line_intersection_rcpp(
   
   return(res);
 }
-
 
 //' Goal in Sight
 //' 
@@ -90,37 +91,37 @@ NumericVector line_line_intersection_rcpp(
 //' 
 //' @export
 // [[Rcpp::export]]
-bool seesGoal_rcpp(NumericVector p_n, NumericVector P_n, List objects) {
-  int l = objects.length();
+bool seesGoal_rcpp(
+    NumericVector p_n,
+    NumericVector P_n,
+    List objects
+) {
+  // define new point type
+  typedef bg::model::d2::point_xy<double> point_t;
   
-  // Indices for creating P3 and P4
-  NumericVector idx_P3_x = NumericVector::create(0, 0, 0, 1);
-  NumericVector idx_P3_y = NumericVector::create(0, 0, 1, 0);
-  NumericVector idx_P4_x = NumericVector::create(1, 0, 1, 1);
-  NumericVector idx_P4_y = NumericVector::create(0, 1, 1, 1); 
+  // create linestring object from p_n to P_n
+  bg::model::linestring<point_t> l_goal;
   
-  for (int i = 0; i < l; ++i) {
-    
-    List object_i = objects[i];
-    NumericVector x = object_i["x"];
-    NumericVector y = object_i["y"];
-    
-    for (int j = 0; j < 4; ++j) {
-      // Create object line
-      NumericVector P3 = NumericVector::create(x[idx_P3_x[j]], y[idx_P3_y[j]]);
-      NumericVector P4 = NumericVector::create(x[idx_P4_x[j]], y[idx_P4_y[j]]);
-      
-      NumericVector intersects = line_line_intersection_rcpp(
-        p_n, P_n, P3, P4, true
-      );
-      
-      if (is_true(any(is_finite(intersects)))) {
-        return(false);
-      }
-    }
-  }
+  point_t p1 = as<point_t>(p_n);
+  point_t p2 = as<point_t>(P_n);
   
-  return(true);
+  bg::append(l_goal, p1);
+  bg::append(l_goal, p2);
+  
+  box_t l_bbox = bg::return_envelope<box_t>(l_goal);
+  
+  // create rtree structure from objects
+  rtree_t rtree = objects_to_rtree(objects);
+  
+  // allocate results
+  std::vector<rtree_elem_t> values;
+  
+  // query intersections between line and objects in rtree
+  // also query if line is within objects
+  rtree.query(bgi::intersects(l_goal) && !bgi::covers(l_bbox), std::back_inserter(values));
+  
+  // any intersections
+  return(values.size() == 0);
 }
 
 // Helper function to get x and y from goal n

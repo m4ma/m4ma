@@ -228,7 +228,7 @@ testthat::test_that(
   "Blocked angle works (when intersecting cones and seen)", {
     ref = m4ma::blockedAngle_r(n, state, p_pred, objects)
     res = m4ma::blockedAngle_rcpp(n, state, p_pred, objects)
-    testthat::expect_equal(res, if (length(ref) == 0) unname(ref) else ref)
+    testthat::expect_equal(res, (if (length(ref) == 0) unname(ref) else ref))
   }
 )
 
