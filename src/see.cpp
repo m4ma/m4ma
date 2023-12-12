@@ -102,8 +102,13 @@ bool seesGoal_rcpp(
   // create linestring object from p_n to P_n
   bg::model::linestring<point_t> l_goal;
   
-  bg::append(l_goal, as<point_t>(p_n));
-  bg::append(l_goal, as<point_t>(P_n));
+  point_t p1 = as<point_t>(p_n);
+  point_t p2 = as<point_t>(P_n);
+  
+  bg::append(l_goal, p1);
+  bg::append(l_goal, p2);
+  
+  box_t l_bbox = bg::return_envelope<box_t>(l_goal);
   
   // create rtree structure from objects
   rtree_t rtree = objects_to_rtree(objects);
@@ -112,7 +117,8 @@ bool seesGoal_rcpp(
   std::vector<rtree_elem_t> values;
   
   // query intersections between line and objects in rtree
-  rtree.query(bgi::intersects(l_goal), std::back_inserter(values));
+  // also query if line is within objects
+  rtree.query(bgi::intersects(l_goal) && !bgi::covers(l_bbox), std::back_inserter(values));
   
   // any intersections
   return(values.size() == 0);

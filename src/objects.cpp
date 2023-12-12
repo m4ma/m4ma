@@ -144,7 +144,10 @@ rtree_t objects_to_rtree(List objects) {
     // rtree requires bounding box as input
     box_t box_i = bg::return_envelope<box_t>(mpoly_i);
     
-    boxes.push_back(std::make_pair(box_i, i));
+    // only add objects with positive area (exclude points)
+    if (bg::area(box_i) > 0.0) {
+      boxes.push_back(std::make_pair(box_i, i));
+    }
   }
   
   // construct rtree
