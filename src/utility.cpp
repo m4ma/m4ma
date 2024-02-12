@@ -238,7 +238,7 @@ NumericVector psUtility_rcpp(double aPS, double bPS, double sPref, double sSlow,
                              double v, double d) {
   
   // take the parallel min of sPref
-  double sPref2 = std::min(sPref, d * sPref / sSlow);	
+  double sPref2 = std::min(sPref, sPref * (d / v * sSlow));	
   
   // compute utility for different rings
   NumericVector rings = NumericVector::create(1.5, 1.0, 0.5);
