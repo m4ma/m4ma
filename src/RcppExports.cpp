@@ -169,14 +169,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // c_vd_rcpp
-NumericMatrix c_vd_rcpp(IntegerVector cells, NumericVector p1, NumericVector v1, double a1, NumericMatrix vels, NumericMatrix angles, double tStep);
+NumericMatrix c_vd_rcpp(IntegerVector cells, NumericVector p1, double v1, double a1, NumericMatrix vels, NumericMatrix angles, double tStep);
 RcppExport SEXP _m4ma_c_vd_rcpp(SEXP cellsSEXP, SEXP p1SEXP, SEXP v1SEXP, SEXP a1SEXP, SEXP velsSEXP, SEXP anglesSEXP, SEXP tStepSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< IntegerVector >::type cells(cellsSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type p1(p1SEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type v1(v1SEXP);
+    Rcpp::traits::input_parameter< double >::type v1(v1SEXP);
     Rcpp::traits::input_parameter< double >::type a1(a1SEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type vels(velsSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type angles(anglesSEXP);
