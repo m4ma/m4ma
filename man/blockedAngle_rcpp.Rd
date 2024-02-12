@@ -7,19 +7,21 @@
 \alias{blockedAngle}
 \title{Blocked Angle}
 \usage{
-blockedAngle_rcpp(n, state, p_pred, objects)
+blockedAngle_rcpp(p1, a1, v1, p2, r, objects)
 
 blockedAngle_r(n, state, p_pred, objects)
 
 blockedAngle(..., use = "cpp")
 }
 \arguments{
-\item{n}{Integer scalar index of current pedestrian in pedestrian matrix.}
+\item{p1}{Numeric matrix with shape 1x2 (x and y) indicating the current pedestrian position.}
 
-\item{state}{List with state data.}
+\item{a1}{Double scalar angle of current pedestrian.}
 
-\item{p_pred}{Numeric matrix with shape Nx2 (x and y) as predicted positions
-of all pedestrians.}
+\item{v1}{Double scalar velocity of current pedestrian.}
+
+\item{p2}{Numeric matrix with shape Nx2 (x and y) as predicted positions
+of all other pedestrians excluding the current pedestrian.}
 
 \item{objects}{List containing a list for each object. An object has
 two length-two numeric vectors of x- and y-coordinates.}

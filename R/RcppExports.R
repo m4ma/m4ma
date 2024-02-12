@@ -51,6 +51,22 @@ bodyObjectOK_rcpp <- function(r, centres, objects, ok) {
     .Call(`_m4ma_bodyObjectOK_rcpp`, r, centres, objects, ok)
 }
 
+#' Check Cell Movement 
+#'
+#' Checks if cells are outside the background, and if there is
+#' a line of sight between the agent's position and the cell center.
+#' 
+#' @param agent Object of class `agent`.
+#' @param background Object class `background`.
+#' @param centers Numeric matrix with x- and y-coordinates of cell centers.
+#' 
+#' @return Logical matrix (11x3) indicating whether cells are in the background,
+#' and if there is a line of sight between the agent agent's position and the 
+#' cell center.
+free_cells_rcpp <- function(agent, background, centers) {
+    .Call(`_m4ma_free_cells_rcpp`, agent, background, centers)
+}
+
 #' Matrix-to-matrix Distance
 #'
 #' Compute the Euclidian distance between two Nx2 matrices with the first
@@ -686,19 +702,19 @@ iCones2Cells_rcpp <- function(iC, v, tStep = 0.5) {
 #'
 #' Compute the distance from each cell to closest pedestrians.
 #' 
-#' 
-#' @param n Integer scalar index of current pedestrian in pedestrian matrix.
-#' @param state List with state data.
-#' @param p_pred Numeric matrix with shape Nx2 (x and y) as predicted positions
-#' of all pedestrians.
+#' @param p1 Numeric matrix with shape 1x2 (x and y) indicating the current pedestrian position.
+#' @param a1 Double scalar angle of current pedestrian.
+#' @param v1 Double scalar velocity of current pedestrian.
+#' @param p2 Numeric matrix with shape Nx2 (x and y) as predicted positions
+#' of all other pedestrians excluding the current pedestrian.
 #' @param objects List containing a list for each object. An object has
 #' two length-two numeric vectors of x- and y-coordinates.
 #' 
 #' @return Numeric matrix with rows for each other pedestrian and columns for
 #' each cell (Nx33) or NULL.
 #' 
-blockedAngle_rcpp <- function(n, state, p_pred, objects) {
-    .Call(`_m4ma_blockedAngle_rcpp`, n, state, p_pred, objects)
+blockedAngle_rcpp <- function(p1, a1, v1, p2, r, objects) {
+    .Call(`_m4ma_blockedAngle_rcpp`, p1, a1, v1, p2, r, objects)
 }
 
 #' Leaders
@@ -710,7 +726,11 @@ blockedAngle_rcpp <- function(n, state, p_pred, objects) {
 #' pedestrian `n` and `onlyGroup` is `TRUE`.
 #' 
 #' @param n Integer scalar index of current pedestrian in pedestrian matrix.
-#' @param state List with state data.
+#' @param p_mat Numeric matrix with shape Nx2 (x and y) indicating the positions of all pedestrians.
+#' @param a Numeric vector with angles of all pedestrians.
+#' @param v Numeric vector with velocities of all pedestrians.
+#' @param P1 Numeric matrix with shape 1x2 (x and y) indicating position of current goal of current pedestrian.
+#' @param group Numeric vector with group membership indices of all pedestrians.
 #' @param centres Numeric matrix with x and y for each cell centre (33x2).
 #' @param objects List containing a list for each object. An object has
 #' two length-two numeric vectors of x- and y-coordinates.
@@ -731,8 +751,8 @@ blockedAngle_rcpp <- function(n, state, p_pred, objects) {
 #'       third the index of the shared group.}
 #'   }
 #' 
-getLeaders_rcpp <- function(n, state, centres, objects, onlyGroup = FALSE, preferGroup = TRUE, pickBest = FALSE) {
-    .Call(`_m4ma_getLeaders_rcpp`, n, state, centres, objects, onlyGroup, preferGroup, pickBest)
+getLeaders_rcpp <- function(n, p_mat, a, v, P1, group, centres, objects, onlyGroup = FALSE, preferGroup = TRUE, pickBest = FALSE) {
+    .Call(`_m4ma_getLeaders_rcpp`, n, p_mat, a, v, P1, group, centres, objects, onlyGroup, preferGroup, pickBest)
 }
 
 #' Buddies
@@ -744,8 +764,10 @@ getLeaders_rcpp <- function(n, state, centres, objects, onlyGroup = FALSE, prefe
 #' pedestrian `n`.
 #' 
 #' @param n Integer scalar index of current pedestrian in pedestrian matrix.
-#' @param group Integer vector of group memberships.
-#' @param a Numeric vector of heading angles for each pedestrian.
+#' @param p_mat Numeric matrix with shape Nx2 (x and y) indicating the positions of all pedestrians.
+#' @param v Numeric vector with velocities of all pedestrians.
+#' @param group Numeric vector with group membership indices of all pedestrians.
+#' @param a Numeric vector with angles of all pedestrians.
 #' @param p_pred Numeric matrix with shape Nx2 (x and y) as predicted positions
 #' of all pedestrians.
 #' @param centres Numeric matrix with x and y for each cell centre (33x2).
@@ -764,7 +786,7 @@ getLeaders_rcpp <- function(n, state, centres, objects, onlyGroup = FALSE, prefe
 #'       each buddy (rows).}
 #'   }
 #' 
-getBuddy_rcpp <- function(n, group, a, p_pred, centres, objects, pickBest, state) {
-    .Call(`_m4ma_getBuddy_rcpp`, n, group, a, p_pred, centres, objects, pickBest, state)
+getBuddy_rcpp <- function(n, p_mat, v, group, a, p_pred, centres, objects, pickBest) {
+    .Call(`_m4ma_getBuddy_rcpp`, n, p_mat, v, group, a, p_pred, centres, objects, pickBest)
 }
 

@@ -9,7 +9,11 @@
 \usage{
 getLeaders_rcpp(
   n,
-  state,
+  p_mat,
+  a,
+  v,
+  P1,
+  group,
   centres,
   objects,
   onlyGroup = FALSE,
@@ -32,7 +36,15 @@ getLeaders(..., use = "cpp")
 \arguments{
 \item{n}{Integer scalar index of current pedestrian in pedestrian matrix.}
 
-\item{state}{List with state data.}
+\item{p_mat}{Numeric matrix with shape Nx2 (x and y) indicating the positions of all pedestrians.}
+
+\item{a}{Numeric vector with angles of all pedestrians.}
+
+\item{v}{Numeric vector with velocities of all pedestrians.}
+
+\item{P1}{Numeric matrix with shape 1x2 (x and y) indicating position of current goal of current pedestrian.}
+
+\item{group}{Numeric vector with group membership indices of all pedestrians.}
 
 \item{centres}{Numeric matrix with x and y for each cell centre (33x2).}
 

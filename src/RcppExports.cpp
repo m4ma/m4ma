@@ -48,6 +48,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// free_cells_rcpp
+LogicalMatrix free_cells_rcpp(S4 agent, S4 background, NumericMatrix centers);
+RcppExport SEXP _m4ma_free_cells_rcpp(SEXP agentSEXP, SEXP backgroundSEXP, SEXP centersSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< S4 >::type agent(agentSEXP);
+    Rcpp::traits::input_parameter< S4 >::type background(backgroundSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type centers(centersSEXP);
+    rcpp_result_gen = Rcpp::wrap(free_cells_rcpp(agent, background, centers));
+    return rcpp_result_gen;
+END_RCPP
+}
 // dist_rcpp
 NumericVector dist_rcpp(NumericMatrix p1, NumericMatrix p2);
 RcppExport SEXP _m4ma_dist_rcpp(SEXP p1SEXP, SEXP p2SEXP) {
@@ -554,51 +567,58 @@ BEGIN_RCPP
 END_RCPP
 }
 // blockedAngle_rcpp
-NumericVector blockedAngle_rcpp(int n, List state, NumericMatrix p_pred, List objects);
-RcppExport SEXP _m4ma_blockedAngle_rcpp(SEXP nSEXP, SEXP stateSEXP, SEXP p_predSEXP, SEXP objectsSEXP) {
+NumericVector blockedAngle_rcpp(NumericMatrix p1, double a1, double v1, NumericMatrix p2, NumericVector r, List objects);
+RcppExport SEXP _m4ma_blockedAngle_rcpp(SEXP p1SEXP, SEXP a1SEXP, SEXP v1SEXP, SEXP p2SEXP, SEXP rSEXP, SEXP objectsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< List >::type state(stateSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type p_pred(p_predSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type p1(p1SEXP);
+    Rcpp::traits::input_parameter< double >::type a1(a1SEXP);
+    Rcpp::traits::input_parameter< double >::type v1(v1SEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type p2(p2SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type r(rSEXP);
     Rcpp::traits::input_parameter< List >::type objects(objectsSEXP);
-    rcpp_result_gen = Rcpp::wrap(blockedAngle_rcpp(n, state, p_pred, objects));
+    rcpp_result_gen = Rcpp::wrap(blockedAngle_rcpp(p1, a1, v1, p2, r, objects));
     return rcpp_result_gen;
 END_RCPP
 }
 // getLeaders_rcpp
-Nullable<List> getLeaders_rcpp(int n, List state, NumericMatrix centres, List objects, bool onlyGroup, bool preferGroup, bool pickBest);
-RcppExport SEXP _m4ma_getLeaders_rcpp(SEXP nSEXP, SEXP stateSEXP, SEXP centresSEXP, SEXP objectsSEXP, SEXP onlyGroupSEXP, SEXP preferGroupSEXP, SEXP pickBestSEXP) {
+Nullable<List> getLeaders_rcpp(int n, NumericMatrix p_mat, NumericVector a, NumericVector v, NumericMatrix P1, NumericVector group, NumericMatrix centres, List objects, bool onlyGroup, bool preferGroup, bool pickBest);
+RcppExport SEXP _m4ma_getLeaders_rcpp(SEXP nSEXP, SEXP p_matSEXP, SEXP aSEXP, SEXP vSEXP, SEXP P1SEXP, SEXP groupSEXP, SEXP centresSEXP, SEXP objectsSEXP, SEXP onlyGroupSEXP, SEXP preferGroupSEXP, SEXP pickBestSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< List >::type state(stateSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type p_mat(p_matSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type a(aSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type v(vSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type P1(P1SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type group(groupSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type centres(centresSEXP);
     Rcpp::traits::input_parameter< List >::type objects(objectsSEXP);
     Rcpp::traits::input_parameter< bool >::type onlyGroup(onlyGroupSEXP);
     Rcpp::traits::input_parameter< bool >::type preferGroup(preferGroupSEXP);
     Rcpp::traits::input_parameter< bool >::type pickBest(pickBestSEXP);
-    rcpp_result_gen = Rcpp::wrap(getLeaders_rcpp(n, state, centres, objects, onlyGroup, preferGroup, pickBest));
+    rcpp_result_gen = Rcpp::wrap(getLeaders_rcpp(n, p_mat, a, v, P1, group, centres, objects, onlyGroup, preferGroup, pickBest));
     return rcpp_result_gen;
 END_RCPP
 }
 // getBuddy_rcpp
-Nullable<List> getBuddy_rcpp(int n, NumericVector group, NumericVector a, NumericMatrix p_pred, NumericMatrix centres, List objects, bool pickBest, List state);
-RcppExport SEXP _m4ma_getBuddy_rcpp(SEXP nSEXP, SEXP groupSEXP, SEXP aSEXP, SEXP p_predSEXP, SEXP centresSEXP, SEXP objectsSEXP, SEXP pickBestSEXP, SEXP stateSEXP) {
+Nullable<List> getBuddy_rcpp(int n, NumericMatrix p_mat, NumericVector v, NumericVector group, NumericVector a, NumericMatrix p_pred, NumericMatrix centres, List objects, bool pickBest);
+RcppExport SEXP _m4ma_getBuddy_rcpp(SEXP nSEXP, SEXP p_matSEXP, SEXP vSEXP, SEXP groupSEXP, SEXP aSEXP, SEXP p_predSEXP, SEXP centresSEXP, SEXP objectsSEXP, SEXP pickBestSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type p_mat(p_matSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type v(vSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type group(groupSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type a(aSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type p_pred(p_predSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type centres(centresSEXP);
     Rcpp::traits::input_parameter< List >::type objects(objectsSEXP);
     Rcpp::traits::input_parameter< bool >::type pickBest(pickBestSEXP);
-    Rcpp::traits::input_parameter< List >::type state(stateSEXP);
-    rcpp_result_gen = Rcpp::wrap(getBuddy_rcpp(n, group, a, p_pred, centres, objects, pickBest, state));
+    rcpp_result_gen = Rcpp::wrap(getBuddy_rcpp(n, p_mat, v, group, a, p_pred, centres, objects, pickBest));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -607,6 +627,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_m4ma_object2lines_rcpp", (DL_FUNC) &_m4ma_object2lines_rcpp, 1},
     {"_m4ma_bodyObjectOverlap_rcpp", (DL_FUNC) &_m4ma_bodyObjectOverlap_rcpp, 3},
     {"_m4ma_bodyObjectOK_rcpp", (DL_FUNC) &_m4ma_bodyObjectOK_rcpp, 4},
+    {"_m4ma_free_cells_rcpp", (DL_FUNC) &_m4ma_free_cells_rcpp, 3},
     {"_m4ma_dist_rcpp", (DL_FUNC) &_m4ma_dist_rcpp, 2},
     {"_m4ma_dist1_rcpp", (DL_FUNC) &_m4ma_dist1_rcpp, 2},
     {"_m4ma_angle2s_rcpp", (DL_FUNC) &_m4ma_angle2s_rcpp, 2},
@@ -643,9 +664,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_m4ma_eObjects_rcpp", (DL_FUNC) &_m4ma_eObjects_rcpp, 3},
     {"_m4ma_iCones_rcpp", (DL_FUNC) &_m4ma_iCones_rcpp, 5},
     {"_m4ma_iCones2Cells_rcpp", (DL_FUNC) &_m4ma_iCones2Cells_rcpp, 3},
-    {"_m4ma_blockedAngle_rcpp", (DL_FUNC) &_m4ma_blockedAngle_rcpp, 4},
-    {"_m4ma_getLeaders_rcpp", (DL_FUNC) &_m4ma_getLeaders_rcpp, 7},
-    {"_m4ma_getBuddy_rcpp", (DL_FUNC) &_m4ma_getBuddy_rcpp, 8},
+    {"_m4ma_blockedAngle_rcpp", (DL_FUNC) &_m4ma_blockedAngle_rcpp, 6},
+    {"_m4ma_getLeaders_rcpp", (DL_FUNC) &_m4ma_getLeaders_rcpp, 11},
+    {"_m4ma_getBuddy_rcpp", (DL_FUNC) &_m4ma_getBuddy_rcpp, 9},
     {NULL, NULL, 0}
 };
 

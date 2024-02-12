@@ -6,6 +6,7 @@
 \usage{
 like_state(
   state,
+  ti,
   p,
   nests,
   alpha,
