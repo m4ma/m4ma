@@ -534,7 +534,7 @@ NumericVector blockedAngle_rcpp(NumericMatrix p1, double a1, double v1, NumericM
 //' @param p_mat Numeric matrix with shape Nx2 (x and y) indicating the positions of all pedestrians.
 //' @param a Numeric vector with angles of all pedestrians.
 //' @param v Numeric vector with velocities of all pedestrians.
-//' @param P1 Numeric matrix with shape 1x2 (x and y) indicating position of current goal of current pedestrian.
+//' @param P1 Numeric matrix with shape Nx2 (x and y) indicating goal positions of current pedestrian.
 //' @param group Numeric vector with group membership indices of all pedestrians.
 //' @param centres Numeric matrix with x and y for each cell centre (33x2).
 //' @param objects List containing a list for each object. An object has
