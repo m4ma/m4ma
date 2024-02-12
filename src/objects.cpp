@@ -90,6 +90,12 @@ multi_polygon_t s4_polygon_to_multi_polygon(S4 obj) {
     bg::append(mpoly[0].outer(), p_i);
   }
   
+  // close polygon
+  Rcpp::NumericVector c_0 = points(0, _);
+  point_t p_0 = point_t(c_0[0], c_0[1]);
+  
+  bg::append(mpoly[0].outer(), p_0);
+  
   return mpoly;
 }
 
@@ -114,10 +120,10 @@ template <> multi_polygon_t as(SEXP osexp) {
   
   multi_polygon_t mpoly;
   
-  if (r_obj.isS4() && r_obj.inherits("circle")) {
+  if (r_obj.isS4() && r_obj.hasSlot("radius") && r_obj.hasSlot("center")) {
     Rcpp::S4 obj(r_obj);
     mpoly = s4_circle_to_multi_polygon(obj);
-  } else if (r_obj.isS4() && r_obj.inherits("polygon")) {
+  } else if (r_obj.isS4() && r_obj.hasSlot("points")) {
     Rcpp::S4 obj(r_obj);
     mpoly = s4_polygon_to_multi_polygon(obj);
   } else if (is<List>(r_obj)) {
@@ -142,6 +148,9 @@ rtree_t objects_to_rtree(List objects) {
     multi_polygon_t mpoly_i = as<multi_polygon_t>(objects_i);
     
     // rtree requires bounding box as input
+    // for non-box objects this will return a crude approximation of the shape
+    // never directly use output from rtree but instead use object corresponding to 
+    // queried index
     box_t box_i = bg::return_envelope<box_t>(mpoly_i);
     
     // only add objects with positive area (exclude points)
