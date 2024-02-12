@@ -27,7 +27,7 @@ Rcpp::NumericVector scaleVel_rcpp(Rcpp::NumericVector v, double tStep);
 Rcpp::NumericMatrix c_vd_rcpp(
     Rcpp::IntegerVector cells,
     Rcpp::NumericVector p1,
-    Rcpp::NumericVector v1,
+    double v1,
     double a1, 
     Rcpp::NumericMatrix vels, 
     Rcpp::NumericMatrix angles,

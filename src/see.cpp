@@ -118,10 +118,20 @@ bool seesGoal_rcpp(
   
   // query intersections between line and objects in rtree
   // also query if line is within objects
+  // rtree returns a bounding box for each matching object
   rtree.query(bgi::intersects(l_goal) && !bgi::covers(l_bbox), std::back_inserter(values));
   
+  for (int i = 0; i < values.size(); i++) {
+    // for polygons (incl circles) we need to check if the actual object is disjoint with the line
+    // because the bounding box is larger than the object
+    multi_polygon_t object_mpoly = as<multi_polygon_t>(objects[std::get<1>(values[i])]);
+    if (!bg::disjoint(l_goal, object_mpoly)) {
+      return(false);
+    }
+  }
+  
   // any intersections
-  return(values.size() == 0);
+  return(true);
 }
 
 // Helper function to get x and y from goal n

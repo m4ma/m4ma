@@ -343,9 +343,11 @@ Nullable<NumericVector> iCones_rcpp(
     return(R_NilValue);
   }
   
+  double v = 1.0;
+  
   // calc cell centers for p1
   NumericMatrix coneLineEnds = c_vd_rcpp(
-    seq_len(11), p1, rep(1.0, 11), a, get_vels(), get_angles(), 0.5
+    seq_len(11), p1, v, a, get_vels(), get_angles(), 0.5
   );
   
   CharacterVector cList_names = cList.names();
@@ -487,11 +489,11 @@ NumericMatrix get_p1(int n, NumericMatrix p_mat) {
 //'
 //' Compute the distance from each cell to closest pedestrians.
 //' 
-//' 
-//' @param n Integer scalar index of current pedestrian in pedestrian matrix.
-//' @param state List with state data.
-//' @param p_pred Numeric matrix with shape Nx2 (x and y) as predicted positions
-//' of all pedestrians.
+//' @param p1 Numeric matrix with shape 1x2 (x and y) indicating the current pedestrian position.
+//' @param a1 Double scalar angle of current pedestrian.
+//' @param v1 Double scalar velocity of current pedestrian.
+//' @param p2 Numeric matrix with shape Nx2 (x and y) as predicted positions
+//' of all other pedestrians excluding the current pedestrian.
 //' @param objects List containing a list for each object. An object has
 //' two length-two numeric vectors of x- and y-coordinates.
 //' 
@@ -499,22 +501,22 @@ NumericMatrix get_p1(int n, NumericMatrix p_mat) {
 //' each cell (Nx33) or NULL.
 //' 
 // [[Rcpp::export]]
-NumericVector blockedAngle_rcpp(int n, List state, NumericMatrix p_pred, List objects) {
-  n = n - 1; // c++ indexing
-  NumericMatrix p_mat = state["p"];
-  NumericMatrix p1 = get_p1(n, p_mat);
-  NumericVector a = state["a"];
-  NumericMatrix p2 = omit_rows(p_pred, IntegerVector::create(n));
-  NumericVector r = state["r"];
+NumericVector blockedAngle_rcpp(NumericMatrix p1, double a1, double v1, NumericMatrix p2, NumericVector r, List objects) {
+  // n = n - 1; // c++ indexing
+  // NumericMatrix p_mat = state["p"];
+  // NumericMatrix p1 = get_p1(n, p_mat);
+  // NumericVector a = state["a"];
+  // NumericMatrix p2 = omit_rows(p_pred, IntegerVector::create(n));
+  // NumericVector r = state["r"];
   
-  Nullable<NumericVector> _iC = iCones_rcpp(p1, a[n], p2, r, objects);
+  Nullable<NumericVector> _iC = iCones_rcpp(p1, a1, p2, r, objects);
   if (_iC == R_NilValue) { // if iCones is NULL return empty vector
     NumericVector out_empty;
     return(out_empty);
   }
   NumericVector iC = as<NumericVector>(_iC);
-  NumericVector v = state["v"];
-  NumericVector cells = iCones2Cells_rcpp(iC, v[n]);
+  // NumericVector v = state["v"];
+  NumericVector cells = iCones2Cells_rcpp(iC, v1);
   
   return(cells);
 }
@@ -529,7 +531,11 @@ NumericVector blockedAngle_rcpp(int n, List state, NumericMatrix p_pred, List ob
 //' pedestrian `n` and `onlyGroup` is `TRUE`.
 //' 
 //' @param n Integer scalar index of current pedestrian in pedestrian matrix.
-//' @param state List with state data.
+//' @param p_mat Numeric matrix with shape Nx2 (x and y) indicating the positions of all pedestrians.
+//' @param a Numeric vector with angles of all pedestrians.
+//' @param v Numeric vector with velocities of all pedestrians.
+//' @param P1 Numeric matrix with shape Nx2 (x and y) indicating goal positions of current pedestrian.
+//' @param group Numeric vector with group membership indices of all pedestrians.
 //' @param centres Numeric matrix with x and y for each cell centre (33x2).
 //' @param objects List containing a list for each object. An object has
 //' two length-two numeric vectors of x- and y-coordinates.
@@ -553,7 +559,11 @@ NumericVector blockedAngle_rcpp(int n, List state, NumericMatrix p_pred, List ob
 // [[Rcpp::export]]
 Nullable<List> getLeaders_rcpp(
   int n,
-  List state,
+  NumericMatrix p_mat,
+  NumericVector a,
+  NumericVector v,
+  NumericMatrix P1,
+  NumericVector group,
   NumericMatrix centres,
   List objects,
   bool onlyGroup = false,
@@ -561,10 +571,10 @@ Nullable<List> getLeaders_rcpp(
   bool pickBest = false
 ) {
   n = n - 1; // c++ indexing
-  NumericMatrix p_mat = state["p"];
+  // NumericMatrix p_mat = state["p"];
   NumericMatrix p1 = get_p1(n, p_mat);
-  NumericVector a = state["a"];
-  NumericVector v = state["v"];
+  // NumericVector a = state["a"];
+  // NumericVector v = state["v"];
   double a1 = a[n];
   double v1 = v[n];
   // omit self from pedestrian matrix
@@ -596,17 +606,17 @@ Nullable<List> getLeaders_rcpp(
   }
   
   // get goal matrix
-  NumericMatrix P1;
-  
-  if (is<List>(state["P"])) {
-    List P1_list = state["P"];
-    NumericMatrix P1_mat = P1_list[n];
-    int attr_i = P1_mat.attr("i");
-    P1 = P1_mat(Range(attr_i - 1, attr_i - 1), Range(0, 1));
-  } else {
-    NumericMatrix P1_mat = state["P"];
-    P1 = P1_mat(Range(n, n), Range(0, 1));
-  }
+  // NumericMatrix P1;
+  // 
+  // if (is<List>(state["P"])) {
+  //   List P1_list = state["P"];
+  //   NumericMatrix P1_mat = P1_list[n];
+  //   int attr_i = P1_mat.attr("i");
+  //   P1 = P1_mat(Range(attr_i - 1, attr_i - 1), Range(0, 1));
+  // } else {
+  //   NumericMatrix P1_mat = state["P"];
+  //   P1 = P1_mat(Range(n, n), Range(0, 1));
+  // }
   
   // bin angle to other peds
   NumericVector I_n = Iangle_rcpp(p1, a1, p2);
@@ -648,7 +658,7 @@ Nullable<List> getLeaders_rcpp(
   candidates = candidates + 11 * (ring - 1);
   
   CharacterVector candidates_names = candidates.names();
-  NumericVector group = state["group"];
+  // NumericVector group = state["group"];
   NumericVector group_candidates = group[candidates_names];
   LogicalVector inGroup = group_candidates == group[n];
   inGroup.names() = group_candidates.names();
@@ -765,8 +775,10 @@ Nullable<List> getLeaders_rcpp(
 //' pedestrian `n`.
 //' 
 //' @param n Integer scalar index of current pedestrian in pedestrian matrix.
-//' @param group Integer vector of group memberships.
-//' @param a Numeric vector of heading angles for each pedestrian.
+//' @param p_mat Numeric matrix with shape Nx2 (x and y) indicating the positions of all pedestrians.
+//' @param v Numeric vector with velocities of all pedestrians.
+//' @param group Numeric vector with group membership indices of all pedestrians.
+//' @param a Numeric vector with angles of all pedestrians.
 //' @param p_pred Numeric matrix with shape Nx2 (x and y) as predicted positions
 //' of all pedestrians.
 //' @param centres Numeric matrix with x and y for each cell centre (33x2).
@@ -788,18 +800,19 @@ Nullable<List> getLeaders_rcpp(
 // [[Rcpp::export]]
 Nullable<List> getBuddy_rcpp(
   int n,
+  NumericMatrix p_mat,
+  NumericVector v,
   NumericVector group,
   NumericVector a,
   NumericMatrix p_pred,
   NumericMatrix centres,
   List objects,
-  bool pickBest,
-  List state
+  bool pickBest
 ) {
   n = n - 1; // c++ indexing
-  NumericMatrix p_mat = state["p"];
+  // NumericMatrix p_mat = state["p"];
   NumericMatrix p1 = get_p1(n, p_mat);
-  NumericVector v = state["v"];
+  // NumericVector v = state["v"];
   // omit self from pedestrian matrix
   NumericMatrix ps = omit_rows(p_mat, IntegerVector::create(n));
   

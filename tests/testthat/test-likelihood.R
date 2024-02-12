@@ -1,6 +1,6 @@
 # Test likelihood functions against reference values on test trace
 
-test_filepath = file.path('data', 'trace_i.rda')
+test_filepath = testthat::test_path('data', 'trace_i.rda')
 
 test_obj_name = load(test_filepath)
 

@@ -416,7 +416,7 @@ NumericVector scaleVel_rcpp(NumericVector v, double tStep = 0.5) {
 //' @return Numeric matrix (Nx2) of xy-coordinates for centers of each cell.
 //' @export
 // [[Rcpp::export]]
-NumericMatrix c_vd_rcpp(IntegerVector cells, NumericVector p1, NumericVector v1,
+NumericMatrix c_vd_rcpp(IntegerVector cells, NumericVector p1, double v1,
                         double a1, NumericMatrix vels, NumericMatrix angles,
                         double tStep = 0.5) {
   
@@ -431,7 +431,7 @@ NumericMatrix c_vd_rcpp(IntegerVector cells, NumericVector p1, NumericVector v1,
   
   for(int i = 0; i < n_rows; i++) {
     // compute scaled velocity with default parameter 0.5
-    cell_vels[i] = tStep * vels[cells_0[i]];
+    cell_vels[i] = tStep * v1 * vels[cells_0[i]];
     // compute modulo
     cell_angles[i] = fmod(360.0 + (angles[cells_0[i]] + a1), 360.0);
   }

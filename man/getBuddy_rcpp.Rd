@@ -7,7 +7,7 @@
 \alias{getBuddy}
 \title{Buddies}
 \usage{
-getBuddy_rcpp(n, group, a, p_pred, centres, objects, pickBest, state)
+getBuddy_rcpp(n, p_mat, v, group, a, p_pred, centres, objects, pickBest)
 
 getBuddy_r(n, group, a, p_pred, centres, objects, pickBest = FALSE, state)
 
@@ -26,9 +26,13 @@ getBuddy(
 \arguments{
 \item{n}{Integer scalar index of current pedestrian in pedestrian matrix.}
 
-\item{group}{Integer vector of group memberships.}
+\item{p_mat}{Numeric matrix with shape Nx2 (x and y) indicating the positions of all pedestrians.}
 
-\item{a}{Numeric vector of heading angles for each pedestrian.}
+\item{v}{Numeric vector with velocities of all pedestrians.}
+
+\item{group}{Numeric vector with group membership indices of all pedestrians.}
+
+\item{a}{Numeric vector with angles of all pedestrians.}
 
 \item{p_pred}{Numeric matrix with shape Nx2 (x and y) as predicted positions
 of all pedestrians.}

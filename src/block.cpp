@@ -3,6 +3,7 @@
 #include "geometry.h"
 #include "see.h"
 #include "utils.h"
+#include "objects.h"
 
 using namespace Rcpp;
 
@@ -166,30 +167,97 @@ Nullable<LogicalMatrix> bodyObjectOK_rcpp(
   if (is_false(any(ok))) {
     return(R_NilValue);
   }
+  // create rtree structure from objects
+  rtree_t rtree = objects_to_rtree(objects);
   
-  IntegerVector which_ok = seq_along(ok) - 1;
+  // allocate output
+  LogicalVector out(ok);
   
-  NumericMatrix okCentres = omit_rows(centres, which_ok[!ok]);
-  
-  List oLines = lapply(objects, object2lines_rcpp);
-  
-  LogicalMatrix body_overlap_mat(sum(ok), oLines.length());
-  
-  for (int i = 0; i < oLines.length(); i++) {
-    body_overlap_mat(_, i) = bodyObjectOverlap_rcpp(
-      oLines[i], r, okCentres
-    );
+  // for each cell centre
+  for (int i = 0; i < ok.length(); i++) {
+    if (ok[i]) {
+      // transform centre into point
+      NumericVector centres_i = centres(i, _);
+      point_t p = as<point_t>(centres_i);
+      
+      // allocate rtree query result
+      std::vector<rtree_elem_t> values;
+      
+      // query nearest bounding box in rtree
+      rtree.query(bgi::nearest(p, 1), std::back_inserter(values));
+      
+      rtree_elem_t res = values[0];
+      
+      // get object corresponding to nearest bounding box
+      multi_polygon_t res_mpoly = as<multi_polygon_t>(objects[std::get<1>(res)]);
+      
+      // if distance to nearest object is smaller than circle radius cell is blocked
+      float d = bg::distance(p, res_mpoly);
+      
+      out[i] = d >= r;
+    }
   }
   
-  LogicalVector out(33);
-  LogicalVector out_ok = out[ok];
+  // transform into matrix
+  out.attr("dim") = Dimension(11, 3);
   
-  for (int i = 0; i < body_overlap_mat.nrow(); i++) {
-    out_ok[i] = is_false(any(body_overlap_mat(i, _)));
+  return(as<LogicalMatrix>(out));
+}
+
+
+// Helper function to check if there is an unblocked line from each cell center to the agent
+LogicalVector blocked_cells_rcpp(
+  S4 agent, List objects, NumericMatrix centers, LogicalVector check = LogicalVector(33)
+) {
+  LogicalVector check_copy = clone(check);
+  NumericVector agent_pos = agent.slot("center");
+  
+  for (int i = check.length()-1; i>= 0; i--) {
+    if (i + 11 >= check.length() || check_copy[i + 11]) {
+      NumericVector centers_i = centers(i, _);
+      check_copy[i] = seesGoal_rcpp(centers_i, agent_pos, objects);
+    }
   }
   
-  out[ok] = out_ok;
+  return(!check_copy);
+}
+
+
+//' Check Cell Movement 
+//'
+//' Checks if cells are outside the background, and if there is
+//' a line of sight between the agent's position and the cell center.
+//' 
+//' @param agent Object of class `agent`.
+//' @param background Object class `background`.
+//' @param centers Numeric matrix with x- and y-coordinates of cell centers.
+//' 
+//' @return Logical matrix (11x3) indicating whether cells are in the background,
+//' and if there is a line of sight between the agent agent's position and the 
+//' cell center.
+// [[Rcpp::export]]
+LogicalMatrix free_cells_rcpp(
+  S4 agent, S4 background, NumericMatrix centers
+) {
+  S4 background_object = background.slot("shape");
+  List objects = background.slot("objects");
   
+  multi_polygon_t background_poly = as<multi_polygon_t>(background_object);
+  
+  LogicalVector out(centers.nrow());
+  
+  for (int i = 0; i < out.length(); i++) {
+    NumericVector centers_i = centers(i, _);
+    point_t p = as<point_t>(centers_i);
+    out[i] = bg::within(p, background_poly);
+  }
+  
+  if (objects.length() > 0) {
+    LogicalVector blocked = blocked_cells_rcpp(agent, objects, centers);
+    out = out & !blocked;
+  }
+  
+  // transform into matrix
   out.attr("dim") = Dimension(11, 3);
   
   return(as<LogicalMatrix>(out));

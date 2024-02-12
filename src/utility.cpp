@@ -43,36 +43,24 @@ NumericVector caUtility_rcpp(double aCA, double bCA, double bCAlr) {
   NumericVector output(11);
   
   // angles 
-  NumericVector angles =
-    NumericVector::create(10, 20, 32.5, 50, 72.5)/90 ;
-
-  // compute power of angles
-//  NumericVector ap = pow(angles, aCA);
-//  NumericVector aip = pow(angles, 1/aCA);
-
-  // fill the output
-//  int ap_len = ap.length();
-  
-//  for(int i = 0;  i < ap_len; ++i) {
-//    output[i+ap_len+1] = ap[i];
-//    output[ap_len - i - 1] = aip[i]; 
-//  }
-//  output[ap_len] = 0;
+  NumericVector angles = NumericVector::create(10, 20, 32.5, 50, 72.5) / 90.0 ;
   
   // compute power of angles
   NumericVector ap = pow(angles, aCA);
+  
+  NumericVector bpb = rep(bCA * bCAlr, 5);
+  NumericVector bdb = rep(bCA / bCAlr, 5);
   
   // fill the output
   int ap_len = ap.length();
   
   for(int i = 0;  i < ap_len; ++i) {
-    output[i] = bCA * bCAlr *ap[ap_len-1-i];
-    output[i+ap_len+1] = (bCA / bCAlr) *ap[i];
+    output[i] = bpb[i] * ap[ap_len - i - 1];
+    output[i+ap_len+1] = bdb[i] * ap[i];
   }
   output[ap_len] = 0;
   
-  
-  output = -rep(bCA*output, 3);
+  output = -rep(output, 3);
   return output;
   
 }
@@ -250,7 +238,7 @@ NumericVector psUtility_rcpp(double aPS, double bPS, double sPref, double sSlow,
                              double v, double d) {
   
   // take the parallel min of sPref
-  double sPref2 = std::min(sPref, d * sPref / sSlow);	
+  double sPref2 = std::min(sPref, sPref * (d / v * sSlow));	
   
   // compute utility for different rings
   NumericVector rings = NumericVector::create(1.5, 1.0, 0.5);
