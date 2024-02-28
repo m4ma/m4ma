@@ -22,11 +22,23 @@ create_rcpp_trace <- function (trace, elements = "iterations")
                 else WB <- states$WB[[i]]
                 if (length(states$BA[[i]]) == 0) 
                   BA <- NULL
-                else BA <- states$BA[[i]]
+                else BA <- pmax(states$BA[[i]], 0)
+                ok <- states$ok[[i]]
+                if (!is.null(states$ID[[i]])) {
+                  group <- states$group
+                  namesInGroup <- names(group[-i][group[-i] == group[i]])
+                  inGroup <- dimnames(states$ID[[i]])[[1]] %in% namesInGroup
+                  ok <- ok & apply(states$ID[[i]], 2, function(x) {
+                    all(x > 0)
+                  })
+                } else {
+                  inGroup <- FALSE
+                }
                 rcpp_state = list(v = states$v[i], d = states$d[i], 
-                  BA = BA, GA = states$GA[[i]], ID = states$ID[[i]], 
-                  FL = states$FL[[i]], WB = WB, ok = states$ok[[i]], 
-                  group = states$group, cell = states$cell[i],pn=pn)
+                  BA = BA, GA = states$GA[[i]], ID = states$ID[[i]],
+                  inGroup = inGroup, IDPreUtility = as.vector(ifelse(ok, 0, -Inf)),
+                  okID = ok, FL = states$FL[[i]], WB = WB, ok = states$ok[[i]], 
+                  group = states$group, cell = states$cell[i], pn = pn)
                 return(rcpp_state)
             })
             return(rcpp_states);
@@ -45,11 +57,23 @@ create_rcpp_trace <- function (trace, elements = "iterations")
                   else WB <- state$WB[[n]]
                   if (length(state$BA[[n]]) == 0) 
                     BA <- NULL
-                  else BA <- state$BA[[n]]
+                  else BA <- pmax(state$BA[[n]], 0)
+                  ok <- state$ok[[n]]
+                  if (!is.null(state$ID[[n]])) {
+                    group <- state$group
+                    namesInGroup <- names(group[-n][group[-n] == group[n]])
+                    inGroup <- dimnames(state$ID[[n]])[[1]] %in% namesInGroup
+                    ok <- ok & apply(state$ID[[n]], 2, function(x) {
+                      all(x > 0)
+                    })
+                  } else {
+                    inGroup <- FALSE
+                  }
                   rcpp_state <- list(v = state$v[n], d = state$d[n], 
                     group = state$group, cell = state$cell[n], 
-                    ok = state$ok[[n]], GA = state$GA[[n]], ID = state$ID[[n]], 
-                    BA = BA, FL = state$FL[[n]], n = n, WB = WB)
+                    ok = state$ok[[n]], GA = state$GA[[n]], ID = state$ID[[n]],
+                    inGroup = inGroup, IDPreUtility = as.vector(ifelse(ok, 0, -Inf)),
+                    okID = ok, BA = BA, FL = state$FL[[n]], n = n, WB = WB)
                 }
                 else {
                   rcpp_state = NULL

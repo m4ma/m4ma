@@ -4,12 +4,10 @@
 \alias{utility}
 \title{Total Utility of Cells}
 \usage{
-utility(p, n, v, d, ba_, ga, id_, fl_, wb_, ok, group)
+utility(p, v, d, ba_, ga, id_, is_ingroup, id_pre_utility, fl_, wb_, ok)
 }
 \arguments{
 \item{p}{Numeric vector of subject parameters.}
-
-\item{n}{Integer scalar indexing the subject in the state.}
 
 \item{v}{Numeric scalar indicating the current speed.}
 
@@ -20,6 +18,10 @@ utility(p, n, v, d, ba_, ga, id_, fl_, wb_, ok, group)
 \item{ga}{Numeric vector of angles to next goal.}
 
 \item{id_}{NULL or numeric matrix of predicted distances from the subject to other pedestrians in the front.}
+
+\item{is_ingroup}{Logical vector indicating which subjects in \code{ID_} are part of the ingroup.}
+
+\item{id_pre_utility}{Numeric pre-calculated interpersonal distance utility vector (contains \code{-Inf} for blocked cells and \code{0} otherwise).}
 
 \item{fl_}{NULL or list of numeric matrices:
 \describe{
@@ -34,8 +36,6 @@ utility(p, n, v, d, ba_, ga, id_, fl_, wb_, ok, group)
 }}
 
 \item{ok}{Logical matrix indicating if cells are blocked.}
-
-\item{group}{Integer vector with group indices for each pedestrian.}
 }
 \value{
 Numeric vector with total utility for each cell.

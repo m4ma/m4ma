@@ -38,9 +38,11 @@ double like_observation(
     double min_like = 1e-10
 ) {
 
-  NumericVector u = utility(p, n, obs["v"], obs["d"], obs["BA"],
-                            obs["GA"], obs["ID"], obs["FL"], obs["WB"],
-                            obs["ok"], obs["group"]);
+  NumericVector u = utility(p, obs["v"], obs["d"], obs["BA"],
+                            obs["GA"], obs["ID"],
+                            obs["inGroup"], obs["IDPreUtility"],
+                            obs["FL"], obs["WB"],
+                            obs["okID"]);
   
   int cell = obs["cell"];
   LogicalMatrix ok = obs["ok"];
@@ -94,7 +96,7 @@ NumericVector like_state(
     if (elements == "iterations") {
       n = i;
       NumericVector pn = state_i["pn"];
-      p_i = pn(i) -  1; // c++ indexing
+      p_i = pn(i) - 1; // c++ indexing
       p_n = p(p_i, _);
     } else {
       n = state_i["n"];

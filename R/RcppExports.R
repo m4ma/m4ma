@@ -479,13 +479,15 @@ seesGoalOK_rcpp <- function(n, objects, state, centres, ok) {
 #'
 #' @param aBA Numeric scalar power parameter.
 #' @param bBA Numeric scalar scale parameter.
-#' @param BA Numeric vector of distances from cells to closest pedestrians.
+#' @param BA Numeric vector of distances from cells to closest pedestrians. Must
+#' be positive.
 #' @param idx_BA Integer vector of cell indices.
+#' @param n_cells Integer number of cells for which the utility is calculated. 
 #'
 #' @return Numeric vector of utilities for each cell.
 #' @export
-baUtility_rcpp <- function(aBA, bBA, BA, idx_BA) {
-    .Call(`_m4ma_baUtility_rcpp`, aBA, bBA, BA, idx_BA)
+baUtility_rcpp <- function(aBA, bBA, BA, idx_BA, n_cells = 33L) {
+    .Call(`_m4ma_baUtility_rcpp`, aBA, bBA, BA, idx_BA, n_cells)
 }
 
 #' Current-angle Utility
@@ -493,11 +495,13 @@ baUtility_rcpp <- function(aBA, bBA, BA, idx_BA) {
 #' @param aCA Numeric scalar power parameter.
 #' @param bCA Numeric scalar scale parameter.
 #' @param bCAlr Numeric scalar scale parameter.
+#' @param angles Numeric vector with angles for which to calculate utility.
+#' @param n_rings Integer number of cell rings for which to calculate utlity.
 #' 
 #' @return Numeric vector of utilities for each cell.
 #' @export
-caUtility_rcpp <- function(aCA, bCA, bCAlr) {
-    .Call(`_m4ma_caUtility_rcpp`, aCA, bCA, bCAlr)
+caUtility_rcpp <- function(aCA, bCA, bCAlr, angles = as.numeric( c(10, 20, 32.5, 50, 72.5) / 90.0), n_rings = 3L) {
+    .Call(`_m4ma_caUtility_rcpp`, aCA, bCA, bCAlr, angles, n_rings)
 }
 
 #' Follow-leader Utility
@@ -518,10 +522,12 @@ flUtility_rcpp <- function(aFL, bFL, dFL, leaders, dists) {
 #' @param bGA Numeric scalar scale parameter.
 #' @param aGA Numeric scalar power parameter.
 #' @param GA Numeric vector of angles to next goal.
+#' @param n_rings Integer number of cell rings for which to calculate utlity.
+#' 
 #' @returns Numeric vector of utilities for each cell.
 #' @export
-gaUtility_rcpp <- function(bGA, aGA, GA) {
-    .Call(`_m4ma_gaUtility_rcpp`, bGA, aGA, GA)
+gaUtility_rcpp <- function(bGA, aGA, GA, n_rings = 3L) {
+    .Call(`_m4ma_gaUtility_rcpp`, bGA, aGA, GA, n_rings)
 }
 
 #' Interpersonal Distance Utility
@@ -529,14 +535,15 @@ gaUtility_rcpp <- function(bGA, aGA, GA) {
 #' @param bID Numeric scalar scale parameter.
 #' @param dID Numeric scalar direction parameter.
 #' @param aID Numeric scalar power parameter.
-#' @param n Numeric scalar indexing the subject in the state.
+#' @param is_ingroup Logical vector indicating which subjects in \code{ID_} are part of the ingroup.
 #' @param ok Logical matrix indicating if cells are blocked.
-#' @param group Named numeric scalar with group indices for each pedestrian.
 #' @param ID_ Numeric matrix or NULL; if not NULL, a numeric matrix of predicted distances from the subject to other pedestrians in the front.
+#' @param utility Numeric pre-calculated utility vector (contains \code{-Inf} for blocked cells and \code{0} otherwise).
+#' 
 #' @returns Numeric vector of utilities for each cell.
 #' @export
-idUtility_rcpp <- function(bID, dID, aID, n, ok, group, ID_) {
-    .Call(`_m4ma_idUtility_rcpp`, bID, dID, aID, n, ok, group, ID_)
+idUtility_rcpp <- function(bID, dID, aID, is_ingroup, ok, ID_, utility) {
+    .Call(`_m4ma_idUtility_rcpp`, bID, dID, aID, is_ingroup, ok, ID_, utility)
 }
 
 #' Preferred Speed Utility
@@ -568,12 +575,13 @@ wbUtility_rcpp <- function(aWB, bWB, buddies, dists) {
 #' Total Utility of Cells
 #'
 #' @param p Numeric vector of subject parameters.
-#' @param n Integer scalar indexing the subject in the state.
 #' @param v Numeric scalar indicating the current speed.
 #' @param d Numeric scalar indicating the distance to next goal.
 #' @param ba_ NULL or numeric vector of distances from each cell to closest pedestrian.
 #' @param ga Numeric vector of angles to next goal.
 #' @param id_ NULL or numeric matrix of predicted distances from the subject to other pedestrians in the front.
+#' @param is_ingroup Logical vector indicating which subjects in \code{ID_} are part of the ingroup.
+#' @param id_pre_utility Numeric pre-calculated interpersonal distance utility vector (contains \code{-Inf} for blocked cells and \code{0} otherwise).
 #' @param fl_ NULL or list of numeric matrices:
 #' \describe{
 #'   \item{leaders}{Numeric matrix of buddy positions and angles.}
@@ -585,13 +593,12 @@ wbUtility_rcpp <- function(aWB, bWB, buddies, dists) {
 #'   \item{dists}{Numeric matrix of distances from cells' centers to closest buddy. # needs rewrite}
 #' }
 #' @param ok Logical matrix indicating if cells are blocked.
-#' @param group Integer vector with group indices for each pedestrian.
 #'
 #' @return Numeric vector with total utility for each cell.
 #' @export
 #'
-utility <- function(p, n, v, d, ba_, ga, id_, fl_, wb_, ok, group) {
-    .Call(`_m4ma_utility`, p, n, v, d, ba_, ga, id_, fl_, wb_, ok, group)
+utility <- function(p, v, d, ba_, ga, id_, is_ingroup, id_pre_utility, fl_, wb_, ok) {
+    .Call(`_m4ma_utility`, p, v, d, ba_, ga, id_, is_ingroup, id_pre_utility, fl_, wb_, ok)
 }
 
 #' Angle to Destination
@@ -729,7 +736,7 @@ blockedAngle_rcpp <- function(p1, a1, v1, p2, r, objects) {
 #' @param p_mat Numeric matrix with shape Nx2 (x and y) indicating the positions of all pedestrians.
 #' @param a Numeric vector with angles of all pedestrians.
 #' @param v Numeric vector with velocities of all pedestrians.
-#' @param P1 Numeric matrix with shape 1x2 (x and y) indicating position of current goal of current pedestrian.
+#' @param P1 Numeric matrix with shape Nx2 (x and y) indicating goal positions of current pedestrian.
 #' @param group Numeric vector with group membership indices of all pedestrians.
 #' @param centres Numeric matrix with x and y for each cell centre (33x2).
 #' @param objects List containing a list for each object. An object has

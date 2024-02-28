@@ -4,7 +4,13 @@
 \alias{caUtility_rcpp}
 \title{Current-angle Utility}
 \usage{
-caUtility_rcpp(aCA, bCA, bCAlr)
+caUtility_rcpp(
+  aCA,
+  bCA,
+  bCAlr,
+  angles = as.numeric(c(10, 20, 32.5, 50, 72.5)/90),
+  n_rings = 3L
+)
 }
 \arguments{
 \item{aCA}{Numeric scalar power parameter.}
@@ -12,6 +18,10 @@ caUtility_rcpp(aCA, bCA, bCAlr)
 \item{bCA}{Numeric scalar scale parameter.}
 
 \item{bCAlr}{Numeric scalar scale parameter.}
+
+\item{angles}{Numeric vector with angles for which to calculate utility.}
+
+\item{n_rings}{Integer number of cell rings for which to calculate utlity.}
 }
 \value{
 Numeric vector of utilities for each cell.
