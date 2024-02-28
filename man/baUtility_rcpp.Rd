@@ -4,16 +4,19 @@
 \alias{baUtility_rcpp}
 \title{Blocked-angle Utility}
 \usage{
-baUtility_rcpp(aBA, bBA, BA, idx_BA)
+baUtility_rcpp(aBA, bBA, BA, idx_BA, n_cells = 33L)
 }
 \arguments{
 \item{aBA}{Numeric scalar power parameter.}
 
 \item{bBA}{Numeric scalar scale parameter.}
 
-\item{BA}{Numeric vector of distances from cells to closest pedestrians.}
+\item{BA}{Numeric vector of distances from cells to closest pedestrians. Must
+be positive.}
 
 \item{idx_BA}{Integer vector of cell indices.}
+
+\item{n_cells}{Integer number of cells for which the utility is calculated.}
 }
 \value{
 Numeric vector of utilities for each cell.

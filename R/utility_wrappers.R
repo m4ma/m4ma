@@ -55,7 +55,16 @@ idUtility = function(p, n, ID, ok, group, use = 'cpp') {
   if (use == 'r' || (exists('predped_env') && predped_env$use == 'r')) {
     return(m4ma::idUtility_r(p, n, ID, ok, group))
   } else {
-    return(m4ma::idUtility_rcpp(p["bID"], p["dID"], p['aID'], n - 1, ok, group, ID))
+    if (is.null(ID) | !any(ok)) {  
+       return(as.vector(ifelse(ok, 0, -Inf)))
+    }
+    namesInGroup <- names(group[-n][group[-n] == group[n]])
+    inGroup <- dimnames(ID)[[1]] %in% namesInGroup
+    ok <- ok & apply(ID, 2, function(x) {
+      all(x > 0)
+    })
+    u <- ifelse(ok, 0, -Inf)
+    return(m4ma::idUtility_rcpp(p["bID"], p["dID"], p['aID'], inGroup, ok, ID, u))
   }
 }
 

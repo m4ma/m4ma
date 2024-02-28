@@ -4,7 +4,7 @@
 \alias{gaUtility_rcpp}
 \title{Goal Angle Utility}
 \usage{
-gaUtility_rcpp(bGA, aGA, GA)
+gaUtility_rcpp(bGA, aGA, GA, n_rings = 3L)
 }
 \arguments{
 \item{bGA}{Numeric scalar scale parameter.}
@@ -12,6 +12,8 @@ gaUtility_rcpp(bGA, aGA, GA)
 \item{aGA}{Numeric scalar power parameter.}
 
 \item{GA}{Numeric vector of angles to next goal.}
+
+\item{n_rings}{Integer number of cell rings for which to calculate utlity.}
 }
 \value{
 Numeric vector of utilities for each cell.

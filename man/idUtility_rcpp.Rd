@@ -4,7 +4,7 @@
 \alias{idUtility_rcpp}
 \title{Interpersonal Distance Utility}
 \usage{
-idUtility_rcpp(bID, dID, aID, n, ok, group, ID_)
+idUtility_rcpp(bID, dID, aID, is_ingroup, ok, ID_, utility)
 }
 \arguments{
 \item{bID}{Numeric scalar scale parameter.}
@@ -13,13 +13,13 @@ idUtility_rcpp(bID, dID, aID, n, ok, group, ID_)
 
 \item{aID}{Numeric scalar power parameter.}
 
-\item{n}{Numeric scalar indexing the subject in the state.}
+\item{is_ingroup}{Logical vector indicating which subjects in \code{ID_} are part of the ingroup.}
 
 \item{ok}{Logical matrix indicating if cells are blocked.}
 
-\item{group}{Named numeric scalar with group indices for each pedestrian.}
-
 \item{ID_}{Numeric matrix or NULL; if not NULL, a numeric matrix of predicted distances from the subject to other pedestrians in the front.}
+
+\item{utility}{Numeric pre-calculated utility vector (contains \code{-Inf} for blocked cells and \code{0} otherwise).}
 }
 \value{
 Numeric vector of utilities for each cell.

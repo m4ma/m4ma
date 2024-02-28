@@ -111,7 +111,7 @@ double pmnl_rcpp(int cell, NumericVector utility, LogicalMatrix ok) {
     if (ok[ii]) {
       u[ok_count] = utility[i];
       ok_count = ok_count + 1;
-    } 
+    }
   }
   
   // Exponential protected against overflows

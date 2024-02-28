@@ -42,7 +42,7 @@ getLeaders(..., use = "cpp")
 
 \item{v}{Numeric vector with velocities of all pedestrians.}
 
-\item{P1}{Numeric matrix with shape 1x2 (x and y) indicating position of current goal of current pedestrian.}
+\item{P1}{Numeric matrix with shape Nx2 (x and y) indicating goal positions of current pedestrian.}
 
 \item{group}{Numeric vector with group membership indices of all pedestrians.}
 
