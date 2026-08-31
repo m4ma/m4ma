@@ -22,17 +22,23 @@ Rcpp::Nullable<Rcpp::NumericMatrix> predClose_rcpp(
 );
 
 Rcpp::NumericVector blockedAngle_rcpp(
-    int n,
-    Rcpp::List state,
-    Rcpp:: NumericMatrix p_pred,
-    Rcpp::List objects
+    NumericMatrix p1, 
+    double a1, 
+    double v1, 
+    NumericMatrix p2, 
+    NumericVector r, 
+    List objects
 );
 
 Rcpp::Nullable<Rcpp::List> getLeaders_rcpp(
     int n,
-    Rcpp::List state,
-    Rcpp::NumericMatrix centres,
-    Rcpp::List objects,
+    NumericMatrix p_mat,
+    NumericVector a,
+    NumericVector v,
+    NumericMatrix P1,
+    NumericVector group,
+    NumericMatrix centres,
+    List objects,
     bool onlyGroup = false,
     bool preferGroup = true,
     bool pickBest = false
