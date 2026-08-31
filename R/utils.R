@@ -1,3 +1,12 @@
+#' Indicator of functions to call (R or C++)
+#' @keywords internal
+predped_env <- new.env()
+predped_env$use <- 'cpp'
+
+#' Indicator of functions to call (R or C++)
+#' @keywords internal
+predped_env <- new.env()
+predped_env$use <- 'cpp'
 
 #' Rcpp Trace
 #' 
