@@ -222,9 +222,9 @@ NumericVector fix(NumericVector x) {
   }
   LogicalVector false_true = LogicalVector::create(false, true);
   LogicalVector true_false = LogicalVector::create(true, false);
-  if (is_true(all(is_na(x) == false_true)) | is_true(all(is_nan(x) == false_true))) {
+  if (is_true(all(is_na(x) == false_true)) || is_true(all(is_nan(x) == false_true))) {
     x = NumericVector::create(x[0], 10);
-  } else if (is_true(all(is_na(x) == true_false)) | is_true(all(is_nan(x) == true_false))) {
+  } else if (is_true(all(is_na(x) == true_false)) || is_true(all(is_nan(x) == true_false))) {
     x = NumericVector::create(0, x[1]); 
   }
   if (x.length() > 1) {
@@ -239,7 +239,7 @@ List check_list_na(List x) {
   LogicalVector valid(x.length());
   for(int i = 0; i < x.length(); i++) {
     NumericVector x_i = x[i];
-    if (is_false(any(is_na(x_i))) & is_false(any(is_nan(x_i)))) {
+    if (is_false(any(is_na(x_i))) && is_false(any(is_nan(x_i)))) {
       valid[i] = true;
     }
   }

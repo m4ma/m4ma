@@ -59,8 +59,8 @@ NumericVector line_line_intersection_rcpp(
     double lambda1 = -((X - P1[0]) * dx1 + (Y - P1[1]) * dy1)/(pow(dx1, 2) + pow(dy1, 2));
     double lambda2 = -((X - P3[0]) * dx2 + (Y - P3[1]) * dy2)/(pow(dx2, 2) + pow(dy2, 2));
     
-    if (!(isgreater(lambda1, 0.0) & isless(lambda1, 1.0) & 
-        isgreater(lambda2, 0.0) & isless(lambda2, 1.0))) {
+    if (!(isgreater(lambda1, 0.0) && isless(lambda1, 1.0) & 
+        isgreater(lambda2, 0.0) && isless(lambda2, 1.0))) {
       NumericVector na_res = {NA_REAL, NA_REAL};
       return(na_res);
     }
