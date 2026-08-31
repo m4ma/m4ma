@@ -25,8 +25,16 @@ of all other pedestrians excluding the current pedestrian.}
 
 \item{r}{Numeric vector denoting the N radii of the other pedestrians.}
 
-\item{objects}{List containing a list for each object. An object has
-two length-two numeric vectors of x- and y-coordinates.}
+\item{objects}{List containing instances of the \code{object} class.
+See the documentation of \code{predped} for more information.}
+
+\item{n}{Integer denoting the index of the pedestrian in \code{p_pred}
+and \code{state}.}
+
+\item{state}{Instance of the \code{state} class. See the documentation
+of \code{predped} for more information.}
+
+\item{p_pred}{Numeric matrix containing the positions of the agents.}
 
 \item{...}{Arguments passed to the function implementation.}
 

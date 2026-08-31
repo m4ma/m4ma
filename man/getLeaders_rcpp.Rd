@@ -60,6 +60,9 @@ the same group.}
 \item{pickBest}{Logical salar indicating if all or the best leader should be
 returned.}
 
+\item{state}{Instance of the \code{state} class. See the documentation
+of \code{predped} for more information.}
+
 \item{...}{Arguments passed to the function implementation.}
 
 \item{use}{Whether the R or C++ implementation is called.}
