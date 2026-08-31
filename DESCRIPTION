@@ -1,8 +1,8 @@
 Package: m4ma
 Title: m4ma: An R package containing C++ implementations
   to speed up the simulation and estimation of the
-  Predictive Pedestrian model
-Date: 2026-08-28
+  Minds for Mobile Agents model
+Date: 2026-08-31
 Version: 0.4.1
 Authors@R: c(
     person("Malte", "Luken", email = "m.luken@esciencecenter.nl", role = "cre"),
