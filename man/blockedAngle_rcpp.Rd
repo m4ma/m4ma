@@ -23,6 +23,8 @@ blockedAngle(..., use = "cpp")
 \item{p2}{Numeric matrix with shape Nx2 (x and y) as predicted positions
 of all other pedestrians excluding the current pedestrian.}
 
+\item{r}{Numeric vector denoting the N radii of the other pedestrians.}
+
 \item{objects}{List containing a list for each object. An object has
 two length-two numeric vectors of x- and y-coordinates.}
 

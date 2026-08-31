@@ -262,9 +262,10 @@ like_observation <- function(obs, p, n, nests, alpha, cell_nest, min_like = 1e-1
 
 #' State Log-likelihood
 #' 
-#' Calculate the log-likelihood of observations for a state as the sum of observation log-likelihoods.
+#' DEPRECATED. Calculate the log-likelihood of observations for a state as the sum of observation log-likelihoods.
 #'
 #' @param state List of lists with subject data.
+#' @param ti Integer denoting the iteration for which to evaluate the likelihood.
 #' @param p Numeric matrix with subject parameters for each subject.
 #' @param nests List of vectors with utility indices.
 #' @param alpha List of vectors with alpha values.
@@ -313,6 +314,16 @@ pcnl_rcpp <- function(cell, utility, mum, nests, alpha, mu) {
     .Call(`_m4ma_pcnl_rcpp`, cell, utility, mum, nests, alpha, mu)
 }
 
+#' Probability of the Multinomial Logit Model
+#'
+#' DEPRECATED. Computed the probability of the mulinomial logit model given a cell and utility vector.
+#'
+#' @param cell Integer with the index of the cell to compute the probability for.
+#' @param utility Numeric vector with the utility for each cell.
+#' @param ok Logical matrix with the same shape as utility indicating which cells are available.
+#'
+#' @return Probability of alternative \code{cell} given \code{utility} and \code{ok}.
+#' @export
 pmnl_rcpp <- function(cell, utility, ok) {
     .Call(`_m4ma_pmnl_rcpp`, cell, utility, ok)
 }
@@ -714,6 +725,7 @@ iCones2Cells_rcpp <- function(iC, v, tStep = 0.5) {
 #' @param v1 Double scalar velocity of current pedestrian.
 #' @param p2 Numeric matrix with shape Nx2 (x and y) as predicted positions
 #' of all other pedestrians excluding the current pedestrian.
+#' @param r Numeric vector denoting the N radii of the other pedestrians.
 #' @param objects List containing a list for each object. An object has
 #' two length-two numeric vectors of x- and y-coordinates.
 #' 

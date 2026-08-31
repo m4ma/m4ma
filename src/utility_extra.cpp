@@ -494,6 +494,7 @@ NumericMatrix get_p1(int n, NumericMatrix p_mat) {
 //' @param v1 Double scalar velocity of current pedestrian.
 //' @param p2 Numeric matrix with shape Nx2 (x and y) as predicted positions
 //' of all other pedestrians excluding the current pedestrian.
+//' @param r Numeric vector denoting the N radii of the other pedestrians.
 //' @param objects List containing a list for each object. An object has
 //' two length-two numeric vectors of x- and y-coordinates.
 //' 
