@@ -22,7 +22,7 @@ Description: The Minds for Mobile Agents (M4MA) project
 License: Apache License (>= 2)
 Imports: Rcpp (>= 1.0.8)
 LinkingTo: Rcpp, BH, RcppArmadillo
-SystemRequirements: C++14
+SystemRequirements: C++14 or later
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Depends: R (>= 4.1.0)
