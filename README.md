@@ -6,27 +6,28 @@
 [![codecov](https://codecov.io/gh/m4ma/m4ma/branch/development/graph/badge.svg?token=PWCVRIDAH7)](https://codecov.io/gh/m4ma/m4ma)
 <!-- badges: end -->
 
-An R package containing C++ implementations to speed up the simulation and parameter estimation of the Predictive Pedestrian model.
+An R package containing C++ implementations to speed up the simulation and parameter estimation of the [Minds for Mbile Agents model (M4MA)](https://www.ampl-psych.com/projects/minds-for-mobile-agents/).
 
 ## How to Use m4ma
 
-This package is currently not self-contained but should be used in combination with code from the [predped](https://github.com/CharlotteTanis/predped) repository. The m4ma package includes C++ implementations that can be used instead of R code from predped. The functions in m4ma have in most cases the same names as functions in predped, so that they can be easily substituted. Exceptions are functions to estimate parameters and likelihoods. Benchmarks that show the speed improvement of m4ma implementations compared to predped can be found [here](https://github.com/m4ma/m4ma-performance/tree/main/bench).
+This package is currently not self-contained but should be used in combination with code from the [`predped`](https://github.com/ndpvh/predped) repository. The `m4ma` package includes C++ implementations that `predped` builds on. In most cases, the functions in `m4ma` have the same names as the original functions in `predped`, so that they can be easily substituted. Exceptions are functions to estimate parameters and likelihoods. Benchmarks that show the speed improvement of `m4ma` implementations compared to the original version of `predped` can be found [here](https://github.com/m4ma/m4ma-performance/tree/main/bench).
 
 ## Installation
 
-You can install m4ma from GitHub using `devtools`:
+You can install `m4ma` from GitHub using `remotes`:
 
 ```r
-install.packages('devtools')
+install.packages('remotes')
 
-devtools::install_github('m4ma/m4ma')
+remotes::install_github('m4ma/m4ma')
 
 ```
 
 ## Getting Started
 
-For access to the predped repository, please contact c.c.tanis@uva.nl.
+To get started with simulating from and estimating the M4MA, please take a look at `predped`s [documentation site](https://ndpvh.github.io/predped) or at [its repository](https://github.com/ndpvh/predped).
 
+<!--
 ### Simulating the Predictive Pedestrian Model
 The easiest way to substitute predped R functions to simulate the Predictive Pedestrian model with m4ma C++ implementations is by first loading the m4ma package:
 
@@ -96,23 +97,24 @@ m4ma::msumlogLike(p, trace_rcpp, nests, alpha, cell_nest)
 ```
 
 Note that the estimation in m4ma requires a transformation of the trace via `m4ma::create_rcpp_trace()`.
+-->
 
 ## Documentation
 
-The documentation of m4ma is build with [roxygen2](https://roxygen2.r-lib.org/articles/roxygen2.html) and currently only locally available. See `?m4ma` after installing the package.
+The documentation of `m4ma` is build with [`roxygen2`](https://roxygen2.r-lib.org/articles/roxygen2.html) and is currently only locally available. See `?m4ma` after installing the package.
 
 ## Testing
 
-The code in m4ma is automatically tested on Windows, Mac, and Linux (Ubuntu) using GitHub actions and [testthat](https://testthat.r-lib.org/). The test coverage is calculated via [codecov](https://about.codecov.io/) and [covr](https://covr.r-lib.org/). For the entire package and new code, the coverage is required to be 80% or above.
+The code in `m4ma` is automatically tested on Windows, Mac, and Linux (Ubuntu) using GitHub actions and [`testthat`](https://testthat.r-lib.org/). The test coverage is calculated via [`codecov`](https://about.codecov.io/) and [`covr`](https://covr.r-lib.org/). We aim to maintain a coverage rate of 80% or above.
 
 ## Maintenance
 
-The package is maintained by Charlotte Tanis (c.c.tanis@uva.nl) and Andrew Heathcote.
+The package is maintained by Niels Vanhasbroeck (niels.vanhasbroeck@gmail.com) and Andrew Heathcote.
 
 ## License
 
-The code is licensed under the Apache 2.0 License. This means that m4ma can be used, modified and redistributed for free, even for commercial purposes.
+The code is licensed under the Apache 2.0 License. This means that m4ma can be used, modified, and redistributed for free, even for commercial purposes. Please see [LICENSE](https://github.com/m4ma/m4ma/blob/main/LICENSE.md) for more information.
 
 ## Credits
 
-The package was developed by the Netherlands eScience Center in collaboration with the Department of Psychological Methods at the University of Amsterdam. The reimplemented code is majorly based on the predped code written by Andrew Heathcote, Charlotte Tanis, and others.
+The package was developed by the Netherlands eScience Center in collaboration with the Department of Psychological Methods at the University of Amsterdam. The reimplemented code is majorly based on the original `predped` code written by Andrew Heathcote, Charlotte Tanis, and others. Since then, `m4ma` has been integrated into the new version of the [`predped`](https://github.com/ndpvh/predped) package developed by Niels Vanhasbroeck, Andrew Heathcote, and others. 

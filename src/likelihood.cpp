@@ -58,9 +58,10 @@ double like_observation(
 
 //' State Log-likelihood
 //' 
-//' Calculate the log-likelihood of observations for a state as the sum of observation log-likelihoods.
+//' DEPRECATED. Calculate the log-likelihood of observations for a state as the sum of observation log-likelihoods.
 //'
 //' @param state List of lists with subject data.
+//' @param ti Integer denoting the iteration for which to evaluate the likelihood.
 //' @param p Numeric matrix with subject parameters for each subject.
 //' @param nests List of vectors with utility indices.
 //' @param alpha List of vectors with alpha values.

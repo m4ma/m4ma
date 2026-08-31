@@ -174,7 +174,14 @@ iCones2Cells_r <- function(iC, v, vels = c(1.5, 1, .5)) {
   return(out)
 }
 
-
+#' @param n Integer denoting the index of the pedestrian in \code{p_pred} 
+#' and \code{state}.
+#' @param state Instance of the \code{state} class. See the documentation 
+#' of \code{predped} for more information.
+#' @param p_pred Numeric matrix containing the positions of the agents.
+#' @param objects List containing instances of the \code{object} class. 
+#' See the documentation of \code{predped} for more information.
+#' 
 #' @rdname blockedAngle_rcpp
 blockedAngle_r <- function(n, state, p_pred, objects) {
   iC <- iCones_r(p1 = state$p[n, , drop = FALSE], a = state$a[n], 
@@ -182,7 +189,8 @@ blockedAngle_r <- function(n, state, p_pred, objects) {
   iCones2Cells_r(iC, state$v[n])
 }
 
-
+#' @param state Instance of the \code{state} class. See the documentation 
+#' of \code{predped} for more information.
 #' @rdname getLeaders_rcpp
 getLeaders_r <- function(n, state, centres, objects, onlyGroup = FALSE, 
                        preferGroup = TRUE, pickBest = FALSE) {

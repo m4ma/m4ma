@@ -1,12 +1,14 @@
 Package: m4ma
 Title: m4ma: An R package containing C++ implementations
   to speed up the simulation and estimation of the
-  Predictive Pedestrian model
-Version: 0.1.1
+  Minds for Mobile Agents model
+Date: 2026-08-31
+Version: 0.4.1
 Authors@R: c(
     person("Malte", "Luken", email = "m.luken@esciencecenter.nl", role = "cre"),
     person("Eva", "Viviani", email = "e.viviani@esciencecenter.nl", role = "aut"),
     person("Charlotte", "Tanis", email = "c.c.tanis@uva.nl", role = "aut"),
+    person("Niels", "Vanhasbroeck", email = "niels.vanhasbroeck@gmail.com", role = "ctb"),
     person("Andrew", "Heathcote", email = "a.j.heathcote@uva.nl", role = "aut"),
     person("Dora", "Matzke", email = "d.matzke@uva.nl", role = "ctb")
     )
@@ -20,12 +22,12 @@ Description: The Minds for Mobile Agents (M4MA) project
 License: Apache License (>= 2)
 Imports: Rcpp (>= 1.0.8)
 LinkingTo: Rcpp, BH, RcppArmadillo
-SystemRequirements: C++14
+SystemRequirements: C++14 or later
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
 Depends: R (>= 4.1.0)
 Suggests:
     covr, 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+Config/roxygen2/version: 8.1.0

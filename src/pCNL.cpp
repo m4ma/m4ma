@@ -98,6 +98,16 @@ double pcnl_rcpp(NumericVector cell, NumericVector utility,
   return p;
 }
 
+//' Probability of the Multinomial Logit Model
+//'
+//' DEPRECATED. Computed the probability of the mulinomial logit model given a cell and utility vector.
+//'
+//' @param cell Integer with the index of the cell to compute the probability for.
+//' @param utility Numeric vector with the utility for each cell.
+//' @param ok Logical matrix with the same shape as utility indicating which cells are available.
+//'
+//' @return Probability of alternative \code{cell} given \code{utility} and \code{ok}.
+//' @export
 // [[Rcpp::export]]
 double pmnl_rcpp(int cell, NumericVector utility, LogicalMatrix ok) {
   

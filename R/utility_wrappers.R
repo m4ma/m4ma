@@ -100,6 +100,7 @@ pCNL = function(cell, V, muM = rep(1, length(nests)),
     return(m4ma::pCNL_r(cell, V, muM = rep(1, length(nests)),
                         nests, alpha, mu, cellNest))
   } else {
+    cell_nest <- get_cell_nest()
     return(m4ma::pcnl_rcpp(cell_nest[cell, ], V, rep(1, length(nests)),
                            nests, alpha, mu))
   }

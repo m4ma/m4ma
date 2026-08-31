@@ -157,7 +157,7 @@ NumericVector idUtility_rcpp(double bID, double dID, double aID,
     return utility;
   }
     
-  NumericMatrix ID(ID_); //re-initialise ID if it is not NULL
+  NumericMatrix ID = Rcpp::as<NumericMatrix>(ID_); //re-initialise ID if it is not NULL
   
   NumericVector bID_group = ifelse(is_ingroup, bID, bID + dID);
   
@@ -274,7 +274,7 @@ NumericVector utility(NumericVector p, double v, double d,
   NumericVector ba_utility (33);
   
   if (ba_.isNotNull()) {
-    NumericVector ba(ba_);
+    NumericVector ba = Rcpp::as<NumericVector>(ba_);
     IntegerVector ba_names = char2int(ba.names()) - 1; // c++ indexing
     ba_utility = baUtility_rcpp(p["aBA"], p["bBA"], ba, ba_names);
   }
@@ -284,7 +284,7 @@ NumericVector utility(NumericVector p, double v, double d,
   NumericVector fl_utility (33);
   
   if (fl_.isNotNull()) {
-    List fl(fl_);
+    List fl = Rcpp::as<List>(fl_);
     fl_utility = flUtility_rcpp(p["aFL"], p["bFL"], p["dFL"], fl["leaders"], fl["dists"]);
   }
   
@@ -301,7 +301,7 @@ NumericVector utility(NumericVector p, double v, double d,
   NumericVector wb_utility (33);
   
   if (wb_.isNotNull()) {
-    List wb(wb_);
+    List wb = Rcpp::as<List>(wb_);
     wb_utility = wbUtility_rcpp(p["aWB"], p["bWB"], wb["buddies"], wb["dists"]);
   }
   

@@ -18,6 +18,8 @@ like_state(
 \arguments{
 \item{state}{List of lists with subject data.}
 
+\item{ti}{Integer denoting the iteration for which to evaluate the likelihood.}
+
 \item{p}{Numeric matrix with subject parameters for each subject.}
 
 \item{nests}{List of vectors with utility indices.}
@@ -36,5 +38,5 @@ iterations or subjects as elements. Can be either \code{"iterations"} or
 Numeric vector of state observaton log-likelihoods.
 }
 \description{
-Calculate the log-likelihood of observations for a state as the sum of observation log-likelihoods.
+DEPRECATED. Calculate the log-likelihood of observations for a state as the sum of observation log-likelihoods.
 }
